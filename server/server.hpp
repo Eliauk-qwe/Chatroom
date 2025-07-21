@@ -54,6 +54,19 @@
 #define GROUP_APPLY_AGREE 27
 #define GROUP_APPLY_REFUSE 28
 #define CHECK_GROUP_APPLY 29
+#define CHECK_GROUP_MEMBERS 30
+#define GROUP_QUIT 31
+#define OWNER_ADD_MANAGERS 32
+#define OWNER_DEL_MANAGERS 33
+#define OWNER_QUIT_GROUP 34
+#define ALL_MANAGERS_DEL_MEMBERS 35
+#define CHECK_GROUP_MANAGERS 36
+#define ACCESS_GROUP 37
+
+
+
+
+
 
 
 
@@ -99,6 +112,20 @@ void group_add(StickyPacket socket,Message &msg);
 void group_apply_agree(StickyPacket socket,Message &msg);
 void group_apply_refuse(StickyPacket socket,Message &msg);
 void check_group_apply(StickyPacket socket,Message &msg);
+void check_group_members(StickyPacket socket,Message &msg);
+void group_quit(StickyPacket socket,Message &msg);
+void owner_add_managers(StickyPacket socket,Message &msg);
+void owner_del_managers(StickyPacket socket,Message &msg);
+void owner_quit_group(StickyPacket socket,Message &msg);
+void all_managers_del_members(StickyPacket socket,Message &msg);
+void check_group_managers(StickyPacket socket,Message &msg);
+void access_group(StickyPacket socket,Message &msg);
+
+
+
+
+
+
 
 
 
@@ -220,6 +247,29 @@ public:
             break;
         case CHECK_GROUP_APPLY:
             check_group_apply(socket,msg);
+            break;
+        case CHECK_GROUP_MEMBERS:
+            check_group_members(socket,msg);
+            break;
+        
+        case OWNER_ADD_MANAGERS:
+            owner_add_managers(socket,msg);
+            break;
+        case OWNER_DEL_MANAGERS:
+            owner_del_managers(socket,msg);
+            break;
+        case OWNER_QUIT_GROUP:
+            owner_quit_group(socket,msg);
+            break;
+        case ALL_MANAGERS_DEL_MEMBERS:
+            all_managers_del_members(socket,msg);
+            break;
+        
+        case CHECK_GROUP_MANAGERS:
+            check_group_managers(socket,msg);
+            break;
+        case ACCESS_GROUP:
+            access_group(socket,msg);
             break;
         
         default:

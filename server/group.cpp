@@ -82,3 +82,12 @@ void group_add(StickyPacket socket,Message &msg){
     
 
 }
+
+
+void access_group(StickyPacket socket,Message &msg){
+    if(redis.sismember("群聊名字集合",msg.friend_or_group)){
+        socket.mysend("ok");
+        return;
+
+    }
+}

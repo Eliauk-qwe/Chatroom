@@ -50,7 +50,7 @@ void group_apply_refuse(StickyPacket socket,Message &msg){
     //redis.sadd(msg.friend_or_group+"的群聊列表",msg.other);
 
     //对于person_uid
-    //如果被多人拒绝呢？
+    //如果被多人拒绝呢？，通过表明被谁来区分
     redis.Rpush(msg.friend_or_group+"的通知类消息","你已被"+msg.uid+"拒绝加入群聊"+msg.other);
 
     if(online_users.find(msg.friend_or_group) != online_users.end()){

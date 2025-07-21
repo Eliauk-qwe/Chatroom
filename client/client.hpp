@@ -40,6 +40,17 @@
 #define GROUP_APPLY_AGREE 27
 #define GROUP_APPLY_REFUSE 28
 #define CHECK_GROUP_APPLY 29
+#define CHECK_GROUP_MEMBERS 30
+#define GROUP_QUIT 31
+#define OWNER_ADD_MANAGERS 32
+#define OWNER_DEL_MANAGERS 33
+#define OWNER_QUIT_GROUP 34
+#define ALL_MANAGERS_DEL_MEMBERS 35
+#define CHECK_GROUP_MANAGERS 36
+#define ACCESS_GROUP 37
+
+
+
 
 
 
@@ -85,6 +96,20 @@ void group_apply_menu();
 void group_apply_agree();
 void group_apply_refuse();
 void check_group_apply();
+void access_group();
+void group_chat_menu(const string group_name);
+void group_chat(const string group_name);
+void check_group_members(const string group_name);
+void group_quit(const string group_name);
+void owner_add_managers(const string group_name);
+void owner_del_managers(const string group_name);
+void owner_quit_group(const string group_name);
+void all_managers_del_members(const string group_name);
+void check_group_managers(const string group_name);
+
+
+
+
 
 
 

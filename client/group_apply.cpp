@@ -44,30 +44,28 @@ void group_apply_agree(){
     printf("请依次输入你想同意的人的uid和群名\n\n");
    
     for(int i=0;i<stoi(num);i++){
-    
+        printf("你想同意入群的人的uid为:\n");
+        string person_uid;
+        getline(cin,person_uid);
 
-    printf("你想同意入群的人的uid为:\n");
-    string person_uid;
-    getline(cin,person_uid);
+        printf("该群的名字为：");
+        string group_name;
+        getline(cin,group_name);
 
-    printf("该群的名字为：");
-    string group_name;
-    getline(cin,group_name);
+        Message msg(log_uid,GROUP_APPLY_AGREE,person_uid,group_name);
+        socket_fd.mysend(msg.S_to_json());
 
-    Message msg(log_uid,GROUP_APPLY_AGREE,person_uid,group_name);
-    socket_fd.mysend(msg.S_to_json());
+        string recv=socket_fd.client_recv();
 
-    string recv=socket_fd.client_recv();
+        if(recv=="have_exist"){
+            printf("该人已经在该群里，可能已经被其他高权限者同意入群\n");
+            return;
+        }
 
-    if(recv=="have_exist"){
-        printf("该人已经在该群里，可能已经被其他高权限者同意入群\n");
-        return;
-    }
-
-    if(recv=="ok"){
-        printf("已成功同意这个人进入群聊");
-        return;
-    }
+        if(recv=="ok"){
+            printf("已成功同意这个人进入群聊");
+            return;
+        }
 
     }        
 

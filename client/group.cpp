@@ -22,6 +22,9 @@ void group_menu(){
         case 4:
             group_apply_menu();
             break;
+        case 5:
+            access_group();
+            break;
 
         
         default:
@@ -109,6 +112,27 @@ void group_add(){
         printf("群聊申请发送成功\n");
     }
 
+}
+
+void access_group(){
+    group_list();
+    printf("你想进入的群聊名字是：\n");
+    string group_name;
+    getline(cin,group_name);
+
+    Message msg(ACCESS_GROUP,group_name);
+    socket_fd.mysend(msg.S_to_json());
+
+    string recv=socket_fd.client_recv();
+    if(recv=="ok"){
+        group_chat_menu(group_name);
+    }else{
+        printf("不存在该群聊\n");
+        return;
+    }
+
+    
+    return;
 }
 
 
