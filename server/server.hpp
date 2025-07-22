@@ -42,7 +42,7 @@
 #define FRIEND_APPLY_REFUSE 15
 #define FRIEND_CHAT 16
 #define FRIEND_CHAT_DAILY 17
-#define QUIT_CHAT 18
+#define FRIEND_QUIT_CHAT 18
 #define FRIEND_SEND_FILE 19
 #define FRIEND_RECV_FILE 20
 #define PASSFIND 21
@@ -62,6 +62,12 @@
 #define ALL_MANAGERS_DEL_MEMBERS 35
 #define CHECK_GROUP_MANAGERS 36
 #define ACCESS_GROUP 37
+#define GROUP_CHAT 38
+#define GROUP_DAILY_CHAT 39
+#define GROUP_SEND_FILE  40
+#define GROUP_RECV_FILE  41
+
+
 
 
 
@@ -99,7 +105,7 @@ void friend_apply_agree(StickyPacket socket,Message &msg);
 void friend_apply_refuse(StickyPacket socket,Message &msg);
 void friend_chat(StickyPacket socket,Message &msg);
 void friend_chat_daily(StickyPacket socket,Message &msg);
-void quit_chat(StickyPacket socket,Message &msg);
+void friend_quit_chat(StickyPacket socket,Message &msg);
 void recv_sendfile(StickyPacket socket,Message &msg);
 void friend_send_file(StickyPacket socket,Message &msg);
 void friend_recv_file(StickyPacket socket,Message &msg);
@@ -120,6 +126,12 @@ void owner_quit_group(StickyPacket socket,Message &msg);
 void all_managers_del_members(StickyPacket socket,Message &msg);
 void check_group_managers(StickyPacket socket,Message &msg);
 void access_group(StickyPacket socket,Message &msg);
+void group_chat(StickyPacket socket,Message &msg);
+void group_daily_chat(StickyPacket socket,Message &msg);
+void group_send_file(StickyPacket socket,Message &msg);
+void group_recv_file(StickyPacket socket,Message &msg);
+
+
 
 
 
@@ -218,8 +230,8 @@ public:
         case FRIEND_CHAT_DAILY:
             friend_chat_daily(socket,msg);
             break;
-        case QUIT_CHAT:
-            quit_chat(socket,msg);
+        case FRIEND_QUIT_CHAT:
+            friend_quit_chat(socket,msg);
             break;
         case FRIEND_SEND_FILE:
             friend_send_file(socket,msg);
@@ -270,6 +282,19 @@ public:
             break;
         case ACCESS_GROUP:
             access_group(socket,msg);
+            break;
+        case GROUP_CHAT:
+            group_chat(socket,msg);
+            break;
+        case GROUP_DAILY_CHAT:
+            group_daily_chat(socket,msg);
+            break;
+
+        case GROUP_SEND_FILE:
+            group_send_file(socket,msg);
+            break;
+        case GROUP_RECV_FILE:
+            group_recv_file(socket,msg);
             break;
         
         default:

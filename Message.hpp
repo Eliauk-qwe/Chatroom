@@ -165,16 +165,20 @@ public:
     // 查看好友申请  群聊列表
     Message(string uid, int flag) 
         : uid(uid), flag(flag) {}
-    //好友申请  申请加群   同意群聊申请  群主添加管理员
+    //好友申请  申请加群   同意群聊申请  群主添加管理员  群聊日常聊天
     Message(string uid,int flag,string friend_or_group,string other)
         :uid(uid),flag(flag),friend_or_group(friend_or_group),other(other){}
 
-    //好友删除   同意添加好友   群聊创建  成员退出群聊   
+    //好友删除   同意添加好友   群聊创建  成员退出群聊   群聊聊天
     Message(string uid,int flag,string friend_or_group)
         :uid(uid),flag(flag),friend_or_group(friend_or_group){}
 
     Message(int flag,string friend_or_group)
         :flag(flag),friend_or_group(friend_or_group){}
+
+    //发送文件
+    Message(string uid,string friend_or_group,vector<string> para,int flag)
+         :uid(uid),friend_or_group(friend_or_group),para(para),flag(flag){}
 
     // JSON转换方法
     void Json_to_s(string jsr) {

@@ -124,7 +124,7 @@ void friend_chat(){
 
     string recv=socket_fd.client_recv();
     if(recv=="friend_no_exist"){
-        printf("你想删除的用户不存在\n");
+        printf("你想聊天的用户不存在\n");
         return;
     }else if(recv=="start"){
         string chat_what;
@@ -133,7 +133,7 @@ void friend_chat(){
             cout << chat_what <<endl;
         }
         printf("现在可以开始新的聊天了:\n");
-        printf("HELP(如果你想接收文件或退出):\n");
+        printf("HELP(如果你想收发文件或退出):\n");
         printf("[1]请输入 <send> 来发送文件\n");
         printf("[2]请输入 <recv> 来接受文件\n");
         printf("[3]输入 <quit> 可退出\n\n");
@@ -145,7 +145,7 @@ void friend_chat(){
         getline(cin,notice);
         
         if(notice == "quit"){
-            Message msg(log_uid,friend_chat_uid,QUIT_CHAT);
+            Message msg(log_uid,friend_chat_uid,FRIEND_QUIT_CHAT);
             socket_fd.mysend(msg.S_to_json());
             if(recv=="success"){
                 return;

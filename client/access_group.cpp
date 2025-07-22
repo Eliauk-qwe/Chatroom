@@ -42,9 +42,6 @@ void group_chat_menu(const string group_name){
     }
 }
 
-void group_chat(const string group_name){
-
-}
 
 void check_group_members(const string group_name){
     Message msg(CHECK_GROUP_MEMBERS,group_name);
@@ -242,4 +239,62 @@ void check_group_managers(const string group_name){
     }
 
     printf("以上是该群的所有管理员\n");
+}
+
+
+void group_chat(const string group_name){
+    Message msg(log_uid,GROUP_CHAT,group_name);
+    socket_fd.mysend(msg.S_to_json());
+
+    string  recv=socket_fd.client_recv();
+    if(recv=="no_exist"){
+        printf("你不是该群的成员，无法进行聊天\n");
+        return;
+    }
+
+    while((recv=socket_fd.client_recv()) != "over"){
+        if(recv=="no_exist"){
+            printf("你不是该群的成员，无法进行聊天\n");
+            return;
+        }
+
+        cout << recv <<endl;
+    }
+
+    printf("以上为该群的历史消息记录，可以进行新的聊天了\n");
+    printf("HELP(如果你想收发文件或退出):\n");
+    printf("[1]请输入 <send> 来发送文件\n");
+    printf("[2]请输入 <recv> 来接受文件\n");
+    printf("[3]输入 <quit> 可退出\n\n");
+
+    string notice;
+    while(1){
+        getline(cin,notice);
+        if(notice=="send"){
+            send_file(log_uid,group_name,socket_fd,GROUP_SEND_FILE);
+            string recv=socket_fd.client_recv();
+            if(recv=="ok"){
+                continue;
+            }
+
+        }
+        else if(notice=="recv"){
+            recv_file(log_uid,group_name,socket_fd,GROUP_RECV_FILE);
+            string recv=socket_fd.client_recv();
+            if(recv=="ok"){
+                continue;
+            }
+        }
+        else if(notice=="quit"){
+
+        }
+
+        Message msg(log_uid,GROUP_DAILY_CHAT,group_name,notice);
+        socket_fd.mysend(msg.S_to_json());
+        string recv=socket_fd.client_recv();
+        if(recv=="ok"){
+            continue;
+        }
+    }
+
 }
