@@ -52,6 +52,8 @@
 #define GROUP_DAILY_CHAT 39
 #define GROUP_SEND_FILE  40
 #define GROUP_RECV_FILE  41
+#define GROUP_QUIT_CHAT  42
+
 
 
 

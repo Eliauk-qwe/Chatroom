@@ -286,6 +286,10 @@ void group_chat(const string group_name){
             }
         }
         else if(notice=="quit"){
+            Message msg(log_uid,GROUP_QUIT_CHAT,group_name);
+            socket_fd.mysend(msg.S_to_json());
+            string recv=socket_fd.client_recv();
+            if(recv=="ok") return;
 
         }
 

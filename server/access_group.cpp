@@ -291,3 +291,10 @@ void group_daily_chat(StickyPacket socket,Message &msg){
 
     socket.mysend("ok");
 }
+
+
+void group_quit_chat(StickyPacket socket,Message &msg){
+    redis.Srem(msg.friend_or_group+"的在线用户",msg.uid);
+    socket.mysend("ok");
+    return;
+}

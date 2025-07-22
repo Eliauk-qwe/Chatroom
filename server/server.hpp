@@ -66,6 +66,8 @@
 #define GROUP_DAILY_CHAT 39
 #define GROUP_SEND_FILE  40
 #define GROUP_RECV_FILE  41
+#define GROUP_QUIT_CHAT  42
+
 
 
 
@@ -130,6 +132,8 @@ void group_chat(StickyPacket socket,Message &msg);
 void group_daily_chat(StickyPacket socket,Message &msg);
 void group_send_file(StickyPacket socket,Message &msg);
 void group_recv_file(StickyPacket socket,Message &msg);
+void group_quit_chat(StickyPacket socket,Message &msg);
+
 
 
 
@@ -295,6 +299,9 @@ public:
             break;
         case GROUP_RECV_FILE:
             group_recv_file(socket,msg);
+            break;
+        case GROUP_QUIT_CHAT:
+            group_quit_chat(socket,msg);
             break;
         
         default:
