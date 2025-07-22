@@ -1,0 +1,4 @@
+/home/wly/my_chatroom (副本)/build/CMakeFiles/server.dir
+/home/wly/my_chatroom (副本)/build/CMakeFiles/client.dir
+/home/wly/my_chatroom (副本)/build/CMakeFiles/edit_cache.dir
+/home/wly/my_chatroom (副本)/build/CMakeFiles/rebuild_cache.dir

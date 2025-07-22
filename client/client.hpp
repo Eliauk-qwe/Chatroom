@@ -112,6 +112,7 @@ void owner_del_managers(const string group_name);
 void owner_quit_group(const string group_name);
 void all_managers_del_members(const string group_name);
 void check_group_managers(const string group_name);
+void notice_recv_thread(string uid,int noticefd);
 
 
 

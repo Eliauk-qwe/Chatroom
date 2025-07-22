@@ -109,7 +109,7 @@ void friend_quit_chat(StickyPacket socket,Message &msg);
 void recv_sendfile(StickyPacket socket,Message &msg);
 void friend_send_file(StickyPacket socket,Message &msg);
 void friend_recv_file(StickyPacket socket,Message &msg);
-void send_sendfile(StickyPacket socket,Message &msg);
+int send_sendfile(StickyPacket socket,Message &msg);
 void passfind(StickyPacket socket,Message &msg);
 void check_friend_apply(StickyPacket socket,Message &msg);
 void group_creat(StickyPacket socket,Message &msg);
@@ -149,7 +149,7 @@ void group_recv_file(StickyPacket socket,Message &msg);
 
 extern Redis redis;
 extern int user_uid;
-unordered_set<string> online_users;
+extern unordered_set<string> online_users;
 
 
 using namespace std;

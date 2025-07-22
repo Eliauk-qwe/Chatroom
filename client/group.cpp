@@ -53,7 +53,7 @@ void group_list(){
     return;
 }
 
-void gruop_creat(){
+void group_creat(){
     printf("输入你想创建的群聊的名字\n");
     string gruop_name;
     getline(cin,gruop_name);

@@ -11,6 +11,7 @@
 using namespace std;
 StickyPacket socket_fd("receive");
 sockaddr_in client_addr;
+string log_uid;
 
 
 int main(int argc,char *argv[]){

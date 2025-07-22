@@ -16,10 +16,10 @@ void group_apply_menu(){
                 group_apply_agree();
                 break;
             case 2:
-                friend_apply_refuse();
+                group_apply_refuse();
                 break;
             case 3:
-                check_friend_apply();
+                check_group_apply();
                 break;
             case 4:
                 return;

@@ -173,7 +173,7 @@ int send_sendfile(StickyPacket socket,Message &msg){
         long long filesize=statbuf.st_size;
         socket.mysend(to_string(filesize));
 
-        long long sum=0;
+        off_t sum=0;
         while(sum<filesize){
             long long num=sendfile(socket.getfd(),fd,&sum,filesize-sum);
             if(num<0){

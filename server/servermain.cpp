@@ -4,6 +4,9 @@ int user_uid=1001;
 
 
 MessageTrans trans;
+Redis redis;
+unordered_set<string> online_users;
+
 
 
 
@@ -22,7 +25,7 @@ void setnoblock(int fd){
     }
 }
 
-void client_exit(int fd);
+//void client_exit(int fd);
 
 
 
@@ -159,11 +162,11 @@ int  main(int argc,char *argv[]){
             else if(events[i].events & EPOLLIN){
                 StickyPacket sp_fd(fd);
                 string client_cmd;
-                if(sp_fd.server_recv(fd,client_cmd) <=0){
+                /*if(sp_fd.server_recv(fd,client_cmd) <=0){
                     //没有接受到客户端任何信息
                     client_exit(fd);
                     continue;
-                }
+                }*/
 
                 //buf中为客户端请求的命令
                 //string client_cmd = buf;

@@ -151,7 +151,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
 }
 
 
-void quit_chat(StickyPacket socket,Message &msg){
+void friend_quit_chat(StickyPacket socket,Message &msg){
     redis.hset(msg.uid, "聊天对象", "0");
     /////////////////////////////////////???//?/
     redis.hset(msg.friend_or_group, "聊天对象", "0");
