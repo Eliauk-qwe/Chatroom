@@ -1,6 +1,6 @@
 #include "server.hpp"
 
-int user_uid=1001;
+//int user_uid=1001;
 
 
 MessageTrans trans;
@@ -25,11 +25,16 @@ void setnoblock(int fd){
     }
 }
 
-//void client_exit(int fd);
+
 
 
 
 int  main(int argc,char *argv[]){
+    // 在main函数中初始化UID计数器
+    if (!redis.Exists("user_uid_counter"))
+    {
+        redis.set("user_uid_counter", "1"); // 从1000开始计数
+    }
     //再命令行要输入指定
     if(argc !=3){
         cerr << "Usage : " << argv[0] << "<IP> <PORT>" << endl;
@@ -162,11 +167,52 @@ int  main(int argc,char *argv[]){
             else if(events[i].events & EPOLLIN){
                 StickyPacket sp_fd(fd);
                 string client_cmd;
+                //sp_fd.server_recv(fd,client_cmd);
                 /*if(sp_fd.server_recv(fd,client_cmd) <=0){
                     //没有接受到客户端任何信息
-                    client_exit(fd);
+                    
+                    cout<<client_cmd<<endl;
+
+                    cout<<"5555555555555hhhhhhhhhhhh"<<endl;
+                    close(fd);
                     continue;
+                    //exit(EXIT_SUCCESS);
                 }*/
+               // 修改后：仅关闭当前连接
+                int recv_ret = sp_fd.server_recv(fd, client_cmd);
+                if (recv_ret <= 0)
+                {
+                    if (recv_ret == 0)
+                    {
+                        cout << "客户端关闭连接: " << fd << endl;
+                    }
+                    else
+                    {
+                        perror("接收数据错误");
+                    }
+
+                    // 从 epoll 中移除
+                    epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
+
+                    // 关闭连接
+                    close(fd);
+
+                    // 如果是通知连接，清理相关资源
+                    if (redis.Exists("fd-uid表"))
+                    {
+                        string uid = redis.Hget("fd-uid表", to_string(fd));
+                        if (!uid.empty())
+                        {
+                            redis.hset(uid, "消息fd", "-1");
+                            online_users.erase(uid);
+                        }
+                        redis.Hdel("fd-uid表", to_string(fd));
+                    }
+
+                    continue; // 继续处理下一个事件
+                }
+                cout<<client_cmd<<endl;
+
 
                 //buf中为客户端请求的命令
                 //string client_cmd = buf;
@@ -175,10 +221,11 @@ int  main(int argc,char *argv[]){
 
                 Message msg;
                 msg.Json_to_s(client_cmd);
-                if(msg.flag == NOTICE){
-                    redis.hset(msg.uid,"消息fd",to_string(fd));
+                cout << msg.flag <<endl;
+                if(msg.flag==NOTICE){
+                    redis.hset(msg.uid, "消息fd", to_string(fd));
                 }
-                else if(msg.flag==FRIEND_SEND_FILE || msg.flag == FRIEND_RECV_FILE){
+                if(msg.flag==FRIEND_SEND_FILE || msg.flag == FRIEND_RECV_FILE){
                     ev.data.fd=fd;
                     ev.events=EPOLLIN | EPOLLET;
                     setnoblock(fd);
@@ -192,19 +239,15 @@ int  main(int argc,char *argv[]){
                     });
 
                     filethread.detach();
-                }else{
-                    StickyPacket socket(fd);
+                }else{  
+                    StickyPacket socket(fd); 
                     Task task([socket,client_cmd](){
                         trans.translation(socket,client_cmd);
-                    });
+                    });    
                     pool.addTask(task);
+
                     
                 }
-
-                
-
-
-
             }
         }
 

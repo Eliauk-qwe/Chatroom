@@ -53,6 +53,7 @@
 #define GROUP_SEND_FILE  40
 #define GROUP_RECV_FILE  41
 #define GROUP_QUIT_CHAT  42
+#define CLIENT_QUIT 43
 
 
 
@@ -78,11 +79,11 @@ extern sockaddr_in client_addr;
 void sign_up();
 int  log_in();
 void pass_find();
-void user_dele();
-void unread_msg();
+//void user_dele();
+//void unread_msg();
 void user_menu();
 void friend_menu();
-void friend_apply();
+void friend_add();
 void friend_del();
 void friend_list();
 void friend_quit();
@@ -115,6 +116,7 @@ void owner_quit_group(const string group_name);
 void all_managers_del_members(const string group_name);
 void check_group_managers(const string group_name);
 void notice_recv_thread(string uid,int noticefd);
+void client_quit(int fd);
 
 
 

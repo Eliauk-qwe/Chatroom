@@ -32,6 +32,7 @@ server/access_group.cpp
 server/group_apply.cpp
 server/group.cpp
 server/signup.cpp
+server/user.cpp
 )
 
 # 客户端源文件（根据实际文件调整）

@@ -7,21 +7,22 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <cstring>
+#include <fcntl.h>
 
 using namespace std;
 
 class StickyPacket{
 private:
     int fd=-1;
-    int receive_fd=-1;
+    int notice_fd=-1;
 
 public:
     int getfd() {
         return fd;
     }
 
-    int get_receive_fd(){
-        return receive_fd;
+    int get_notice_fd(){
+        return notice_fd;
     }
 
     StickyPacket(){
@@ -35,20 +36,23 @@ public:
     StickyPacket(string msg){
         if(msg=="receive"){
             fd=socket(AF_INET,SOCK_STREAM,0);
-            receive_fd=socket(AF_INET,SOCK_STREAM,0);
+            notice_fd=socket(AF_INET,SOCK_STREAM,0);
         }
     }
 
     ~StickyPacket()  {
-        if (fd != -1) {
+        cout<<"StickyPacket 析构函数调用"<<endl;
+
+    }
+        /*if (fd != -1) {
             close(fd);  // 析构时自动关闭
             fd = -1;
         }
-        if(receive_fd!=-1){
-            close(receive_fd);
-            receive_fd=-1;
-        }
-    }
+        if(notice_fd!=-1){
+            close(notice_fd);
+            notice_fd=-1;
+        }*/
+    
 
 
 
@@ -81,6 +85,14 @@ public:
     }
 
     int mysend(string message){
+        cout<<"message:"<<message<<endl;
+
+        // 添加有效性检查
+        if (fd <= 0 || fcntl(fd, F_GETFL) < 0)
+        {
+            cerr << "[" << __func__ << "] 无效的文件描述符: " << fd << endl;
+            return -1;
+        }
         int message_len=message.size();
         int head_len=htonl(message_len);
 
@@ -95,7 +107,11 @@ public:
         int count=0;
 
         while(left>0){
+            cout<<left<<endl;
+           // printf("%s\n",buf);
+
             nsend=send(fd,buf,left,0);
+            cout<<nsend<<endl;
             if(nsend<0){
                 if(errno==EINTR || errno==EWOULDBLOCK) continue;
                 else{

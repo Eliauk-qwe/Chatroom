@@ -49,6 +49,11 @@ public:
             freeReplyObject(reply);
             return true;
         }
+        else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==0){
+            printf("集合中已存在该元素: %s",reply->str);
+            freeReplyObject(reply);
+            return false;
+        }
 
         freeReplyObject(reply);
         return false;
@@ -62,13 +67,14 @@ public:
             fprintf(stderr,"SCARD fail\n");
         }
         else if(reply->type == REDIS_REPLY_ERROR){
-            fprintf(stderr,"SCARD错误 :%s",reply->str);
+            fprintf(stderr,"SCARD错误 :%s\n",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("SCARD成功: %s",reply->str);
-            cout << key<<"中元素个数为"<< reply->integer;
+            printf("SCARD成功: %s\n",reply->str);
+            cout << key<<"中元素个数为"<< reply->integer<<endl;
+            int num=reply->integer;
             freeReplyObject(reply);
-            return reply->integer;
+            return num;
         }
 
         freeReplyObject(reply);
@@ -76,9 +82,9 @@ public:
     }
 
 
-    //哈希HSET  设置  1001 name wly |||| key field alue
+    //哈希HSET  设置  1001 name wly |||| key field alue  返回值为新增的字段数
     int hset (const string &key,const string &field,const string &value){
-        redisReply *reply = (redisReply *)redisCommand(con,"HSET %s %s",key.c_str(),field.c_str(),value.c_str());
+        redisReply *reply = (redisReply *)redisCommand(con,"HSET %s %s %s",key.c_str(),field.c_str(),value.c_str());
 
         if(reply == nullptr){
             fprintf(stderr,"HSET fail\n");
@@ -86,14 +92,15 @@ public:
         else if(reply->type == REDIS_REPLY_ERROR){
             fprintf(stderr,"HSET错误 :%s",reply->str);
         }
-        else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
+        else if(reply->type ==REDIS_REPLY_INTEGER ){
             printf("HSET成功: %s",reply->str);
+            cout<<reply->integer<<endl;
             freeReplyObject(reply);
-            return true;
+            return reply->integer;
         }
 
         freeReplyObject(reply);
-        return false;
+        return reply->integer;
     }
     //判断集合中的成员在不在
     int sismember (const string &key,const string &member){
@@ -232,9 +239,8 @@ public:
         return "";
     }
 
-    int Hlen(const string &uid,const string &list ){
-        string  uidlist=uid+list;
-        redisReply *reply = (redisReply *)redisCommand(this->con, "HLEN %s ", uidlist.c_str());
+    int Hlen(const string &key){
+        redisReply *reply = (redisReply *)redisCommand(this->con, "HLEN %s ", key.c_str());
         if(reply == nullptr){
             fprintf(stderr,"HLEN fail\n");
         }
@@ -312,22 +318,27 @@ public:
     {
         vector<string> members;
         redisReply *reply = (redisReply *)redisCommand(this->con, "SMEMBERS %s", key.c_str());
-        if (reply != nullptr && reply->type == REDIS_REPLY_ARRAY)
-        {
+
+        if(reply == nullptr){
+            fprintf(stderr,"EXISTS fail\n");
+        }
+        else if(reply->type == REDIS_REPLY_ERROR){
+            fprintf(stderr,"EXISTS错误 :%s",reply->str);
+        }
+        else if(reply->type ==REDIS_REPLY_ARRAY ){
+            printf("SMEMBERS成功\n");
             for (size_t i = 0; i < reply->elements; ++i)
             {
                 members.push_back(reply->element[i]->str);
             }
             freeReplyObject(reply);
+            return members;
         }
-        else
-        {
-            if (reply)
-            {
-                freeReplyObject(reply);
-            }
-        }
-        return members;
+
+        freeReplyObject(reply);
+        return {};
+
+
     }
 
 
@@ -376,6 +387,37 @@ public:
 
         freeReplyObject(reply);
         return {};
+    }
+
+    string incr(const string& key) {
+        redisReply* reply = (redisReply*)redisCommand(con, "INCR %s", key.c_str());
+        string res = to_string(reply->integer);
+        freeReplyObject(reply);
+        return res;
+    }
+
+    // SET 命令封装
+    bool set(const string& key, const string& value) {
+        // 构造命令: SET key value
+        redisReply* reply = (redisReply*)redisCommand(con, "SET %s %s", key.c_str(), value.c_str());
+        
+        if (reply == nullptr) {
+            cerr << "Redis SET command failed: NULL reply" << endl;
+            return false;
+        }
+        
+        if (reply->type == REDIS_REPLY_ERROR) {
+            cerr << "Redis SET command failed: " << reply->str << endl;
+            freeReplyObject(reply);
+            return false;
+        }
+        
+        // SET 命令成功返回 OK
+        bool success = (reply->type == REDIS_REPLY_STATUS && 
+                       string(reply->str) == "OK");
+        
+        freeReplyObject(reply);
+        return success;
     }
 
 

@@ -67,6 +67,7 @@
 #define GROUP_SEND_FILE  40
 #define GROUP_RECV_FILE  41
 #define GROUP_QUIT_CHAT  42
+#define CLIENT_QUIT 43
 
 
 
@@ -95,8 +96,8 @@
 
 void sign_up(StickyPacket socket,Message &msg);
 void log_in(StickyPacket socket,Message &msg);
-void user_del(StickyPacket socket,Message &msg);
-void unread_msg(StickyPacket socket,Message &msg);
+//void user_del(StickyPacket socket,Message &msg);
+//void unread_msg(StickyPacket socket,Message &msg);
 void friend_add(StickyPacket socket,Message &msg);
 void friend_del(StickyPacket socket,Message &msg);
 void friend_list(StickyPacket socket,Message &msg);
@@ -133,6 +134,8 @@ void group_daily_chat(StickyPacket socket,Message &msg);
 void group_send_file(StickyPacket socket,Message &msg);
 void group_recv_file(StickyPacket socket,Message &msg);
 void group_quit_chat(StickyPacket socket,Message &msg);
+void client_quit(StickyPacket socket,Message &msg);
+
 
 
 
@@ -152,7 +155,7 @@ void group_quit_chat(StickyPacket socket,Message &msg);
 
 
 extern Redis redis;
-extern int user_uid;
+//extern int user_uid;
 extern unordered_set<string> online_users;
 
 
@@ -162,7 +165,7 @@ using namespace std;
 #define MAX_EVENTS 1024
 
 
-class User{
+/*class User{
 public:
    string UID, Name, Pass, Question, Answer,Phone;
    
@@ -178,7 +181,7 @@ public:
 private:
    mutex user_mutex;
    
-};
+};*/
 
 
 class MessageTrans
@@ -198,12 +201,12 @@ public:
         case PASSFIND:
             passfind(socket,msg);
             break;
-        case USER_DEL:
+        /*case USER_DEL:
             user_del(socket,msg);
             break;
         case UNREAD_MSG:
             unread_msg(socket,msg);
-            break;
+            break;*/
         case FRIEND_ADD:
             friend_add(socket,msg);
             break;
@@ -303,7 +306,10 @@ public:
         case GROUP_QUIT_CHAT:
             group_quit_chat(socket,msg);
             break;
-        
+
+        case CLIENT_QUIT:
+            client_quit(socket,msg);
+            break;
         default:
             break;
         }

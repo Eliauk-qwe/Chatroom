@@ -4,14 +4,14 @@ void friend_menu(){
     string opt;
     while(1){
         printf("---------好友界面-------\n");
-        printf("选项：\n[1]好友申请\n[2]删除好友\n[3]好友列表\n[4]屏蔽好友\n[5]私聊\n[6]新的朋友\n[7]返回\n");
+        printf("选项：\n[1]申请添加好友\n[2]删除好友\n[3]好友列表\n[4]屏蔽好友\n[5]私聊\n[6]新的朋友（添加好友）\n[7]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
 
         switch (stoi(opt))
         {
         case 1:
-            friend_apply();
+            friend_add();
             break;
         case 2:
             friend_del();
@@ -38,7 +38,7 @@ void friend_menu(){
     }
 }
 
-void friend_apply(){
+void friend_add(){
     string friend_add_uid,self_intro;
     cout<<"你想添加的好友uid为:"<< endl;
     getline(cin,friend_add_uid);
@@ -50,28 +50,36 @@ void friend_apply(){
 
     string recv=socket_fd.client_recv();
 
-    if(recv=="该用户不存在"){
+    if (recv == "该用户不存在")
+    {
         printf("你想添加的用户不存在\n");
         return;
     }
-    else if(recv=="friend_exit"){
+    else if (recv == "friend_exit")
+    {
         printf("该用户你已添加，无需添加\n");
         return;
     }
-    else if(recv=="receive_friend_apply"){
+    else if (recv == "receive_friend_apply")
+    {
         printf("对方已向你发送过好友申请，可到新的朋友界面，实现添加\n");
         return;
     }
-    else if(recv=="have_send"){
+    else if (recv == "have_send")
+    {
         printf("你曾向对方发送过好友申请，无需再次发送\n");
         return;
-    }else if(recv=="ok"){
+    }
+    else if (recv == "ok")
+    {
         printf("已成功发送添加信息\n");
         return;
     }
-
-    
-
+    else if (recv == "no")
+    {
+        printf("不能自己添加自己");
+        return;
+    }
 }
 
 
@@ -90,6 +98,9 @@ void friend_del(){
     }else if(recv=="ok"){
         printf("已成功删除该好友\n");
         return;
+    }else if(recv=="no"){
+        printf("不能自己删除自己");
+        return;
     }
 }
 
@@ -98,17 +109,22 @@ void friend_list(){
     Message msg(log_uid,FRIEND_LIST);
     socket_fd.mysend(msg.S_to_json());
 
-    string recv=socket_fd.client_recv();
-    while ((recv=socket_fd.client_recv()) != "over"){
-        if(recv=="no_friend"){
-            printf("你还没有好友\n");
-            return;
-        }else{
-            cout<<recv<<endl;
-        }
+    string recv;
 
+    recv=socket_fd.client_recv();
+    
+    if(recv=="no_exit"){
+        printf("你还没有好友\n");
+        return;
     }
+
+    while(recv!="over"){
+        cout<<recv<<endl;
+        recv=socket_fd.client_recv();
+    }
+
     printf("黄色表示好友在线\n");
+    printf("以上是你的好友列表\n");
     return;
 
 }
@@ -124,12 +140,16 @@ void friend_chat(){
 
     string recv=socket_fd.client_recv();
     if(recv=="friend_no_exist"){
-        printf("你想聊天的用户不存在\n");
+        printf("你未添加该用户\n");
         return;
-    }else if(recv=="start"){
+    }else if(recv=="no"){
+        printf("该用户未注册\n");
+        return;
+    }
+    else if(recv=="start"){
         string chat_what;
         printf("历史聊天记录为:\n");
-        while((chat_what=socket_fd.client_recv()) != "end"){
+        while((chat_what=socket_fd.client_recv()) != "over"){
             cout << chat_what <<endl;
         }
         printf("现在可以开始新的聊天了:\n");
@@ -145,12 +165,11 @@ void friend_chat(){
         getline(cin,notice);
         
         if(notice == "quit"){
-            Message msg(log_uid,friend_chat_uid,FRIEND_QUIT_CHAT);
+            Message msg(log_uid,FRIEND_QUIT_CHAT,friend_chat_uid);
             socket_fd.mysend(msg.S_to_json());
-            if(recv=="success"){
+            if(recv=="ok"){
                 return;
             }
-            return;
         }
 
         if(notice=="send"){
@@ -184,16 +203,18 @@ void friend_chat(){
         }
 
 
-        Message msg(log_uid,friend_chat_uid,{notice},FRIEND_CHAT_DAILY);
+        Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
         socket_fd.mysend(msg.S_to_json());
         
         string recv=socket_fd.client_recv();
 
-        if(recv=="have_been_quit"){
-            printf("你已被对方屏蔽\n");
-            return;
+        if(recv=="friend_del"){
+            printf("你已被对方删除\n");
+            recv=socket_fd.client_recv();
+            cout<<recv<<endl;
+            continue;
         }
-        else if(recv=="over"){
+        else if(recv=="ok"){
             continue;
         }
     }

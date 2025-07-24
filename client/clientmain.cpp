@@ -11,7 +11,7 @@
 using namespace std;
 StickyPacket socket_fd("receive");
 sockaddr_in client_addr;
-string log_uid;
+string log_uid="0";
 
 
 int main(int argc,char *argv[]){
@@ -28,11 +28,11 @@ int main(int argc,char *argv[]){
     }*/
 
     int fd=socket_fd.getfd();
-    sockaddr_in client_addr;
+    //sockaddr_in client_addr;
     memset(&client_addr,0,sizeof(client_addr));
     client_addr.sin_family=AF_INET;
     uint16_t port=atoi(argv[2]);
-    client_addr.sin_port=ntohs(port);
+    client_addr.sin_port=htons(port);
     if(inet_pton(AF_INET,argv[1],(sockaddr*)&client_addr.sin_addr) <0){
         perror("inet_pton failed!\n");
         close(fd);
@@ -72,15 +72,12 @@ int main(int argc,char *argv[]){
                 break;
             }
             case 4: {
-
-                close(fd);
-                printf("连接已关闭\n");
-                printf("感谢使用聊天室，再见！\n");
-                exit(EXIT_SUCCESS);
+                client_quit(fd);
+                break;
             }
             default:
                 printf("无效选项,请输入1-4\n");
-                continue;
+                break;
         }
 
     }
