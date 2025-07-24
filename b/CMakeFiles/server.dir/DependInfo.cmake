@@ -17,6 +17,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wly/my_chatroom (副本)/server/new_friend.cpp" "CMakeFiles/server.dir/server/new_friend.cpp.o" "gcc" "CMakeFiles/server.dir/server/new_friend.cpp.o.d"
   "/home/wly/my_chatroom (副本)/server/servermain.cpp" "CMakeFiles/server.dir/server/servermain.cpp.o" "gcc" "CMakeFiles/server.dir/server/servermain.cpp.o.d"
   "/home/wly/my_chatroom (副本)/server/signup.cpp" "CMakeFiles/server.dir/server/signup.cpp.o" "gcc" "CMakeFiles/server.dir/server/signup.cpp.o.d"
+  "/home/wly/my_chatroom (副本)/server/user.cpp" "CMakeFiles/server.dir/server/user.cpp.o" "gcc" "CMakeFiles/server.dir/server/user.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -598,6 +598,30 @@ server/signup.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/signup.cpp.s
 .PHONY : server/signup.cpp.s
 
+server/user.o: server/user.cpp.o
+.PHONY : server/user.o
+
+# target to build an object file
+server/user.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/user.cpp.o
+.PHONY : server/user.cpp.o
+
+server/user.i: server/user.cpp.i
+.PHONY : server/user.i
+
+# target to preprocess a source file
+server/user.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/user.cpp.i
+.PHONY : server/user.cpp.i
+
+server/user.s: server/user.cpp.s
+.PHONY : server/user.s
+
+# target to generate assembly for a file
+server/user.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/server.dir/build.make CMakeFiles/server.dir/server/user.cpp.s
+.PHONY : server/user.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -665,6 +689,9 @@ help:
 	@echo "... server/signup.o"
 	@echo "... server/signup.i"
 	@echo "... server/signup.s"
+	@echo "... server/user.o"
+	@echo "... server/user.i"
+	@echo "... server/user.s"
 .PHONY : help
 
 
