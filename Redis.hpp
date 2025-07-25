@@ -103,7 +103,7 @@ public:
         return reply->integer;
     }
     //判断集合中的成员在不在
-    int sismember (const string &key,const string &member){
+    bool sismember (const string &key,const string &member){
         redisReply *reply =(redisReply *) redisCommand(con,"SISMEMBER %s %s",key.c_str(),member.c_str());
 
         if(reply == nullptr){
@@ -112,10 +112,11 @@ public:
         else if(reply->type == REDIS_REPLY_ERROR){
             fprintf(stderr,"SISMEMBER错误 :%s",reply->str);
         }
-        else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
+        else if(reply->type ==REDIS_REPLY_INTEGER ){
             printf("SISMEMBER成功");
+            int num=reply->integer;
             freeReplyObject(reply);
-            return true;
+            return num;
         }
 
         freeReplyObject(reply);

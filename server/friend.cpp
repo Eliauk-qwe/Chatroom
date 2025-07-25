@@ -7,16 +7,16 @@ void friend_add(StickyPacket socket,Message &msg){
     }
 
     //判断是不是friend在不在uid的好友列表
-    if(redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group)){
+    if((redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group)) &&(redis.Hexists(msg.friend_or_group+"的好友列表",msg.uid))){
         socket.mysend("friend_exit");
     }
 
-    if(redis.sismember(msg.uid+"的新的朋友",msg.friend_or_group)){
+    if(redis.Hexists(msg.uid+"的新的朋友",msg.friend_or_group)){
         socket.mysend("receive_friend_apply");
         return;
     }
 
-    if(redis.sismember(msg.friend_or_group+"的新的朋友",msg.uid)){
+    if(redis.Hexists(msg.friend_or_group+"的新的朋友",msg.uid)){
         socket.mysend("have_send");
         return;
     }
@@ -82,14 +82,14 @@ void friend_list(StickyPacket socket,Message &msg){
 
     for(size_t i=0;i<friendlist.size(); i+=2){
         const string &frienduid =friendlist[i];
-        if(!redis.Hexists(msg.uid+"的屏蔽列表",frienduid)){
+        
             string notice=frienduid+" "+friendlist[i+1];
             if(online_users.find(frienduid)!=online_users.end()){
                 socket.mysend(YELLOW+notice+RESET);
             }else{
                 socket.mysend(notice);
             }
-        }
+        
     }
 
     socket.mysend("over");
@@ -102,17 +102,19 @@ void friend_chat(StickyPacket socket,Message &msg){
         return;
     }
 
-    if(!redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group)){
+    if(!redis.Exists(msg.uid+"与"+msg.friend_or_group+"的聊天记录")){
         socket.mysend("friend_no_exist");
         return;
     }
 
+
+
     
 
-    if(redis.Hexists(msg.friend_or_group+"的屏蔽列表",msg.uid)){
+    /*if(redis.Hexists(msg.friend_or_group+"的屏蔽列表",msg.uid)){
         socket.mysend("quit");
         return;
-    }
+    }*/
     socket.mysend("start");
 
     vector<string> chat_what = redis.Lrange(msg.uid+"与"+msg.friend_or_group+"的聊天记录");
@@ -193,8 +195,8 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
     StickyPacket fd2_socket(stoi(fd2));
 
     //对于你被好友删除
-    if((!redis.Hexists(msg.friend_or_group+"的好友列表",msg.friend_or_group)) &&(redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group))){
-        socket.mysend("friend_del");
+    if((!redis.Hexists(msg.friend_or_group+"的好友列表",msg.uid)) &&(redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group))){
+        //socket.mysend("friend_del");
         string  notice="我:" RED "!" RESET +msg.other; 
         fd1_socket.mysend(notice);
         redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice);
@@ -207,7 +209,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
         string notice = "我：" + msg.other;
         fd1_socket.mysend(notice);
         redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice);
-        socket.mysend("over");
+        //socket.mysend("over");
         return; 
     }
 
@@ -219,7 +221,8 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
     string notice1 = "我：" + msg.other;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
-    string notice2 =msg.uid + ":"+msg.other;
+    string name1=redis.Hget(msg.uid,"name");
+    string notice2 =name1 + ":"+msg.other;
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -231,16 +234,16 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
         fd2_socket.mysend(notice2);
     }
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
-        fd2_socket.mysend(RED+msg.uid+"给你发了一条消息"+RESET);
+        fd2_socket.mysend(RED+msg.uid+":"+name1+"给你发了一条消息"+RESET);
     }
     else if(online_users.find(msg.friend_or_group)==online_users.end()){
         string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+2));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
         
     }
-    socket.mysend("ok");
+    //socket.mysend("ok");
     return;
 
 

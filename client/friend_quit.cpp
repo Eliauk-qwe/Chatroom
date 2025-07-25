@@ -8,8 +8,7 @@ void friend_quit_menu(){
         getline(cin,opt);
         printf("-------------------------\n");
 
-        while (1)
-        {
+        
             switch (stoi(opt))
             {
             case 1:
@@ -28,7 +27,7 @@ void friend_quit_menu(){
                 printf("请输入范围内的选择\n");
                 break;
             }
-        }
+        
         
 
     }
@@ -58,19 +57,21 @@ void friend_quit(){
         if (recv == "friend_no_exist")
         {
             printf("你未添加该好友\n");
-            return;
+            continue;
         }
         else if (recv == "ok")
         {
             printf("屏蔽成功\n");
-            return;
+            continue;
         }
         else if (recv == "friend_have_exist")
         {
             printf("你之前已屏蔽过该好友\n");
-            return;
+            continue;
         }
     }
+
+    return;
 }
 
 
@@ -99,7 +100,7 @@ void friend_quit_list(){
 
 void friend_back(){
     string num;
-    printf("你想屏蔽好友的数量为：\n");
+    printf("你想取消屏蔽好友的数量为：\n");
     getline(cin, num);
 
     printf("接下来请依次输入你想屏蔽好友的uid\n");
@@ -107,7 +108,7 @@ void friend_back(){
     for (int i = 0; i < stoi(num); i++)
     {
         string friend_back_uid;
-        printf("请输入你想恢复的好友的uid:\n");
+        printf("请输入你想取消屏蔽的好友的uid:\n");
         getline(cin, friend_back_uid);
         Message msg(log_uid, FRIEND_BACK, friend_back_uid);
         socket_fd.mysend(msg.S_to_json());
@@ -116,17 +117,17 @@ void friend_back(){
         if (recv == "no_quit_freind")
         {
             printf("你没有屏蔽过该好友\n");
-            return;
+            continue;
         }
         else if (recv == "no_add")
         {
             printf("你没有添加过该好友\n");
-            return;
+            continue;
         }
         else if (recv == "ok")
         {
             printf("你已成功恢复好友\n");
-            return;
+            continue;
         }
     }
 }

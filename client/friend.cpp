@@ -55,11 +55,11 @@ void friend_add(){
         printf("你想添加的用户不存在\n");
         return;
     }
-    else if (recv == "friend_exit")
+    /*else if (recv == "friend_exit")
     {
         printf("该用户你已添加，无需添加\n");
         return;
-    }
+    }*/
     else if (recv == "receive_friend_apply")
     {
         printf("对方已向你发送过好友申请，可到新的朋友界面，实现添加\n");
@@ -135,7 +135,7 @@ void friend_chat(){
     printf("你想聊天的好友的uid为:\n");
     getline(cin,friend_chat_uid);
 
-    Message msg(log_uid,friend_chat_uid,FRIEND_CHAT);
+    Message msg(log_uid,FRIEND_CHAT,friend_chat_uid);
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
@@ -160,13 +160,16 @@ void friend_chat(){
         
     }
 
-    string notice;
+    
     while(1){
+        string notice;
         getline(cin,notice);
-        
+        cout<<"notice:"<<notice<<endl;
         if(notice == "quit"){
+            printf("退出聊天\n");
             Message msg(log_uid,FRIEND_QUIT_CHAT,friend_chat_uid);
             socket_fd.mysend(msg.S_to_json());
+            string recv=socket_fd.client_recv();
             if(recv=="ok"){
                 return;
             }
@@ -187,7 +190,7 @@ void friend_chat(){
         }
 
 
-        if(recv == "recv"){
+        if(notice == "recv"){
             recv_file(log_uid,friend_chat_uid,socket_fd,FRIEND_RECV_FILE);
             string recv=socket_fd.client_recv();
 
@@ -206,17 +209,17 @@ void friend_chat(){
         Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
         socket_fd.mysend(msg.S_to_json());
         
-        string recv=socket_fd.client_recv();
+        /*string recv=socket_fd.client_recv();
 
         if(recv=="friend_del"){
-            printf("你已被对方删除\n");
             recv=socket_fd.client_recv();
             cout<<recv<<endl;
-            continue;
+            printf("你已被对方删除\n");
+            return;
         }
         else if(recv=="ok"){
             continue;
-        }
+        }*/
     }
 
 }
