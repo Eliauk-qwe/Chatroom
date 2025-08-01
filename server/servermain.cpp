@@ -287,7 +287,7 @@ void heart(int epd)
                     std::lock_guard<std::mutex> lock(heart_mutex);
                     heart_time.erase(fd);
                 }
-                online_users.erase();
+                //online_users.erase();
                 cout << "客户端" << fd << "已断开连接" << endl;
                
             }
