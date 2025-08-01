@@ -177,23 +177,30 @@ void friend_chat(){
         }
 
         if(notice=="send"){
-            int res=send_file(log_uid,friend_chat_uid,socket_fd,FRIEND_SEND_FILE);
-            if(res==0){
-                printf("文件已成功上传至服务器\n");
-            }else if(res<0){
-                printf("文件未成功上传至服务器\n");
-            }
+            string filepath;
+            printf("请输入你要发送的文件的路径:\n");
+            getline(cin, filepath);
+            thread thread([uid=log_uid,friend_or_group=friend_chat_uid,path=filepath](){
+                sfile(uid,friend_or_group,FRIEND_SEND_FILE,path);
+            });
+            thread.detach();
             continue;
         }
 
 
         if(notice == "recv"){
-            int res=recv_file(log_uid,socket_fd,FRIEND_RECV_FILE,friend_chat_uid);
-            if(res==0){
-                printf("文件已成功下载\n");
-            }else if(res<0){
-                printf("文件未成功下载\n");
-            }
+            printf("你要下载的文件名为：\n");
+            string filename;
+            getline(cin, filename);
+
+            printf("请输入你想存储的文件的位置（无需以 / 结尾）：\n");
+            string want_path;
+            getline(cin, want_path);
+
+            thread thread([uid=log_uid,friend_or_group=friend_chat_uid,filename=filename,want_path=want_path](){
+                fvfile(uid,friend_or_group,FRIEND_RECV_FILE,filename,want_path);
+            });
+            thread.detach();
             continue;
 
         }

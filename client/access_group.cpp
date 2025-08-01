@@ -274,12 +274,14 @@ void group_chat(const string group_name){
         string notice;
         getline(cin,notice);
         if(notice=="send"){
-            int res=send_file(log_uid,group_name,socket_fd,GROUP_SEND_FILE);
-            if(res==0){
-                printf("文件已成功上传至服务器\n");
-            }else if(res<0){
-                printf("文件未成功上传至服务器\n");
-            }
+            string filepath;
+            printf("请输入你要发送的文件的路径:\n");
+            getline(cin, filepath);
+
+            thread thread([uid=log_uid,friend_or_group=group_name,path=filepath](){
+                sfile(uid,friend_or_group,GROUP_SEND_FILE,path);
+            });
+            thread.detach();
             string recv=socket_fd.client_recv();
             if(recv=="ok"){
                 continue;
@@ -287,7 +289,21 @@ void group_chat(const string group_name){
 
         }
         else if(notice=="recv"){
-            recv_file(log_uid,socket_fd,GROUP_RECV_FILE,group_name);
+            string other_uid;
+            printf("你要下载的文件的人的uid为\n");
+            getline(cin, other_uid);
+
+            printf("你要下载的文件名为：\n");
+            string filename;
+            getline(cin, filename);
+
+            printf("请输入你想存储的文件的位置（无需以 / 结尾）：\n");
+            string want_path;
+            getline(cin, want_path);
+            thread thread([uid=log_uid,friend_or_group=group_name,filename=filename,want_path=want_path,other_uid=other_uid](){
+                gvfile(uid,friend_or_group,FRIEND_RECV_FILE,filename,want_path,other_uid);
+            });
+            thread.detach();
             string recv=socket_fd.client_recv();
             if(recv=="ok"){
                 continue;

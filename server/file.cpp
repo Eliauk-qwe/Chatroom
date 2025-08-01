@@ -299,7 +299,11 @@ int send_sendfile(StickyPacket socket,Message &msg){
 
     while (total_send < filesize)
     {
-        send_bytes = sendfile(socket.getfd(), fd, &offset, filesize - offset);
+         // 计算本次要接收的最大字节数
+        size_t remaining = filesize - total_send;
+        size_t send_size = (remaining < 65536) ? remaining : 65536;
+
+        send_bytes = sendfile(socket.getfd(), fd, &offset, send_size);
         if (send_bytes == -1)
         {
             fprintf(stderr, "sendfile错误:%s\n", strerror(errno));

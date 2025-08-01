@@ -75,6 +75,13 @@ int log_in(){
                 notice_recv_thread(uid,noticefd);
             });
             thread.detach();
+
+            thread  heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
+                heartthread(uid,fd);
+            });
+            heart_thread.detach();
+
+            
             return 1;
         }
 
@@ -89,6 +96,7 @@ void notice_recv_thread(string uid,int noticefd){
     sockaddr_in notice_addr=client_addr;
     if(connect(noticefd,(sockaddr*)&notice_addr,sizeof(notice_addr))  <0){
         perror("connect failed!\n");
+        close(noticefd);
         return;
     }
 
@@ -160,4 +168,23 @@ void client_quit(int fd){
             exit(EXIT_SUCCESS);
         }
     }
+}
+
+
+void heartthread(string uid,int fd){
+    printf("心跳检测开始！\n");
+
+    string notice="heart";
+    int flag=true;
+
+    while(flag){
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+
+        Message msg(uid,HEART);
+
+        socket_fd.mysend(msg.S_to_json());
+
+
+    }
+
 }

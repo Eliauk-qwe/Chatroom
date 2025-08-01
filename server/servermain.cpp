@@ -7,6 +7,8 @@
 MessageTrans trans;
 Redis redis;
 unordered_set<string> online_users;
+std::unordered_map<int, std::chrono::steady_clock::time_point> heart_time;
+std::chrono::seconds maxtime=std::chrono::seconds(60);
 
 
 
@@ -129,6 +131,8 @@ int  main(int argc,char *argv[]){
 
    cout << "服务器开始工作" << endl;
 
+   heart(epoll_fd);
+
    //======================================================================
    //心跳检测
    //======================================================================
@@ -235,7 +239,7 @@ int  main(int argc,char *argv[]){
                 if(msg.flag==NOTICE){
                     redis.hset(msg.uid, "消息fd", to_string(fd));
                 }
-                if(msg.flag==FRIEND_SEND_FILE || msg.flag == FRIEND_RECV_FILE ||msg.flag==GROUP_SEND_FILE||msg.flag==GROUP_RECV_FILE){
+                else if(msg.flag==FRIEND_SEND_FILE || msg.flag == FRIEND_RECV_FILE ||msg.flag==GROUP_SEND_FILE||msg.flag==GROUP_RECV_FILE){
                     ev.data.fd=fd;
                     ev.events=EPOLLIN | EPOLLET;
                     setnoblock(fd);
@@ -249,7 +253,11 @@ int  main(int argc,char *argv[]){
                     });
 
                     filethread.detach();
-                }else{  
+                }
+                else if(msg.flag==HEART){
+                    heart_time[fd]=std::chrono::steady_clock::now();
+                }
+                else{  
                     StickyPacket socket(fd); 
                     Task task([socket,client_cmd](){
                         trans.translation(socket,client_cmd);
@@ -263,15 +271,35 @@ int  main(int argc,char *argv[]){
 
    }
 
+}
 
+void heart(int epd){
 
+    while (1)
+    {
+        auto now = std::chrono::steady_clock::now();
 
+        vector<int> time_out_clients;
 
+        if (heart_time.empty())
+        {
+            continue;
+        }
 
-     
-    
- 
-    
+        for (const auto &[fd, last_heartbeat] : heart_time)
+        {
+            if (now - last_heartbeat > maxtime)
+            {
+                time_out_clients.push_back(fd);
+            }
+        }
 
-
+        for (int fd : time_out_clients)
+        {
+            cout << "客户端" << fd << "断开" << endl;
+            epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
+            heart_time.erase(fd);
+            close(fd);
+        }
+    }
 }

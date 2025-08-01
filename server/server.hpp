@@ -68,6 +68,7 @@
 #define GROUP_RECV_FILE  41
 #define GROUP_QUIT_CHAT  42
 #define CLIENT_QUIT 43
+#define HEART 44
 
 
 

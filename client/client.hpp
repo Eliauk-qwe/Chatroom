@@ -56,6 +56,7 @@
 #define GROUP_RECV_FILE  41
 #define GROUP_QUIT_CHAT  42
 #define CLIENT_QUIT 43
+#define HEART 44
 
 
 
@@ -96,8 +97,8 @@ void friend_back();
 void friend_apply_agree();
 void friend_apply_refuse();
 void friend_chat();
-int send_file(string uid,string friend_uid,StickyPacket f_socket,int flag);
-int recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group);
+int send_file(string uid,string friend_uid,StickyPacket f_socket,int flag,string filepath);
+//int recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group);
 void check_friend_apply();
 void group_menu();
 int group_list();
@@ -119,6 +120,12 @@ void all_managers_del_members(const string group_name);
 void check_group_managers(const string group_name);
 void notice_recv_thread(string uid,int noticefd);
 void client_quit(int fd);
+void sfile(string uid,string friend_or_group,int flag,string path);
+void fvfile(string uid,string friend_or_group,int flag,string filename,string want_path);
+int  friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path);
+void gvfile(string uid,string friend_or_group,int flag,string filename,string want_path,string other_uid);
+int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path,string other_uid);
+void heartthread(string uid,int fd);
 
 
 
