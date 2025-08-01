@@ -1,0 +1,4 @@
+/home/wly/桌面/chatroom/b/CMakeFiles/server.dir
+/home/wly/桌面/chatroom/b/CMakeFiles/client.dir
+/home/wly/桌面/chatroom/b/CMakeFiles/edit_cache.dir
+/home/wly/桌面/chatroom/b/CMakeFiles/rebuild_cache.dir
