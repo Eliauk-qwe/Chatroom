@@ -31,6 +31,11 @@ void sign_up(){
     //错误处理
 
     string uid=socket_fd.client_recv();
+    if (uid == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     cout<<"你注册的uid为:"<<uid<<endl;
     printf("请记住它哦，它是类似学号一样重要的东西\n");
     //cout<<"接下来将进入登录界面"<<endl<<endl;
@@ -55,6 +60,11 @@ int log_in(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="该用户未注册"){
             cout<<"你还未注册，请先注册"<<endl;
             return 0;
@@ -70,17 +80,17 @@ int log_in(){
         }else if(recv=="ok"){
             cout<<"登录成功"<<endl;
            
-            //system("clear");
-            thread   thread([uid=log_uid,noticefd=socket_fd.get_notice_fd()](){
+            // 修复点1：添加分号并重命名线程变量
+            thread notice_thread([uid=log_uid,noticefd=socket_fd.get_notice_fd()](){
                 notice_recv_thread(uid,noticefd);
             });
-            thread.detach();
+            notice_thread.detach();
 
-            thread  heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
+            // 修复点2：添加分号并重命名线程变量
+            thread heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
             heart_thread.detach();
-
             
             return 1;
         }
@@ -109,7 +119,7 @@ void notice_recv_thread(string uid,int noticefd){
 
     while(1){
         string recv =noticesocket.client_recv();
-        if(recv =="close"){
+        if(recv =="读取消息头不完整"){
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
@@ -133,10 +143,20 @@ void pass_find(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="no"){
         cout<<"你的uid与电话不匹配,无法找回密码"<<endl;
     }else if(recv=="yes"){
         string pass=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         cout<< "你的密码是："<< pass<<endl;
     }
 
@@ -159,6 +179,11 @@ void client_quit(int fd){
         Message msg(log_uid,CLIENT_QUIT);
         socket_fd.mysend(msg.S_to_json());
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="ok"){
             close(fd);
             int notice_fd=socket_fd.get_notice_fd();
@@ -178,7 +203,7 @@ void heartthread(string uid,int fd){
     int flag=true;
 
     while(flag){
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(30));
 
         Message msg(uid,HEART);
 

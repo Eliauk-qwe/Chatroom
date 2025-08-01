@@ -54,6 +54,11 @@ void  unread_msg(){
     Message msg(log_uid,UNREAD_MSG);
     socket_fd.mysend(msg.S_to_json());
     string recv =socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     while(recv !="over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();

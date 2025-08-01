@@ -54,6 +54,11 @@ void friend_quit(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv = socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if (recv == "friend_no_exist")
         {
             printf("你未添加该好友\n");
@@ -82,6 +87,11 @@ void friend_quit_list(){
     string recv;
 
     recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="no_have_quit_list"){
         printf("你没有屏蔽的好友\n");
@@ -114,6 +124,11 @@ void friend_back(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv = socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if (recv == "no_quit_freind")
         {
             printf("你没有屏蔽过该好友\n");

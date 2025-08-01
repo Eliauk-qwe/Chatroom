@@ -48,6 +48,11 @@ void friend_apply_agree(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv = socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
 
         if (recv == "ok")
         {
@@ -79,6 +84,11 @@ void friend_apply_refuse(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv = socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
 
         if (recv == "OK")
         {
@@ -122,6 +132,11 @@ void check_friend_apply() {
     string recv;
     // 先接收一次数据，判断是否有申请
     recv = socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     
     if (recv == "no") {
         cout << "你还没有好友申请" << endl;
@@ -131,7 +146,12 @@ void check_friend_apply() {
     // 如果有申请，循环接收直到"over"
     while (recv != "over") {
         cout << recv << endl;
-        recv = socket_fd.client_recv(); // 继续接收下一条
+        recv = socket_fd.client_recv();// 继续接收下一条
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        } 
     }
 
     printf("以上是所有好友申请,可选出想添加好友的uid,来同意或拒绝申请\n");

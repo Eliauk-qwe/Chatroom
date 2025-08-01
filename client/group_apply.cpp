@@ -55,6 +55,11 @@ void group_apply_agree(){
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
 
         if(recv=="group_no_exit"){
             printf("该群聊不存在\n");
@@ -104,6 +109,11 @@ void group_apply_refuse(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="group_no_exit"){
             printf("该群聊不存在");
@@ -144,6 +154,11 @@ void check_group_apply(){
     while(recv != "over"){
         cout <<recv<<endl;
         recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
     
 

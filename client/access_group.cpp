@@ -48,6 +48,11 @@ void check_group_members(const string group_name){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="no_group_name"){
         printf("不存在该群\n");
         return;
@@ -56,6 +61,11 @@ void check_group_members(const string group_name){
     while(recv != "over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
 
     printf("以上是该群的所有群成员\n");
@@ -67,6 +77,11 @@ void group_quit(const string group_name){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="no_group_member"){
         printf("你本来就不是该群的成员\n");
         return;
@@ -101,6 +116,11 @@ void owner_add_managers(const string group_name){
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="quit"){
             printf("你不是群主，无法进行该操作\n");
             return;
@@ -140,6 +160,11 @@ void owner_del_managers(const string group_name){
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="quit"){
             printf("你不是群主，无法进行该操作\n");
             return;
@@ -167,6 +192,11 @@ void owner_quit_group(const string group_name){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="quit"){
         printf("你不是该群群主，无法进行该操作\n");
         return;
@@ -197,6 +227,11 @@ void all_managers_del_members(const string group_name){
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="no_high"){
             printf("你既不是群主，也不是管理员，无法进行该操作\n");
             return;
@@ -228,6 +263,11 @@ void check_group_managers(const string group_name){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="no_group_name"){
         printf("不存在该群\n");
@@ -242,6 +282,11 @@ void check_group_managers(const string group_name){
     while(recv != "over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
 
     printf("以上是该群的所有管理员\n");
@@ -253,6 +298,11 @@ void group_chat(const string group_name){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="no_exist"){
         printf("你不是该群的成员，无法进行聊天\n");
         return;
@@ -261,6 +311,11 @@ void group_chat(const string group_name){
     while(recv!="over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
 
     
@@ -283,6 +338,11 @@ void group_chat(const string group_name){
             });
             thread.detach();
             string recv=socket_fd.client_recv();
+            if (recv == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
             if(recv=="ok"){
                 continue;
             }
@@ -305,6 +365,11 @@ void group_chat(const string group_name){
             });
             thread.detach();
             string recv=socket_fd.client_recv();
+            if (recv == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
             if(recv=="ok"){
                 continue;
             }
@@ -313,6 +378,11 @@ void group_chat(const string group_name){
             Message msg(log_uid,GROUP_QUIT_CHAT,group_name);
             socket_fd.mysend(msg.S_to_json());
             string recv=socket_fd.client_recv();
+            if (recv == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
             if(recv=="ok") return;
 
         }
@@ -320,6 +390,11 @@ void group_chat(const string group_name){
         Message msg(log_uid,GROUP_DAILY_CHAT,group_name,notice);
         socket_fd.mysend(msg.S_to_json());
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
         if(recv=="ok"){
             continue;
         }

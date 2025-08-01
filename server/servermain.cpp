@@ -9,6 +9,7 @@ Redis redis;
 unordered_set<string> online_users;
 std::unordered_map<int, std::chrono::steady_clock::time_point> heart_time;
 std::chrono::seconds maxtime=std::chrono::seconds(60);
+std::mutex heart_mutex;
 
 
 
@@ -34,9 +35,6 @@ void setnoblock(int fd){
 
 int  main(int argc,char *argv[]){
     signal(SIGPIPE, SIG_IGN);
-
-
-
 
     // 在main函数中初始化UID计数器
     if (!redis.Exists("user_uid_counter"))
@@ -131,7 +129,9 @@ int  main(int argc,char *argv[]){
 
    cout << "服务器开始工作" << endl;
 
-   heart(epoll_fd);
+   // 在main函数中启动心跳线程
+   std::thread heart_thread(heart, epoll_fd);
+   heart_thread.detach(); // 分离线程，使其独立运行
 
    //======================================================================
    //心跳检测
@@ -181,17 +181,6 @@ int  main(int argc,char *argv[]){
             else if(events[i].events & EPOLLIN){
                 StickyPacket sp_fd(fd);
                 string client_cmd;
-                //sp_fd.server_recv(fd,client_cmd);
-                /*if(sp_fd.server_recv(fd,client_cmd) <=0){
-                    //没有接受到客户端任何信息
-                    
-                    cout<<client_cmd<<endl;
-
-                    cout<<"5555555555555hhhhhhhhhhhh"<<endl;
-                    close(fd);
-                    continue;
-                    //exit(EXIT_SUCCESS);
-                }*/
                // 修改后：仅关闭当前连接
                 int recv_ret = sp_fd.server_recv(fd, client_cmd);
                 if (recv_ret <= 0)
@@ -211,17 +200,7 @@ int  main(int argc,char *argv[]){
                     // 关闭连接
                     close(fd);
 
-                    // 如果是通知连接，清理相关资源
-                    if (redis.Exists("fd-uid表"))
-                    {
-                        string uid = redis.Hget("fd-uid表", to_string(fd));
-                        if (!uid.empty())
-                        {
-                            redis.hset(uid, "消息fd", "-1");
-                            online_users.erase(uid);
-                        }
-                        redis.Hdel("fd-uid表", to_string(fd));
-                    }
+                    
 
                     continue; // 继续处理下一个事件
                 }
@@ -255,7 +234,8 @@ int  main(int argc,char *argv[]){
                     filethread.detach();
                 }
                 else if(msg.flag==HEART){
-                    heart_time[fd]=std::chrono::steady_clock::now();
+                    std::lock_guard<std::mutex> lock(heart_mutex);
+                    heart_time[fd] = std::chrono::steady_clock::now();
                 }
                 else{  
                     StickyPacket socket(fd); 
@@ -273,33 +253,44 @@ int  main(int argc,char *argv[]){
 
 }
 
-void heart(int epd){
+void heart(int epd)
+{
 
     while (1)
     {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         auto now = std::chrono::steady_clock::now();
 
         vector<int> time_out_clients;
-
-        if (heart_time.empty())
         {
-            continue;
-        }
-
-        for (const auto &[fd, last_heartbeat] : heart_time)
-        {
-            if (now - last_heartbeat > maxtime)
+            std::lock_guard<std::mutex> lock(heart_mutex);
+            if (heart_time.empty())
             {
-                time_out_clients.push_back(fd);
+                continue;
+            }
+
+            for (const auto &[fd, last_heartbeat] : heart_time)
+            {
+                if (now - last_heartbeat > maxtime)
+                {
+                    time_out_clients.push_back(fd);
+                }
             }
         }
 
-        for (int fd : time_out_clients)
-        {
-            cout << "客户端" << fd << "断开" << endl;
-            epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
-            heart_time.erase(fd);
-            close(fd);
-        }
+            for (int fd : time_out_clients)
+            {
+                
+                close(fd);
+                epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
+                {
+                    std::lock_guard<std::mutex> lock(heart_mutex);
+                    heart_time.erase(fd);
+                }
+                online_users.erase();
+                cout << "客户端" << fd << "已断开连接" << endl;
+               
+            }
+        
     }
 }

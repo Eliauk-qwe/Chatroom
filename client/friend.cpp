@@ -49,6 +49,11 @@ void friend_add(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if (recv == "该用户不存在")
     {
@@ -92,6 +97,11 @@ void friend_del(){
     socket_fd.mysend(msg.S_to_json());
     
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="friend_no_exist"){
         printf("你们本来就没有好友关系\n");
         return;
@@ -112,6 +122,11 @@ void friend_list(){
     string recv;
 
     recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     
     if(recv=="no_exit"){
         printf("你还没有好友\n");
@@ -121,6 +136,11 @@ void friend_list(){
     while(recv!="over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
 
     
@@ -139,6 +159,11 @@ void friend_chat(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="friend_no_exist"){
         printf("你未添加该用户\n");
         return;
@@ -150,6 +175,11 @@ void friend_chat(){
         string chat_what;
         printf("历史聊天记录为:\n");
         while((chat_what=socket_fd.client_recv()) != "over"){
+            if (chat_what == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
             cout << chat_what <<endl;
         }
         printf("现在可以开始新的聊天了:\n");
@@ -171,6 +201,11 @@ void friend_chat(){
             Message msg(log_uid,FRIEND_QUIT_CHAT,friend_chat_uid);
             socket_fd.mysend(msg.S_to_json());
             string recv=socket_fd.client_recv();
+            if (recv == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
             if(recv=="ok"){
                 return;
             }
@@ -210,6 +245,11 @@ void friend_chat(){
         socket_fd.mysend(msg.S_to_json());
         
         string recv=socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
 
         if(recv=="del"){
             printf("你已被对方删除\n");

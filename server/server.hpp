@@ -136,6 +136,7 @@ void group_send_file(StickyPacket socket,Message &msg);
 void group_recv_file(StickyPacket socket,Message &msg);
 void group_quit_chat(StickyPacket socket,Message &msg);
 void client_quit(StickyPacket socket,Message &msg);
+void heart(int epd);
 
 
 

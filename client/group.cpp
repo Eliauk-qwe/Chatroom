@@ -43,6 +43,11 @@ int group_list(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="no"){
         printf("你还没有群聊\n");
@@ -86,6 +91,11 @@ void group_creat(){
 
     string recv;
     recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="name_have_exit"){
         printf("该名字已存在，请更改名字\n");
@@ -115,6 +125,11 @@ void group_add(){
 
     string recv;
     recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="name_have_no_exit"){
         printf("不存在这个群聊\n");
@@ -148,6 +163,11 @@ void access_group(){
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
     if(recv=="no"){
         printf("该群聊不存在\n");
         return;

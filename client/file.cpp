@@ -32,6 +32,11 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
     Message msg(uid,friend_or_group,{filename, to_string(filesize)}, flag);
     f_socket.mysend(msg.S_to_json());
     string recv = f_socket.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     if(recv=="no"){
         printf("你没有添加对方为好友\n");
@@ -110,7 +115,7 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
 
 
             total_send += send_bytes;
-            //printf("Sent %zd bytes (%.2f%%)\n", send_bytes, (double)total_send / filesize * 100);
+            printf("Sent %zd bytes (%.2f%%)\n", send_bytes, (double)total_send / filesize * 100);
         }
 
 
@@ -136,6 +141,11 @@ int friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_
     Message msg(uid,friend_or_group,{friend_or_group,filename},flag);
     f_socket.mysend(msg.S_to_json());
     string res =f_socket.client_recv();
+    if (res == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     int fd = open(filepath.c_str(), O_TRUNC | O_WRONLY | O_CREAT, S_IRWXU);
     if (fd < 0)
@@ -200,7 +210,7 @@ int friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_
         }
 
         total_recv = total_recv + write_bytes;
-        printf("Recv %zd bytes (%.2f%%)\n", recv_bytes, (double)total_recv / filesize * 100);
+        //printf("Recv %zd bytes (%.2f%%)\n", recv_bytes, (double)total_recv / filesize * 100);
     }
 
     if (total_recv == filesize)
@@ -280,6 +290,11 @@ int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_g
     Message msg(uid,friend_or_group,{other_uid,filename},flag);
     f_socket.mysend(msg.S_to_json());
     string res =f_socket.client_recv();
+    if (res == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
     int fd = open(filepath.c_str(), O_TRUNC | O_WRONLY | O_CREAT, S_IRWXU);
     if (fd < 0)
@@ -344,7 +359,7 @@ int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_g
         }
 
         total_recv = total_recv + write_bytes;
-        printf("Recv %zd bytes (%.2f%%)\n", recv_bytes, (double)total_recv / filesize * 100);
+        //printf("Recv %zd bytes (%.2f%%)\n", recv_bytes, (double)total_recv / filesize * 100);
     }
 
     if (total_recv == filesize)

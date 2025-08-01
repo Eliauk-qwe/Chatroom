@@ -386,13 +386,13 @@ int recv_sendfile(StickyPacket socket,Message &msg){
         size_t recv_size = (remaining < 65536) ? remaining : 65536;
 
 
-        cout<<"1111111111111111"<<endl;
+        
         recv_bytes=recv(socket.getfd(),buf.data(),recv_size,0);
-        cout<<"recv_bytes"<<recv_bytes<<endl;
+        
 
         if (recv_bytes == -1)
         {
-            fprintf(stderr, "recv错误:%s\n", strerror(errno));
+            //fprintf(stderr, "recv错误:%s\n", strerror(errno));
 
             if (errno == EAGAIN || errno == EWOULDBLOCK)
                 continue;
@@ -408,11 +408,11 @@ int recv_sendfile(StickyPacket socket,Message &msg){
             close(fd);
             return -1;
         }
-        cout<<"3333333333333333333"<<endl;
+        
         write_bytes=write(fd,buf.data(),recv_bytes);
-        cout<<"444444444444444444"<<endl;
+        
         if(write_bytes==-1){
-            fprintf(stderr, "recv错误:%s\n", strerror(errno));
+            //fprintf(stderr, "recv错误:%s\n", strerror(errno));
 
             if (errno == EAGAIN || errno == EWOULDBLOCK)
                 continue;
