@@ -30,7 +30,7 @@ void group_creat(StickyPacket socket,Message &msg){
 
 
 void group_list(StickyPacket socket,Message &msg){
-    printf("进入grouplist\n");
+    
     if(!redis.scard(msg.uid+"的群聊列表")){
         socket.mysend("no");
         return;
@@ -82,7 +82,7 @@ void group_add(StickyPacket socket,Message &msg){
             string notice_fd=redis.Hget(group_managers_uid,"消息fd");
             StickyPacket notice_socket (stoi(notice_fd));
             string notice="收到来自"+msg.uid+"的加群申请";
-            notice_socket.mysend(RED+notice+RESET);
+            notice_socket.mysend(QING+notice+RESET);
         }
 
     }

@@ -26,19 +26,22 @@ void friend_add(StickyPacket socket,Message &msg){
         return;
     }
     
+    string name =redis.Hget(msg.uid,"name");
+
 
     //string apply = msg.uid + ":"+ msg.other;
     redis.hset(msg.friend_or_group+"的新的朋友",msg.uid,msg.other);
+    redis.Rpush(msg.friend_or_group+"的通知类消息","收到来自" + msg.uid +":"+name+ "的好友申请");
 
-    string num=redis.Hget(msg.friend_or_group+"的未读消息","新的朋友");
-    redis.hset(msg.friend_or_group+"的未读消息","新的朋友",to_string(stoi(num)+1));
+
+    /*string num=redis.Hget(msg.friend_or_group+"的未读消息","新的朋友");
+    redis.hset(msg.friend_or_group+"的未读消息","新的朋友",to_string(stoi(num)+1));*/
 
     if(online_users.find(msg.friend_or_group) != online_users.end()){
         string friend_fd =redis.Hget(msg.friend_or_group,"消息fd");
         StickyPacket friend_socket(stoi(friend_fd));
-        string name =redis.Hget(msg.uid,"name");
         string notice = "收到来自" + msg.uid +":"+name+ "的好友申请";
-        friend_socket.mysend(RED + notice + RESET);
+        friend_socket.mysend(QING + notice + RESET);
         
     }
 
@@ -56,11 +59,14 @@ void friend_del(StickyPacket socket,Message &msg){
         socket.mysend("friend_no_exist");
         return;
         
-    }else if(redis.Hdel(msg.uid+"的好友列表",msg.friend_or_group)){
-        //redis.Srem(msg.friend_or_group+"的好友列表",msg.uid);
-        socket.mysend("ok");
-        return;
     }
+
+    redis.Hdel(msg.uid + "的好友列表", msg.friend_or_group);
+    // redis.Srem(msg.friend_or_group+"的好友列表",msg.uid);
+    redis.del(msg.uid+"与"+msg.friend_or_group+"的聊天记录");
+    //redis.del(msg.friend_or_group+"与"+msg.uid+"的聊天记录");
+    socket.mysend("ok");
+    return;
 }
 
 void friend_list(StickyPacket socket,Message &msg){
@@ -87,7 +93,7 @@ void friend_list(StickyPacket socket,Message &msg){
             if(online_users.find(frienduid)!=online_users.end()){
                 socket.mysend(YELLOW+notice+"  在线"+RESET);
             }else{
-                socket.mysend(notice);
+                socket.mysend(PLUSWHITE+ notice+"  离线"+RESET);
             }
         
     }
@@ -97,6 +103,10 @@ void friend_list(StickyPacket socket,Message &msg){
 
 
 void friend_chat(StickyPacket socket,Message &msg){
+    if(msg.uid==msg.friend_or_group){
+        socket.mysend("my");
+        return;
+    }
     if(!redis.sismember("用户ID集合",msg.friend_or_group)){
         socket.mysend("no");
         return;
@@ -104,6 +114,16 @@ void friend_chat(StickyPacket socket,Message &msg){
 
     if(!redis.Exists(msg.uid+"与"+msg.friend_or_group+"的聊天记录")){
         socket.mysend("friend_no_exist");
+        return;
+    }
+
+    if(!redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group)){
+        socket.mysend("no_exit");
+        return;
+    }
+
+   if(!redis.Hlen(msg.uid+"的好友列表")){
+        socket.mysend("0");
         return;
     }
 
@@ -125,10 +145,10 @@ void friend_chat(StickyPacket socket,Message &msg){
     }
    
     redis.hset(msg.uid, "聊天对象", msg.friend_or_group);
-    string num1=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
+    /*string num1=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
     redis.hset(msg.uid+"的好友消息",msg.friend_or_group,"0");
     string num=redis.Hget(msg.uid+"的未读消息","好友消息");
-    redis.hset(msg.uid+"的未读消息","好友消息",to_string(stoi(num)-stoi(num1)));
+    redis.hset(msg.uid+"的未读消息","好友消息",to_string(stoi(num)-stoi(num1)));*/
 
     socket.mysend("over");
 
@@ -184,7 +204,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
-    string notice2 =name1 + ":"+msg.other;
+    string notice2 =ZI+name1 + ":" RESET+msg.other;
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -196,22 +216,22 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
         fd2_socket.mysend(notice2);
     }
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
-        fd2_socket.mysend(RED+msg.uid+":"+name1+"给你发了一条消息"+RESET);
+        fd2_socket.mysend(QING+msg.uid+":"+name1+"给你发了一条消息"+RESET);
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
     else if(online_users.find(msg.friend_or_group)==online_users.end()){
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
     socket.mysend("ok");

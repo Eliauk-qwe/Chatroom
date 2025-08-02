@@ -2,11 +2,11 @@
 void group_chat_menu(const string group_name){
     string opt;
     while(1){
-        cout<<"-------------"<<group_name<<"------------"<<endl;
+        cout<<"================"<<group_name<<"=============="<<endl;
         printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]高级权限者踢出用户\n[8]查看群管理员\n[9]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
-        printf("------------------------------------\n");
+        printf("=============================================\n");
 
         switch (stoi(opt))
         {
@@ -105,7 +105,7 @@ void owner_add_managers(const string group_name){
     string num;
     getline(cin,num);
 
-    printf("注意：接下来每次只能输入一个人\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
     for(int i=0;i<stoi(num) ; i++){
         printf("你想设置为管理员的人的uid为:\n");
@@ -149,7 +149,7 @@ void owner_del_managers(const string group_name){
     string num;
     getline(cin,num);
 
-    printf("注意：接下来每次只能输入一个人\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
     for(int i=0;i<stoi(num) ; i++){
         printf("你想删除管理员的人的uid为:\n");
@@ -216,7 +216,7 @@ void all_managers_del_members(const string group_name){
     string num;
     getline(cin,num);
 
-    printf("注意：接下来每次只能输入一个人\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
     for(int i=0;i<stoi(num) ; i++){
         printf("你想踢出群成员的人的uid为:\n");
@@ -401,3 +401,6 @@ void group_chat(const string group_name){
     }
 
 }
+
+
+

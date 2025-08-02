@@ -36,7 +36,7 @@ void sign_up(){
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-    cout<<"你注册的uid为:"<<uid<<endl;
+    cout<<"你注册的uid为:"<<QING+uid+RESET<<endl;
     printf("请记住它哦，它是类似学号一样重要的东西\n");
     //cout<<"接下来将进入登录界面"<<endl<<endl;
     return;
@@ -197,12 +197,12 @@ void client_quit(int fd){
 
 
 void heartthread(string uid,int fd){
-    printf("心跳检测开始！\n");
+    //printf("心跳检测开始！\n");
 
-    string notice="heart";
-    int flag=true;
+   // string notice="heart";
+   //int flag=true;
 
-    while(flag){
+    while(1){
         std::this_thread::sleep_for(std::chrono::seconds(30));
 
         Message msg(uid,HEART);

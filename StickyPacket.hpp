@@ -41,7 +41,7 @@ public:
     }
 
     ~StickyPacket()  {
-        cout<<"StickyPacket 析构函数调用"<<endl;
+        //1cout<<"StickyPacket 析构函数调用"<<endl;
 
     }
         /*if (fd != -1) {
@@ -85,7 +85,7 @@ public:
     }
 
     int mysend(string message){
-        cout<<"message:"<<message<<endl;
+        //cout<<"message:"<<message<<endl;
 
         // 添加有效性检查
         if (fd <= 0 || fcntl(fd, F_GETFL) < 0)
@@ -107,11 +107,11 @@ public:
         int count=0;
 
         while(left>0){
-            cout<<left<<endl;
+           // cout<<left<<endl;
            // printf("%s\n",buf);
 
             nsend=send(fd,buf,left,0);
-            cout<<nsend<<endl;
+            //cout<<nsend<<endl;
             if(nsend<0){
                 if(errno==EINTR || errno==EWOULDBLOCK) continue;
                 else{

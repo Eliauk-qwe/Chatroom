@@ -137,7 +137,7 @@ void owner_del_managers(StickyPacket socket,Message &msg){
     string notice="你已被移除群聊"+msg.friend_or_group+"的管理员";
     redis.Rpush(msg.other+"的通知类消息",notice);
     if(online_users.find(msg.other) != online_users.end()){
-        string notice_fd=redis.Hget(msg.uid,"消息fd");
+        string notice_fd=redis.Hget(msg.friend_or_group,"消息fd");
         StickyPacket notice_socket(stoi(notice_fd));
         notice_socket.mysend(RED+notice+RESET);
     }
@@ -376,4 +376,4 @@ void group_quit_chat(StickyPacket socket,Message &msg){
     redis.Srem(msg.friend_or_group+"的在线用户",msg.uid);
     socket.mysend("ok");
     return;
-}
+} 

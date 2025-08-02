@@ -2,11 +2,11 @@
 void group_menu(){
     string opt;
     while(1){
-        printf("---------------------群聊界面----------------\n");
+        printf("================群聊界面==================\n");
         printf("选项：\n[1]群聊列表\n[2]创建群聊\n[3]申请加群\n[4]群聊申请\n[5]进入群聊\n[6]返回\n");
         printf("请输入你的选择:\n");
         getline(cin,opt);
-        printf("--------------------------------------------\n");
+        printf("=========================================\n");
 
         switch (stoi(opt))
         {
@@ -74,7 +74,8 @@ void group_creat(){
     string num;
     getline(cin,num);
 
-    printf("接下来请依次输入用户uid\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
+
     
     vector<string> uidlist;
     for(int i=0;i<stoi(num);i++){

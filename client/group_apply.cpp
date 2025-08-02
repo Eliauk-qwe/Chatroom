@@ -2,11 +2,11 @@
 void group_apply_menu(){
     string opt;
     while(1){
-        printf("-------------群聊申请界面-------------\n");
+        printf("================群聊申请界面=============\n");
         printf("选项：\n[1]同意群聊申请\n[2]拒绝群聊申请\n[3]查看群聊申请\n[4]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
-        printf("-------------------------\n");
+        printf("=======================================\n");
 
         
             switch (stoi(opt))
@@ -40,7 +40,7 @@ void group_apply_agree(){
     string num;
     getline(cin,num);
     
-    printf("请依次输入你想同意的人的uid和群名\n");
+    printf(PLUSBLUE "请依次输入你想同意的人的uid和群名\n" RESET);
    
     for(int i=0;i<stoi(num);i++){
         printf("你想同意入群的人的uid为:\n");
@@ -92,7 +92,7 @@ void group_apply_refuse(){
     string num;
     getline(cin,num);
     
-    printf("请依次输入你想拒绝的人的uid和群名\n\n");
+    printf(QING "请依次输入你想拒绝的人的uid和群名\n\n" RESET);
    
     for(int i=0;i<stoi(num);i++){
     

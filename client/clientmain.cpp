@@ -57,10 +57,11 @@ int main(int argc,char *argv[]){
     int res;
     // 命令循环
     while (1) {
-        cout<<"---------欢迎来到聊天室---------"<<endl;
+        cout<<"===============欢迎来到聊天室================"<<endl;
         printf("选项:\n1.注册新账户\n2.登录账户\n3.找回密码\n4.退出\n输入选择: \n");
         string  opt;
         getline(cin,opt);
+        printf("=========================================\n");
 
         switch (stoi(opt)) {
             case 1: {

@@ -2,11 +2,11 @@
 void friend_quit_menu(){
     string opt;
     while(1){
-        printf("-------------屏蔽好友界面-------------\n");
+        printf("======================屏蔽好友界面==================\n");
         printf("选项：\n[1]屏蔽好友\n[2]屏蔽好友列表\n[3]恢复好友\n[4]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
-        printf("-------------------------\n");
+        printf("==================================================\n");
 
         
             switch (stoi(opt))
@@ -37,11 +37,16 @@ void friend_quit_menu(){
 
 
 void friend_quit(){
+    int res= friend_list();
+    if(res<0){
+        return;
+    }
     string num;
-    printf("你想屏蔽好友的数量为：\n");
+    printf("\n你想屏蔽好友的数量为:\n");
     getline(cin, num);
 
-    printf("接下来请依次输入你想屏蔽好友的uid\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人(不能为空)\n" RESET);
+
 
     for (int i = 0; i < stoi(num); i++)
     {
@@ -80,7 +85,9 @@ void friend_quit(){
 }
 
 
-void friend_quit_list(){
+int friend_quit_list(){
+    printf("\n");
+
     Message msg(log_uid,FRIEND_QUIT_LIST);
     socket_fd.mysend(msg.S_to_json());
 
@@ -95,7 +102,7 @@ void friend_quit_list(){
 
     if(recv=="no_have_quit_list"){
         printf("你没有屏蔽的好友\n");
-        return;
+        return -1;
     }
 
     while(recv!="over"){
@@ -104,16 +111,21 @@ void friend_quit_list(){
     }
 
     printf("以上是你的好友屏蔽列表\n");
-    return;
+    return 0;
 }
 
 
 void friend_back(){
+    int res=friend_quit_list();
+    if(res<0){
+        return;
+    }
     string num;
-    printf("你想取消屏蔽好友的数量为：\n");
+    printf("\n你想取消屏蔽好友的数量为;\n");
     getline(cin, num);
 
-    printf("接下来请依次输入你想屏蔽好友的uid\n");
+    printf(PLUSBLUE "注意：接下来每次只能输入一个人(不能为空)\n" RESET);
+
 
     for (int i = 0; i < stoi(num); i++)
     {

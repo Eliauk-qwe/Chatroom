@@ -30,8 +30,8 @@
 #define QUESTION_GET 3
 #define ANSWER_GET 4
 #define PASS_GET 5
-#define USER_DEL 6
-#define UNREAD_MSG 7
+#define USER_QUIT 6
+#define NOTICE 7
 #define FRIEND_ADD 8
 #define FRIEND_DEL 9
 #define FRIEND_LIST 10
@@ -46,7 +46,6 @@
 #define FRIEND_SEND_FILE 19
 #define FRIEND_RECV_FILE 20
 #define PASSFIND 21
-#define NOTICE 22
 #define CHECK_FRIEND_APPLY 23
 #define GROUP_CREAT 25
 #define GROUP_LIST 24
@@ -69,6 +68,7 @@
 #define GROUP_QUIT_CHAT  42
 #define CLIENT_QUIT 43
 #define HEART 44
+#define INFORM 45
 
 
 
@@ -87,18 +87,24 @@
 
 
 
-#define RED "\033[31m"
+
+#define RED "\033[1;31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[33m"
 #define GREEN "\033[32m"
 #define RESET "\033[0m"
-#define WIDEWHITE "\033[1;37m"
+#define ZI  "\033[1;35m"
+#define PLUSWHITE  "\033[1;37m"
+#define QING  "\033[1;36m"
+
+
+
 
 
 void sign_up(StickyPacket socket,Message &msg);
 void log_in(StickyPacket socket,Message &msg);
-//void user_del(StickyPacket socket,Message &msg);
-void unread_msg(StickyPacket socket,Message &msg);
+void user_quit(StickyPacket socket,Message &msg);
+void notice(StickyPacket socket,Message &msg);
 void friend_add(StickyPacket socket,Message &msg);
 void friend_del(StickyPacket socket,Message &msg);
 void friend_list(StickyPacket socket,Message &msg);
@@ -141,23 +147,7 @@ void heart(int epd);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 extern Redis redis;
-//extern int user_uid;
 extern unordered_set<string> online_users;
 
 
@@ -165,25 +155,6 @@ using namespace std;
 
 #define LISTEN_NUM 150
 #define MAX_EVENTS 1024
-
-
-/*class User{
-public:
-   string UID, Name, Pass, Question, Answer,Phone;
-   
-   User(string name,string uid,string pass,string question,string answer,string phone ){
-       this->Answer=answer;
-       this->Name=name;
-       this->Pass=pass;
-       this->Phone=phone;
-       this->Question=question;
-       this->UID=uid;
-   }
-
-private:
-   mutex user_mutex;
-   
-};*/
 
 
 class MessageTrans
@@ -203,11 +174,11 @@ public:
         case PASSFIND:
             passfind(socket,msg);
             break;
-        /*case USER_DEL:
-            user_del(socket,msg);
-            break;*/
-        case UNREAD_MSG:
-            unread_msg(socket,msg);
+        case USER_QUIT:
+            user_quit(socket,msg);
+            break;
+        case INFORM:
+            notice(socket,msg);
             break;
         case FRIEND_ADD:
             friend_add(socket,msg);
@@ -252,7 +223,6 @@ public:
             group_creat(socket,msg);
             break;
         case GROUP_LIST:
-            printf("grouplist\n");
             group_list(socket,msg);
             break;
         case GROUP_ADD:
@@ -273,7 +243,6 @@ public:
         case CHECK_GROUP_MEMBERS:
             check_group_members(socket,msg);
             break;
-        
         case OWNER_ADD_MANAGERS:
             owner_add_managers(socket,msg);
             break;
@@ -286,7 +255,6 @@ public:
         case ALL_MANAGERS_DEL_MEMBERS:
             all_managers_del_members(socket,msg);
             break;
-        
         case CHECK_GROUP_MANAGERS:
             check_group_managers(socket,msg);
             break;
@@ -299,7 +267,6 @@ public:
         case GROUP_DAILY_CHAT:
             group_daily_chat(socket,msg);
             break;
-
         case GROUP_SEND_FILE:
             group_send_file(socket,msg);
             break;
@@ -314,9 +281,7 @@ public:
             client_quit(socket,msg);
             break;
 
-        case GROUP_QUIT:
-            group_quit(socket,msg);
-            break;
+        
         default:
             break;
         }

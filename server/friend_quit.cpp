@@ -28,7 +28,7 @@ void friend_quit_list(StickyPacket socket,Message &msg){
     for(size_t i=0 ;i<quitlist.size();i+=2){
         const string &quitfriend =quitlist[i];
         string notice =quitlist[i]+"  "+quitlist[i+1];
-        socket.mysend(notice); 
+        socket.mysend(PLUSWHITE+notice+RESET); 
     }
 
     socket.mysend("over");

@@ -11,15 +11,15 @@
 #include <thread>
 #include <csignal>  // 包含 SIGPIPE, SIG_IGN 和 signal 的声明
 #include <cerrno>   // 包含 EPIPE 错误码的声明
-
+#include <limits>
 
 #define SIGNUP 1
 #define LOGIN 2
 #define QUESTION_GET 3
 #define ANSWER_GET 4
 #define PASS_GET 5
-#define USER_DEL 6
-#define UNREAD_MSG 7
+#define USER_QUIT 6
+#define NOTICE 7
 #define FRIEND_ADD 8
 #define FRIEND_DEL 9
 #define FRIEND_LIST 10
@@ -34,7 +34,6 @@
 #define FRIEND_SEND_FILE 19
 #define FRIEND_RECV_FILE 20
 #define PASSFIND 21
-#define NOTICE 22
 #define CHECK_FRIEND_APPLY 23
 #define GROUP_LIST 24
 #define GROUP_CREAT 25
@@ -57,18 +56,7 @@
 #define GROUP_QUIT_CHAT  42
 #define CLIENT_QUIT 43
 #define HEART 44
-
-
-
-
-
-
-
-
-
-
-
-
+#define INFORM 45
 
 
 
@@ -82,16 +70,16 @@ extern sockaddr_in client_addr;
 void sign_up();
 int  log_in();
 void pass_find();
-//void user_dele();
-void unread_msg();
+void user_quit();
+void notice();
 void user_menu();
 void friend_menu();
 void friend_add();
 void friend_del();
-void friend_list();
+int friend_list();
 void friend_quit();
 void friend_quit_menu();
-void friend_quit_list();
+int friend_quit_list();
 void new_friend();
 void friend_back();
 void friend_apply_agree();
@@ -99,7 +87,7 @@ void friend_apply_refuse();
 void friend_chat();
 int send_file(string uid,string friend_uid,StickyPacket f_socket,int flag,string filepath);
 //int recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group);
-void check_friend_apply();
+int check_friend_apply();
 void group_menu();
 int group_list();
 void group_creat();
@@ -128,6 +116,14 @@ int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_g
 void heartthread(string uid,int fd);
 
 
+
+#define RED "\033[1;31m"
+#define BLUE "\033[34m"
+#define YELLOW "\033[33m"
+#define GREEN "\033[32m"
+#define RESET "\033[0m"
+#define QING  "\033[1;36m"
+#define PLUSBLUE  "\033[1;34m"
 
 
 

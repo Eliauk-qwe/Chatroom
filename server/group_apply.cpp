@@ -34,7 +34,7 @@ void group_apply_agree(StickyPacket socket,Message &msg){
         string notice_fd=redis.Hget(msg.friend_or_group,"消息fd");
         StickyPacket notice_socket(stoi(notice_fd));
         string notice ="你已被"+msg.uid+"同意加入群聊"+msg.other;
-        notice_socket.mysend(RED+notice+RESET);;
+        notice_socket.mysend(QING+notice+RESET);;
     }
 
     socket.mysend("ok");
@@ -76,7 +76,7 @@ void group_apply_refuse(StickyPacket socket,Message &msg){
         string notice_fd=redis.Hget(msg.friend_or_group,"消息fd");
         StickyPacket notice_socket(stoi(notice_fd));
         string notice ="你已被"+msg.uid+"拒绝加入群聊"+msg.other;
-        notice_socket.mysend(RED+notice+RESET);
+        notice_socket.mysend(QING+notice+RESET);
     }
 
     socket.mysend("ok");
@@ -92,9 +92,9 @@ void check_group_apply(StickyPacket socket,Message &msg){
     }
 
     vector<string> all_group_apply =redis.Hgetall(msg.uid+"的群聊申请");
-    for(int i=0;i<all_group_apply.size();i++){
+    for(int i=0;i<all_group_apply.size();i=i+2){
         string notice =all_group_apply[i]+"  "+all_group_apply[i+1];
-        socket.mysend(notice);
+        socket.mysend(PLUSWHITE+ notice+RESET);
     }
 
     redis.hset(msg.uid+"的未读消息","群聊申请","0");

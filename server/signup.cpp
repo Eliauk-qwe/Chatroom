@@ -3,7 +3,7 @@
 void sign_up(StickyPacket socket,Message &msg){
     string uid = redis.incr("user_uid_counter");
     //string uid =to_string(user_uid);
-    cout<<"uid:"<<uid<<endl;
+    
     //User user(msg.name,uid,msg.pass,msg.question,msg.para[0],msg.phone);
     
     //user_uid=1;
@@ -27,7 +27,7 @@ void sign_up(StickyPacket socket,Message &msg){
     redis.sadd("用户ID集合",uid);
     cout<<"uid:"<<uid<<endl;
 
-    cout<< "777777777"<<endl;
+    
     
     socket.mysend(uid);
     return;

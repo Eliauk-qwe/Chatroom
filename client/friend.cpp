@@ -3,10 +3,11 @@
 void friend_menu(){
     string opt;
     while(1){
-        printf("---------好友界面-------\n");
+        printf("===============好友界面===========\n");
         printf("选项：\n[1]申请添加好友\n[2]删除好友\n[3]好友列表\n[4]屏蔽好友\n[5]私聊\n[6]新的朋友（添加好友）\n[7]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
+        printf("==================================\n");
 
         switch (stoi(opt))
         {
@@ -89,8 +90,12 @@ void friend_add(){
 
 
 void friend_del(){
+    int res= friend_list();
+    if(res<0){
+        return;
+    }
     string friend_del_uid;
-    cout<<"你想删除的好友uid为:"<< endl;
+    cout<<"\n你想删除的好友uid为:"<< endl;
     getline(cin,friend_del_uid);
 
     Message msg(log_uid,FRIEND_DEL,friend_del_uid);
@@ -112,14 +117,18 @@ void friend_del(){
         printf("不能自己删除自己");
         return;
     }
+
+
 }
 
 
-void friend_list(){
+int friend_list(){
     Message msg(log_uid,FRIEND_LIST);
     socket_fd.mysend(msg.S_to_json());
 
     string recv;
+
+    printf("\n");
 
     recv=socket_fd.client_recv();
     if (recv == "读取消息头不完整")
@@ -130,7 +139,7 @@ void friend_list(){
     
     if(recv=="no_exit"){
         printf("你还没有好友\n");
-        return;
+        return -1;
     }
 
     while(recv!="over"){
@@ -145,12 +154,16 @@ void friend_list(){
 
     
     printf("以上是你的好友列表\n");
-    return;
+    return 0;
 
 }
 
 
 void friend_chat(){
+    int res= friend_list();
+    if(res<0){
+        return;
+    }
     string friend_chat_uid;
     printf("你想聊天的好友的uid为:\n");
     getline(cin,friend_chat_uid);
@@ -165,15 +178,24 @@ void friend_chat(){
         exit(EXIT_SUCCESS);
     }
     if(recv=="friend_no_exist"){
-        printf("你未添加该用户\n");
+        printf("对方不是你的好友\n");
         return;
     }else if(recv=="no"){
         printf("该用户未注册\n");
         return;
+    }else if(recv=="no_exit"){
+        printf("对方不是你的好友\n");
+        return;
+    }else if(recv=="my"){
+        printf("不能自己和自己聊天\n");
+        return;
+    }else if(recv=="0"){
+        
+        return;
     }
     else if(recv=="start"){
         string chat_what;
-        printf("历史聊天记录为:\n");
+        //printf("历史聊天记录为:\n");
         while((chat_what=socket_fd.client_recv()) != "over"){
             if (chat_what == "读取消息头不完整")
             {
@@ -183,10 +205,10 @@ void friend_chat(){
             cout << chat_what <<endl;
         }
         printf("现在可以开始新的聊天了:\n");
-        printf("HELP(如果你想收发文件或退出):\n");
-        printf("[1]请输入 <send> 来发送文件\n");
-        printf("[2]请输入 <recv> 来接受文件\n");
-        printf("[3]输入 <quit> 可退出\n\n");
+        printf(PLUSBLUE "HELP(如果你想收发文件或退出): \n" RESET);
+        printf(PLUSBLUE"[1]请输入 <send> 来发送文件\n" RESET);
+        printf(PLUSBLUE"[2]请输入 <recv> 来接受文件\n" RESET);
+        printf(PLUSBLUE"[3]输入 <quit> 可退出\n\n" RESET);
         
     }
     
@@ -195,9 +217,11 @@ void friend_chat(){
     while(1){
         string notice;
         getline(cin,notice);
-        cout<<"notice:"<<notice<<endl;
+        cout << "\033[1A\033[2K\r";
+        cout.flush();
+
         if(notice == "quit"){
-            printf("退出聊天\n");
+            //printf("退出聊天\n");
             Message msg(log_uid,FRIEND_QUIT_CHAT,friend_chat_uid);
             socket_fd.mysend(msg.S_to_json());
             string recv=socket_fd.client_recv();
@@ -252,10 +276,11 @@ void friend_chat(){
         }
 
         if(recv=="del"){
-            printf("你已被对方删除\n");
+            cout<<RED"   你已被对方删除" RESET<<endl;
             continue;
         }else if(recv=="quit"){
-            printf("你已被对方屏蔽\n");
+            cout<<RED"   你已被对方屏蔽" RESET<<endl;
+
             continue;
         }
         else if(recv=="ok"){

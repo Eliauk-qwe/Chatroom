@@ -54,7 +54,7 @@ void friend_send_file(StickyPacket socket,Message &msg){
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
-    string notice2 =name1 + ":上传了文件" + msg.para[0];
+    string notice2 =ZI+ name1 +RESET+ ":上传了文件" + msg.para[0];
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -66,7 +66,7 @@ void friend_send_file(StickyPacket socket,Message &msg){
         fd2_socket.mysend(notice2);
     }
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
-        fd2_socket.mysend(RED+msg.uid+":"+name1+"给你发了一个文件"+RESET);
+        fd2_socket.mysend(QING+msg.uid+":"+name1+"给你发了一个文件"+RESET);
         //总数量
         string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
@@ -141,7 +141,7 @@ void friend_recv_file(StickyPacket socket,Message &msg){
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
-    string notice2 =name1 + ":下载了文件" + msg.other;
+    string notice2 =QING+ name1+RESET + ":下载了文件" + msg.other;
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -153,7 +153,7 @@ void friend_recv_file(StickyPacket socket,Message &msg){
         fd2_socket.mysend(notice2);
     }
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
-        fd2_socket.mysend(RED+msg.uid+":"+name1+"下载了你发的文件"+RESET);
+        fd2_socket.mysend(QING+msg.uid+":"+name1+"下载了你发的文件"+RESET);
         //总数量
         string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
@@ -199,9 +199,9 @@ void group_send_file(StickyPacket socket,Message &msg){
     string name1=redis.Hget(msg.uid,"name");
     string other_notice=name1+"("+msg.uid+"):发送了一个文件"+msg.para[0];
     vector<string> groupmemberslist =redis.Smembers(msg.friend_or_group+"的群成员");
-    printf("789\n");
+   
     for(const string &groupmember : groupmemberslist){
-        printf("sssssssssssss\n");
+        
         if(groupmember==msg.uid)  continue;
 
         redis.Rpush(groupmember+"与"+msg.friend_or_group+"的聊天记录",other_notice);
@@ -210,18 +210,18 @@ void group_send_file(StickyPacket socket,Message &msg){
         if(online_users.find(groupmember)!=online_users.end()){
             string other_notice_fd=redis.Hget(groupmember,"消息fd");
 
-            printf("1111111111\n");
+            
             StickyPacket other_notice_socket(stoi(other_notice_fd));
-            printf("222222222\n");
+           
 
 
             //对于在这个群聊界面的人
             if(redis.sismember(msg.friend_or_group+"的在线用户",groupmember)){
                 other_notice_socket.mysend(other_notice);
             }else{
-                other_notice_socket.mysend(RED "群聊"+msg.friend_or_group+"发送了一个文件"+RESET);
+                other_notice_socket.mysend(QING "群聊"+msg.friend_or_group+"发送了一个文件"+RESET);
                 string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
-                cout<<"num1:"<<num1<<endl;
+                
                 redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
 
                 //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
@@ -233,10 +233,10 @@ void group_send_file(StickyPacket socket,Message &msg){
         }
         //对于未登录的人
         else{
-            printf("33333333333\n");
+            
 
             string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
-            cout<<"num1:"<<num1<<endl;
+           
             redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
 
             //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
@@ -361,7 +361,7 @@ int recv_sendfile(StickyPacket socket,Message &msg){
     }
 
     string filepath=savepath+msg.para[0];
-    cout<<filepath<<endl;
+    //cout<<filepath<<endl;
     int fd =open(filepath.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRWXU);
     if(fd<0){
         perror("open failed\n");
@@ -371,9 +371,9 @@ int recv_sendfile(StickyPacket socket,Message &msg){
     }
     socket.mysend("ok");
 
-    cout<<"555555555555"<<endl;
+    
     off_t filesize=(off_t)stoll(msg.para[1]);
-    cout<<"filesize"<<filesize<<endl;
+    //cout<<"filesize"<<filesize<<endl;
 
     off_t total_recv=0;
     ssize_t recv_bytes;
@@ -435,7 +435,7 @@ int recv_sendfile(StickyPacket socket,Message &msg){
     {
         printf("File transfer incomplete. Recv %zd/%ld bytes\n", total_recv, filesize);
     }
-    cout<<filepath<<endl;
+    //cout<<filepath<<endl;
 
     close(fd);
     return 0;

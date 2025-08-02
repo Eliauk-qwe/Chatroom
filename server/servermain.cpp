@@ -127,7 +127,7 @@ int  main(int argc,char *argv[]){
    //线程池，创建10个线程
    ThreadPool pool(10);
 
-   cout << "服务器开始工作" << endl;
+  // cout << "服务器开始工作" << endl;
 
    // 在main函数中启动心跳线程
    std::thread heart_thread(heart, epoll_fd);
@@ -191,11 +191,21 @@ int  main(int argc,char *argv[]){
                     }
                     else
                     {
-                        perror("接收数据错误");
+                       // perror("接收数据错误");
                     }
 
                     // 从 epoll 中移除
                     epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
+                    if(redis.Exists("客户端fd与对应uid表")){
+                        string uid=redis.Hget("客户端fd与对应uid表",to_string(fd));
+                        redis.Hdel("客户端fd与对应uid表",to_string(fd));
+                        if(online_users.find(uid)!=online_users.end()){
+                            online_users.erase(uid);
+                        }
+                        
+                    }
+                    cout << "客户端" << fd << "已断开连接" << endl;
+
 
                     // 关闭连接
                     close(fd);
@@ -207,14 +217,11 @@ int  main(int argc,char *argv[]){
                 cout<<client_cmd<<endl;
 
 
-                //buf中为客户端请求的命令
-                //string client_cmd = buf;
-                /*cout << "客户端" << " "<< fd << "" << "的新请求为" << client_cmd <<endl
-                     <<endl;*/
+                
 
                 Message msg;
                 msg.Json_to_s(client_cmd);
-                cout << msg.flag <<endl;
+                //cout << msg.flag <<endl;
                 if(msg.flag==NOTICE){
                     redis.hset(msg.uid, "消息fd", to_string(fd));
                 }
@@ -234,8 +241,12 @@ int  main(int argc,char *argv[]){
                     filethread.detach();
                 }
                 else if(msg.flag==HEART){
+                    {
                     std::lock_guard<std::mutex> lock(heart_mutex);
                     heart_time[fd] = std::chrono::steady_clock::now();
+                    }
+                    redis.hset("客户端fd与对应uid表",to_string(fd),msg.uid);
+                    cout<<"收到客户端"<<fd<<",账号为"<<msg.uid<<"的心跳包"<<endl;;
                 }
                 else{  
                     StickyPacket socket(fd); 
@@ -256,18 +267,13 @@ int  main(int argc,char *argv[]){
 void heart(int epd)
 {
 
-    while (1)
-    {
+    
         std::this_thread::sleep_for(std::chrono::seconds(1));
         auto now = std::chrono::steady_clock::now();
 
         vector<int> time_out_clients;
         {
             std::lock_guard<std::mutex> lock(heart_mutex);
-            if (heart_time.empty())
-            {
-                continue;
-            }
 
             for (const auto &[fd, last_heartbeat] : heart_time)
             {
@@ -280,17 +286,24 @@ void heart(int epd)
 
             for (int fd : time_out_clients)
             {
-                
-                close(fd);
-                epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
+
                 {
                     std::lock_guard<std::mutex> lock(heart_mutex);
-                    heart_time.erase(fd);
+                    close(fd);
+                    epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
+                    if (redis.Exists("客户端fd与对应uid表"))
+                    {
+                        string uid = redis.Hget("客户端fd与对应uid表", to_string(fd));
+                        redis.Hdel("客户端fd与对应uid表", to_string(fd));
+                        if(online_users.find(uid)!=online_users.end()){
+                            online_users.erase(uid);
+                        }
+                    }
                 }
-                //online_users.erase();
+
                 cout << "客户端" << fd << "已断开连接" << endl;
                
             }
         
-    }
+    
 }
