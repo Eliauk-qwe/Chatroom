@@ -179,9 +179,13 @@ void access_group(){
         return;
     }
 
-    if(recv=="ok"){
-        group_chat_menu(group_name);
+    if(recv=="1"){
+        group_owner_menu(group_name);
         return;
+    }else if(recv=="2"){
+        group_manager_menu(group_name);
+    }else if(recv=="3"){
+        group_common_menu(group_name);
     }
     
 }

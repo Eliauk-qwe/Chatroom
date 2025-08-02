@@ -1,9 +1,9 @@
 #include "client.hpp"
-void group_chat_menu(const string group_name){
+void group_owner_menu(const string group_name){
     string opt;
     while(1){
         cout<<"================"<<group_name<<"=============="<<endl;
-        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]高级权限者踢出用户\n[8]查看群管理员\n[9]返回\n");
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]群主踢出用户\n[8]查看群管理员\n[9]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
@@ -41,6 +41,74 @@ void group_chat_menu(const string group_name){
         }
     }
 }
+
+
+
+void group_common_menu(const string group_name){
+    string opt;
+    while(1){
+        cout<<"================"<<group_name<<"=============="<<endl;
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]返回\n");
+        printf("请输入你的选择：\n");
+        getline(cin,opt);
+        printf("=============================================\n");
+
+        switch (stoi(opt))
+        {
+        case 1:
+            group_chat(group_name);
+            break;
+        case 2:
+            check_group_members(group_name);
+            break;
+        case 3:
+            group_quit(group_name);
+            break;
+        case 4:
+            return;
+        default:
+            break;
+        }
+    }
+}
+
+
+
+void group_manager_menu(const string group_name){
+    string opt;
+    while(1){
+        cout<<"================"<<group_name<<"=============="<<endl;
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]管理员踢出用户\n[5]查看群管理员\n[6]返回\n");
+        printf("请输入你的选择：\n");
+        getline(cin,opt);
+        printf("=============================================\n");
+
+        switch (stoi(opt))
+        {
+        case 1:
+            group_chat(group_name);
+            break;
+        case 2:
+            check_group_members(group_name);
+            break;
+        case 3:
+            group_quit(group_name);
+            break;
+        case 4:
+            all_managers_del_members(group_name);
+            break;
+        case 5:
+            check_group_managers(group_name);
+            break;
+        case 6:
+            return;
+        default:
+            break;
+        }
+    }
+}
+
+
 
 
 void check_group_members(const string group_name){

@@ -58,21 +58,22 @@ public:
 
 
     // JSON转换方法
-    void Json_to_s(string jsr) {
-        // ... 实现不变 ...
+    void Json_to_s(const string &jsr)
+    {
         json js = json::parse(jsr);
-        js.at("uid").get_to(uid);
-        js.at("name").get_to(name);
-        js.at("pass").get_to(pass);
-        js.at("friend_or_group").get_to(friend_or_group);
-        js.at("flag").get_to(flag);
-        js.at("phone").get_to(phone);
-        js.at("other").get_to(other);
-        js.at("para").get_to(para);
+
+        uid = js["uid"];
+        name = js["name"];
+        pass = js["pass"];
+        friend_or_group = js["friend_or_group"];
+        flag = js["flag"];
+        phone = js["phone"];
+        para = js["para"];
+        other = js["other"];
     }
-    
+
     string S_to_json() {
-        // ... 实现不变 ...
+        
         json js;
         js["uid"] = uid;
         js["name"] = name;

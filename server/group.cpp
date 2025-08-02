@@ -106,6 +106,16 @@ void access_group(StickyPacket socket,Message &msg){
         return;
     }
     redis.sadd(msg.friend_or_group+"的在线用户",msg.uid);
-    socket.mysend("ok");
+    
+    string owner=redis.Hget(msg.friend_or_group,"群主");
+    if(msg.uid==owner){
+        socket.mysend("1");
+    }else if(redis.sismember(msg.friend_or_group+"的管理员",msg.uid)){
+        socket.mysend("2");
+    }
+    else{
+        socket.mysend("3");
+    }
+    
     return;
 }
