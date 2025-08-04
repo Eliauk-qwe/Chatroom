@@ -200,7 +200,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
 
     //正常聊天
     //把消息存入服务器
-    string notice1 = "我：" + msg.other;
+    string notice1 =PLUSWHITE "我："  RESET+ msg.other;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");

@@ -11,7 +11,7 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include "../Redis.hpp"
+#include "./Redis.hpp"
 #include <sys/stat.h>
 #include <sys/sendfile.h>
 #include <thread>
@@ -74,24 +74,10 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #define RED "\033[1;31m"
 #define BLUE "\033[34m"
-#define YELLOW "\033[33m"
-#define GREEN "\033[32m"
+#define YELLOW "\033[1;33m"
+#define GREEN "\033[1;32m"
 #define RESET "\033[0m"
 #define ZI  "\033[1;35m"
 #define PLUSWHITE  "\033[1;37m"
@@ -275,6 +261,9 @@ public:
             break;
         case GROUP_QUIT_CHAT:
             group_quit_chat(socket,msg);
+            break;
+        case GROUP_QUIT:
+            group_quit(socket,msg);
             break;
 
         case CLIENT_QUIT:

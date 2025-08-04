@@ -36,22 +36,26 @@ void group_apply_menu(){
 
 
 void group_apply_agree(){
+    int res=check_group_apply();
+    if(res<0){
+        return;
+    }
     printf("你想要同意的的好友申请的数量为：\n");
     string num;
     getline(cin,num);
     
-    printf(PLUSBLUE "请依次输入你想同意的人的uid和群名\n" RESET);
+    printf(PLUSBLUE "请依次输入你想同意的人的uid和群ID\n" RESET);
    
     for(int i=0;i<stoi(num);i++){
         printf("你想同意入群的人的uid为:\n");
         string person_uid;
         getline(cin,person_uid);
 
-        printf("该群的名字为：\n");
-        string group_name;
-        getline(cin,group_name);
+        printf("该群的ID为：\n");
+        string groupID;
+        getline(cin,groupID);
 
-        Message msg(log_uid,GROUP_APPLY_AGREE,person_uid,group_name);
+        Message msg(log_uid,GROUP_APPLY_AGREE,person_uid,groupID);
         socket_fd.mysend(msg.S_to_json());
 
         string recv=socket_fd.client_recv();
@@ -88,11 +92,15 @@ void group_apply_agree(){
 }
 
 void group_apply_refuse(){
+    int res=check_group_apply();
+    if(res<0){
+        return;
+    }
     printf("你想要拒绝的的好友申请的数量为：\n");
     string num;
     getline(cin,num);
     
-    printf(QING "请依次输入你想拒绝的人的uid和群名\n\n" RESET);
+    printf(QING "请依次输入你想拒绝的人的uid和群ID\n\n" RESET);
    
     for(int i=0;i<stoi(num);i++){
     
@@ -101,7 +109,7 @@ void group_apply_refuse(){
     string person_uid;
     getline(cin,person_uid);
 
-    printf("该群的名字为：");
+    printf("该群的名字为：\n");
     string group_name;
     getline(cin,group_name);
 
@@ -126,7 +134,7 @@ void group_apply_refuse(){
     }
 
     if(recv=="ok"){
-        printf("已成功拒绝这个人进入群聊");
+        printf("已成功拒绝这个人进入群聊\n");
         return;
     }
 
@@ -138,7 +146,7 @@ void group_apply_refuse(){
     }        
 }
 
-void check_group_apply(){
+int check_group_apply(){
     Message msg(log_uid,CHECK_GROUP_APPLY);
     socket_fd.mysend(msg.S_to_json());
 
@@ -147,7 +155,7 @@ void check_group_apply(){
 
     if(recv=="no"){
         printf("你还没有未处理的群聊申请\n");
-        return;
+        return -1;
     }
 
 
@@ -160,10 +168,12 @@ void check_group_apply(){
             exit(EXIT_SUCCESS);
         }
     }
+
+    printf(QING "第一个数字为用户uid\n" RESET);
     
 
     printf("以上是所有群聊申请,可选出想同意或拒绝的人的uid 和 群聊名字,来同意或拒绝申请\n");
-    return;
+    return 0;
 
     
 }

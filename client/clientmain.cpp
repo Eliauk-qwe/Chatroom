@@ -58,7 +58,7 @@ int main(int argc,char *argv[]){
     // 命令循环
     while (1) {
         cout<<"===============欢迎来到聊天室================"<<endl;
-        printf("选项:\n1.注册新账户\n2.登录账户\n3.找回密码\n4.退出\n输入选择: \n");
+        printf("选项:\n[1]注册新账户\n[2]登录账户\n[3]找回密码\n[4]退出\n输入选择: \n");
         string  opt;
         getline(cin,opt);
         printf("=========================================\n");
@@ -78,8 +78,8 @@ int main(int argc,char *argv[]){
                 break;
             }
             case 4: {
-                client_quit(fd);
-                break;
+                //client_quit(fd);
+                exit(0);
             }
             default:
                 printf("无效选项,请输入1-4\n");

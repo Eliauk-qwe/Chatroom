@@ -7,7 +7,7 @@ void sign_up(StickyPacket socket,Message &msg){
     //User user(msg.name,uid,msg.pass,msg.question,msg.para[0],msg.phone);
     
     //user_uid=1;
-    cout<<"name:"<<msg.name<<endl;
+    //cout<<"name:"<<msg.name<<endl;
     redis.hset(uid,"name",msg.name);
     //redis.hset(uid,"uid",msg.uid);
     redis.hset(uid,"pass",msg.pass);
@@ -15,17 +15,17 @@ void sign_up(StickyPacket socket,Message &msg){
     //redis.hset(uid,"answer",msg.para[0]);
     redis.hset(uid,"phone",msg.phone);
 
-    /*redis.hset(uid, "聊天对象", "无");
+    redis.hset(uid, "聊天对象", "无");
     redis.hset(uid + "的未读消息", "通知类消息", "0");
-    redis.hset(uid + "的未读消息", "好友消息", "0");
+    /*redis.hset(uid + "的未读消息", "好友消息", "0");
     redis.hset(uid + "的未读消息", "新的朋友", "0");
     redis.hset(uid + "的未读消息", "群聊申请", "0");
     redis.hset(uid + "的未读消息", "群聊消息", "0");*/
      
-    cout<<"uid:"<<uid<<endl;
+    //cout<<"uid:"<<uid<<endl;
     
     redis.sadd("用户ID集合",uid);
-    cout<<"uid:"<<uid<<endl;
+    //cout<<"uid:"<<uid<<endl;
 
     
     

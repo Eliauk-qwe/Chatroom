@@ -36,10 +36,17 @@ void setnoblock(int fd){
 int  main(int argc,char *argv[]){
     signal(SIGPIPE, SIG_IGN);
 
-    // 在main函数中初始化UID计数器
+    // 在main函数中初始化USER_UID计数器
     if (!redis.Exists("user_uid_counter"))
     {
-        redis.set("user_uid_counter", "1"); // 从1000开始计数
+        redis.set("user_uid_counter", "0"); // 从1000开始计数
+    }
+
+
+    // 在main函数中初始化GROUP_UID计数器
+    if (!redis.Exists("group_uid_counter"))
+    {
+        redis.set("group_uid_counter", "0"); // 从1000开始计数
     }
     //再命令行要输入指定
     if(argc !=3){

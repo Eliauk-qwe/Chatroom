@@ -58,6 +58,11 @@ void friend_apply_agree(){
             exit(EXIT_SUCCESS);
         }
 
+        if(recv=="no"){
+            printf("该用户未注册\n");
+            return;
+        }
+
         if (recv == "ok")
         {
             printf("你们已成功加为好友\n");

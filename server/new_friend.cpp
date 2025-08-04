@@ -2,11 +2,13 @@
 
 void friend_apply_agree(StickyPacket socket,Message &msg){
 
-    redis.Hdel(msg.uid + "的新的朋友", msg.friend_or_group);
 
     // redis.Hdel(msg.uid+"的好友申请",msg.friend_or_group);
 
-    
+    if(!redis.sismember("用户ID集合",msg.friend_or_group)){
+        socket.mysend("no");
+        return;
+    }
 
     string name1 = redis.Hget(msg.uid, "name");
     string name2 = redis.Hget(msg.friend_or_group, "name");
@@ -45,6 +47,8 @@ void friend_apply_agree(StickyPacket socket,Message &msg){
         string notice =msg.uid +":"+name1+ "通过了你的好友申请";
         friendsocket.mysend(QING+notice+RESET);
     }
+    redis.Hdel(msg.uid + "的新的朋友", msg.friend_or_group);
+
 
     socket.mysend("ok");
     return;

@@ -3,7 +3,7 @@ void group_menu(){
     string opt;
     while(1){
         printf("================群聊界面==================\n");
-        printf("选项：\n[1]群聊列表\n[2]创建群聊\n[3]申请加群\n[4]群聊申请\n[5]进入群聊\n[6]返回\n");
+        printf("选项：\n[1]群聊列表\n[2]创建群聊\n[3]申请加群\n[4]处理群聊申请\n[5]进入群聊\n[6]返回\n");
         printf("请输入你的选择:\n");
         getline(cin,opt);
         printf("=========================================\n");
@@ -51,13 +51,18 @@ int group_list(){
 
     if(recv=="no"){
         printf("你还没有群聊\n");
-        return 1;
+        return -1;
     }
 
     while (recv!="over")
     {
-        cout<<recv<<endl;
-        recv=socket_fd.client_recv();
+        cout<<PLUSWHITE+recv+RESET<<endl;
+        recv = socket_fd.client_recv();
+        if (recv == "读取消息头不完整")
+        {
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
     }
 
     printf("以上是你的所有群聊\n");
@@ -66,6 +71,10 @@ int group_list(){
 }
 
 void group_creat(){
+    int res=friend_list();
+    if(res<0){
+        return;
+    }
     printf("输入你想创建的群聊的名字\n");
     string gruop_name;
     getline(cin,gruop_name);
@@ -106,22 +115,32 @@ void group_creat(){
 
     if(recv=="ok"){
         printf("群聊创建成功\n");
+        
+    }else if(recv=="0"){
+        printf("群聊创建失败\n");
         return;
     }
+    else{
+        cout<<recv<<endl;
+        
+    }
+
+    string gid=socket_fd.client_recv();
+    cout<<"该群聊的ID为"<<QING+gid+RESET<<endl;
 
 
 }
 
 void group_add(){
-    printf("输入你想加入的群聊的名字\n");
-    string gruop_name;
-    getline(cin,gruop_name);
+    printf("输入你想加入的群聊的ID\n");
+    string gruopID;
+    getline(cin,gruopID);
 
     printf("你的自我介绍是：\n");
     string self_intro;
     getline(cin,self_intro);
 
-    Message msg(log_uid,GROUP_ADD,gruop_name,self_intro);
+    Message msg(log_uid,GROUP_ADD,gruopID,self_intro);
     socket_fd.mysend(msg.S_to_json());
 
     string recv;
@@ -156,36 +175,42 @@ void group_add(){
 void access_group(){
     int res=group_list();
     if(res==1)  return;
-    printf("你想进入的群聊名字是：\n");
-    string group_name;
-    getline(cin,group_name);
+    printf("你想进入的群聊ID是:\n");
+    string groupID;
+    getline(cin,groupID);
 
-    Message msg(log_uid,ACCESS_GROUP,group_name);
+    Message msg(log_uid,ACCESS_GROUP,groupID);
     socket_fd.mysend(msg.S_to_json());
+
+    string name=socket_fd.client_recv();
+    if (name == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
+    if(name=="no"){
+        printf("该群聊不存在\n");
+        return;
+    }
+
+    if(name=="quit"){
+        printf("你不是该群的成员\n");
+        return;
+    }
 
     string recv=socket_fd.client_recv();
     if (recv == "读取消息头不完整")
     {
         cout << "服务器关闭" << endl;
-        exit(EXIT_SUCCESS);
-    }
-    if(recv=="no"){
-        printf("该群聊不存在\n");
-        return;
-    }
-
-    if(recv=="quit"){
-        printf("你不是该群的成员\n");
-        return;
     }
 
     if(recv=="1"){
-        group_owner_menu(group_name);
+        group_owner_menu(groupID,name);
         return;
     }else if(recv=="2"){
-        group_manager_menu(group_name);
+        group_manager_menu(groupID,name);
     }else if(recv=="3"){
-        group_common_menu(group_name);
+        group_common_menu(groupID,name);
     }
     
 }

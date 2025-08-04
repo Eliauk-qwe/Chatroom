@@ -95,11 +95,11 @@ void group_add();
 void group_apply_menu();
 void group_apply_agree();
 void group_apply_refuse();
-void check_group_apply();
+int check_group_apply();
 void access_group();
-void group_owner_menu(const string group_name);
-void group_manager_menu(const string group_name);
-void group_common_menu(const string group_name);
+void group_owner_menu(const string groupID,const string group_name);
+void group_manager_menu(const string groupID,const string group_name);
+void group_common_menu(const string groupID,const string group_name);
 void group_chat(const string group_name);
 void check_group_members(const string group_name);
 void group_quit(const string group_name);
@@ -126,6 +126,8 @@ void heartthread(string uid,int fd);
 #define RESET "\033[0m"
 #define QING  "\033[1;36m"
 #define PLUSBLUE  "\033[1;34m"
+#define PLUSWHITE  "\033[1;37m"
+
 
 
 

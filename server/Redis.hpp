@@ -45,7 +45,7 @@ public:
             fprintf(stderr,"SADD错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("SADD成功: %s",reply->str);
+            printf("SADD成功: %s\n",reply->str);
             freeReplyObject(reply);
             return true;
         }
@@ -93,7 +93,7 @@ public:
             fprintf(stderr,"HSET错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HSET成功: %s",reply->str);
+            printf("HSET成功: %s\n",reply->str);
             cout<<reply->integer<<endl;
             freeReplyObject(reply);
             return reply->integer;
@@ -113,7 +113,7 @@ public:
             fprintf(stderr,"SISMEMBER错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("SISMEMBER成功");
+            printf("SISMEMBER成功\n");
             int num=reply->integer;
             freeReplyObject(reply);
             return num;
@@ -125,21 +125,29 @@ public:
 
     string Hget (const string &key,const string &field){
         redisReply *reply = (redisReply *)redisCommand(con,"HGET %s %s",key.c_str(),field.c_str());
+            cout<<"111111111"<<endl;
 
         if(reply == nullptr){
+            cout<<"222222222"<<endl;
             fprintf(stderr,"HGET fail\n");
         }
         else if(reply->type == REDIS_REPLY_ERROR){
+            cout<<"3333333333"<<endl;
+
             fprintf(stderr,"HGET错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_STRING ){
-            printf("HGET成功:%s",reply->str);
+            cout<<"333333333"<<endl;
+
+            printf("HGET成功:%s\n",reply->str);
             string recv=reply->str;
             freeReplyObject(reply);
             return recv;
         }
+            cout<<"444444444"<<endl;
 
         freeReplyObject(reply);
+            cout<<"55555555555"<<endl;
 
         return "";
         
@@ -178,7 +186,7 @@ public:
             fprintf(stderr,"HDEL错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("HDEL成功");
+            printf("HDEL成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -198,7 +206,7 @@ public:
             fprintf(stderr,"DEL错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("DEL成功");
+            printf("DEL成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -218,7 +226,7 @@ public:
             fprintf(stderr,"SREM错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("SREM成功");
+            printf("SREM成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -249,7 +257,7 @@ public:
             fprintf(stderr,"HLEN错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HLEN成功");
+            printf("HLEN成功\n");
             int count=reply->integer;
             freeReplyObject(reply);
             return count;
@@ -286,7 +294,7 @@ public:
             fprintf(stderr,"HEXISTS错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("HEXISTS成功");
+            printf("HEXISTS成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -330,12 +338,12 @@ public:
             printf("SMEMBERS成功\n");
             for (size_t i = 0; i < reply->elements; ++i)
             {
-                cout<<"i:"<<i<<endl;
+                
                 members.push_back(reply->element[i]->str);
             }
-            printf("123\n");
+            
             freeReplyObject(reply);
-            printf("456\n");
+            
             return members;
         }
 
@@ -435,7 +443,7 @@ public:
             fprintf(stderr,"HLEN错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HLEN成功");
+            printf("HLEN成功\n");
             int count=reply->integer;
             freeReplyObject(reply);
             return count;

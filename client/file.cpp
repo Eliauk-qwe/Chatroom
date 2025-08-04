@@ -115,7 +115,7 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
 
 
             total_send += send_bytes;
-            printf("Sent %zd bytes (%.2f%%)\n", send_bytes, (double)total_send / filesize * 100);
+            //printf("Sent %zd bytes (%.2f%%)\n", send_bytes, (double)total_send / filesize * 100);
         }
 
 
@@ -242,7 +242,7 @@ void sfile(string uid,string friend_or_group,int flag,string path){
     }
     
     if(flag==FRIEND_SEND_FILE || flag == GROUP_SEND_FILE){
-        int res = send_file(uid, friend_or_group,filesocket, FRIEND_SEND_FILE,path);
+        int res = send_file(uid, friend_or_group,filesocket, flag,path);
         if (res == 0)
         {
             printf("文件已成功上传至服务器\n");

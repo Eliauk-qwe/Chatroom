@@ -50,7 +50,7 @@ void friend_send_file(StickyPacket socket,Message &msg){
 
     //正常聊天
     //把消息存入服务器
-    string notice1 = "我：上传了文件" + msg.para[0];
+    string notice1 =PLUSWHITE "我：" RESET"上传了文件" + msg.para[0];
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
@@ -68,20 +68,20 @@ void friend_send_file(StickyPacket socket,Message &msg){
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
         fd2_socket.mysend(QING+msg.uid+":"+name1+"给你发了一个文件"+RESET);
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
     else if(online_users.find(msg.friend_or_group)==online_users.end()){
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
     
@@ -137,7 +137,7 @@ void friend_recv_file(StickyPacket socket,Message &msg){
                                     
     //正常聊天
     //把消息存入服务器
-    string notice1 = "我：下载了文件" + msg.other;
+    string notice1 =PLUSWHITE "我：" RESET"下载了文件" + msg.other;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
@@ -155,21 +155,21 @@ void friend_recv_file(StickyPacket socket,Message &msg){
     else if((online_users.find(msg.friend_or_group)!=online_users.end())  &&  (redis.Hget(msg.friend_or_group,"聊天对象") != msg.uid)){
         fd2_socket.mysend(QING+msg.uid+":"+name1+"下载了你发的文件"+RESET);
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
      
     else if(online_users.find(msg.friend_or_group)==online_users.end()){
         //总数量
-        string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
+        /*string num1=redis.Hget(msg.friend_or_group+"的未读消息","好友消息");
         redis.hset(msg.friend_or_group+"的未读消息","好友消息",to_string(stoi(num1)+1));
         //单个好友数量
         string num2=redis.Hget(msg.uid+"的好友消息",msg.friend_or_group);
-        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));
+        redis.hset(msg.uid+"的好友消息",msg.friend_or_group,to_string(stoi(num1)+1));*/
         
     }
     
@@ -186,9 +186,11 @@ void group_send_file(StickyPacket socket,Message &msg){
         printf("服务器接受文件成功\n");
     }
      //对于我
-    string my_notice="我：发送了一个文件"+msg.para[0];
-    redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",my_notice);
+    string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
+    string my_notice=PLUSWHITE"我：" RESET "发送了一个文件"+msg.para[0];
+    redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",my_notice);
     string my_notice_fd=redis.Hget(msg.uid,"消息fd");
+    cout<<my_notice_fd<<"1111111111"<<endl;
     StickyPacket my_notice_socket(stoi(my_notice_fd));
     //我肯定是群聊的在线用户，不需要特别颜色，也不需要处理未读消息
     my_notice_socket.mysend(my_notice);
@@ -204,11 +206,12 @@ void group_send_file(StickyPacket socket,Message &msg){
         
         if(groupmember==msg.uid)  continue;
 
-        redis.Rpush(groupmember+"与"+msg.friend_or_group+"的聊天记录",other_notice);
+        redis.Rpush(groupmember+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",other_notice);
 
         //对于登录着的人
         if(online_users.find(groupmember)!=online_users.end()){
             string other_notice_fd=redis.Hget(groupmember,"消息fd");
+            cout<<other_notice_fd<<"222222"<<endl;
 
             
             StickyPacket other_notice_socket(stoi(other_notice_fd));
@@ -220,12 +223,12 @@ void group_send_file(StickyPacket socket,Message &msg){
                 other_notice_socket.mysend(other_notice);
             }else{
                 other_notice_socket.mysend(QING "群聊"+msg.friend_or_group+"发送了一个文件"+RESET);
-                string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
+               // string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
                 
-                redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
+                //redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
 
                 //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
-                redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
+                //redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
             }
 
 
@@ -235,16 +238,16 @@ void group_send_file(StickyPacket socket,Message &msg){
         else{
             
 
-            string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
+            //string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
            
-            redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
+           // redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
 
             //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
-            redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
+            //redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
         }
     }
 
-    socket.mysend("ok");
+    //socket.mysend("ok");
 
 
 }
@@ -256,15 +259,22 @@ void group_recv_file(StickyPacket socket,Message &msg){
         printf("服务器发送文件成功\n");
     }
 
+    cout<<"888888888888888"<<endl;
+
     //对于我
-    string my_notice="我：接收了一个文件"+msg.para[1];
-    redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",my_notice);
+    string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
+    string my_notice=PLUSWHITE"我：" RESET "接受了一个文件"+msg.para[1];
+    redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",my_notice);
     string my_notice_fd=redis.Hget(msg.uid,"消息fd");
+    cout<<my_notice_fd<<"1111111111"<<endl;
+
     StickyPacket my_notice_socket(stoi(my_notice_fd));
     //我肯定是群聊的在线用户，不需要特别颜色，也不需要处理未读消息
     my_notice_socket.mysend(my_notice);
 
-    socket.mysend("ok");
+    //socket.mysend("ok");
+
+
     
 
 
