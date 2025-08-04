@@ -69,6 +69,8 @@
 #define CLIENT_QUIT 43
 #define HEART 44
 #define INFORM 45
+#define INVITE_FRIEND_TO_GROUP 46
+
 
 
 
@@ -129,6 +131,8 @@ void group_recv_file(StickyPacket socket,Message &msg);
 void group_quit_chat(StickyPacket socket,Message &msg);
 void client_quit(StickyPacket socket,Message &msg);
 void heart(int epd);
+void invite_friend_to_group(StickyPacket socket,Message &msg);
+
 
 
 
@@ -268,6 +272,10 @@ public:
 
         case CLIENT_QUIT:
             client_quit(socket,msg);
+            break;
+
+        case INVITE_FRIEND_TO_GROUP:
+            invite_friend_to_group(socket,msg);
             break;
 
         

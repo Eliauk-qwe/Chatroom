@@ -9,6 +9,12 @@ void user_menu(){
         getline(cin,opt);
         printf("===============================\n");
 
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
+
         switch (stoi(opt))
         {
         case 1:
@@ -33,7 +39,7 @@ void user_menu(){
         
         default:
             printf("请输入正确选项\n");
-            
+            break;
         }
     }
 }

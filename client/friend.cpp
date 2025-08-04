@@ -9,6 +9,12 @@ void friend_menu(){
         getline(cin,opt);
         printf("==================================\n");
 
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
+
         switch (stoi(opt))
         {
         case 1:
@@ -217,8 +223,7 @@ void friend_chat(){
     while(1){
         string notice;
         getline(cin,notice);
-        cout << "\033[1A\033[2K\r";
-        cout.flush();
+
 
         if(notice == "quit"){
             //printf("退出聊天\n");
@@ -248,7 +253,7 @@ void friend_chat(){
 
 
         if(notice == "recv"){
-            printf("你要下载的文件名为：\n");
+            printf("你要下载的文件名为\n");
             string filename;
             getline(cin, filename);
 

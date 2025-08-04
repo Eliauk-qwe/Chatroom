@@ -4,10 +4,15 @@ void group_owner_menu(const string groupID,const string group_name){
     string opt;
     while(1){
         cout<<"================"<<group_name<<"=============="<<endl;
-        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]群主踢出用户\n[8]查看群管理员\n[9]返回\n");
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]群主踢出用户\n[8]查看群管理员\n[9]邀请好友加群[10]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
 
         switch (stoi(opt))
         {
@@ -36,8 +41,12 @@ void group_owner_menu(const string groupID,const string group_name){
             check_group_managers(groupID);
             break;
         case 9:
+            invite_friend_to_group(groupID);
             return;
-        default:
+        case 10:
+            return;
+       default:
+            printf("请输入正确选项\n");
             break;
         }
     }
@@ -54,7 +63,11 @@ void group_common_menu(const string groupID,const string group_name){
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
-
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
         switch (stoi(opt))
         {
         case 1:
@@ -69,6 +82,7 @@ void group_common_menu(const string groupID,const string group_name){
         case 4:
             return;
         default:
+            printf("请输入正确选项\n");
             break;
         }
     }
@@ -84,6 +98,11 @@ void group_manager_menu(const string groupID,const string group_name){
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
 
         switch (stoi(opt))
         {
@@ -105,6 +124,7 @@ void group_manager_menu(const string groupID,const string group_name){
         case 6:
             return;
         default:
+            printf("请输入正确选项\n");
             break;
         }
     }
@@ -113,7 +133,7 @@ void group_manager_menu(const string groupID,const string group_name){
 
 
 
-void check_group_members(const string groupID){
+int check_group_members(const string groupID){
     Message msg(log_uid,CHECK_GROUP_MEMBERS,groupID);
     socket_fd.mysend(msg.S_to_json());
 
@@ -125,11 +145,11 @@ void check_group_members(const string groupID){
     }
     if(recv=="no_group_name"){
         printf("不存在该群\n");
-        return;
+        return 0;
     }
     if(recv=="no_group_member"){
         printf("你不是该群的成员,无法查看群成员\n");
-        return;
+        return 0;
     }
 
     while(recv != "over"){
@@ -143,6 +163,8 @@ void check_group_members(const string groupID){
     }
 
     printf("以上是该群的所有群成员\n");
+
+    return 0;
     
 }
 
@@ -173,15 +195,18 @@ void group_quit(const string groupID){
 }
 
 void owner_add_managers(const string groupID){
-    check_group_members(groupID);
+    int res=check_group_members(groupID);
+    if(res<0){
+        return;
+    }
 
-    printf("你想设置为管理员的数量为：\n");
+    /*printf("你想设置为管理员的数量为：\n");
     string num;
     getline(cin,num);
 
     printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
-    for(int i=0;i<stoi(num) ; i++){
+    for(int i=0;i<stoi(num) ; i++){*/
         printf("你想设置为管理员的人的uid为:\n");
         string manager_uid;
         getline(cin,manager_uid);
@@ -210,22 +235,25 @@ void owner_add_managers(const string groupID){
             
         }
 
-    }
+    
 
     return;
 
 }
 
 void owner_del_managers(const string groupID){
-    check_group_managers(groupID);
+    int res=check_group_managers(groupID);
+    if(res<0){
+        return;
+    }
 
-    printf("你想删除管理员的数量为：\n");
+    /*printf("你想删除管理员的数量为：\n");
     string num;
     getline(cin,num);
 
     printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
-    for(int i=0;i<stoi(num) ; i++){
+    for(int i=0;i<stoi(num) ; i++){*/
         printf("你想删除管理员的人的uid为:\n");
         string manager_uid;
         getline(cin,manager_uid);
@@ -254,7 +282,7 @@ void owner_del_managers(const string groupID){
             
         }
 
-    }
+    
 
     return;
 
@@ -286,13 +314,13 @@ void owner_quit_group(const string groupID){
 void all_managers_del_members(const string groupID){
     check_group_members(groupID);
 
-    printf("你想踢出群成员的数量为：\n");
+    /*printf("你想踢出群成员的数量为：\n");
     string num;
     getline(cin,num);
 
     printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
-    for(int i=0;i<stoi(num) ; i++){
+    for(int i=0;i<stoi(num) ; i++){*/
         printf("你想踢出群成员的人的uid为:\n");
         string tick_uid;
         getline(cin,tick_uid);
@@ -321,18 +349,23 @@ void all_managers_del_members(const string groupID){
             return;
         }
 
+        if(recv=="my"){
+            printf("不能自己踢出自己\n");
+            return;
+        }
+
         if(recv=="ok"){
             printf("已成功将此人踢出该群\n");
             
         }
 
-    }
+    
 
     return;
 
 }
 
-void check_group_managers(const string groupID){
+int check_group_managers(const string groupID){
     Message msg(CHECK_GROUP_MANAGERS,groupID);
     socket_fd.mysend(msg.S_to_json());
 
@@ -345,12 +378,12 @@ void check_group_managers(const string groupID){
 
     if(recv=="no_group_name"){
         printf("不存在该群\n");
-        return;
+        return 0;
     }
 
-    if(recv=="no"){
+    if(recv=="0"){
         printf("该群还没有管理员\n");
-        return;
+        return -1;
     }
 
     while(recv != "over"){
@@ -364,6 +397,8 @@ void check_group_managers(const string groupID){
     }
 
     printf("以上是该群的所有管理员\n");
+
+    return 0;
 }
 
 
@@ -394,17 +429,16 @@ void group_chat(const string groupID){
 
     printf("现在可以开始新的聊天了:\n");
     printf(PLUSBLUE "HELP(如果你想收发文件或退出): \n" RESET);
-    printf(PLUSBLUE "[1]请输入 <send> 来发送文件\n" RESET);
-    printf(PLUSBLUE "[2]请输入 <recv> 来接受文件\n" RESET);
-    printf(PLUSBLUE "[3]输入 <quit> 可退出\n\n" RESET);
+    printf(PLUSBLUE "[1]请输入 :send 来发送文件\n" RESET);
+    printf(PLUSBLUE "[2]请输入 :recv 来接受文件\n" RESET);
+    printf(PLUSBLUE "[3]输入 :quit 可退出\n\n" RESET);
 
     while(1){
         string notice;
         getline(cin,notice);
-        cout << "\033[1A\033[2K\r";
-        cout.flush();
+        
 
-        if(notice=="send"){
+        if(notice==":send"){
             string filepath;
             printf("请输入你要发送的文件的路径:\n");
             getline(cin, filepath);
@@ -425,7 +459,7 @@ void group_chat(const string groupID){
            continue;
 
         }
-        else if(notice=="recv"){
+        else if(notice==":recv"){
             string other_uid;
             printf("你要下载的文件的人的uid为\n");
             getline(cin, other_uid);
@@ -452,7 +486,7 @@ void group_chat(const string groupID){
                 continue;
             }*/
         }
-        else if(notice=="quit"){
+        else if(notice==":quit"){
             Message msg(log_uid,GROUP_QUIT_CHAT,groupID);
             socket_fd.mysend(msg.S_to_json());
             string recv=socket_fd.client_recv();
@@ -473,6 +507,12 @@ void group_chat(const string groupID){
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
+
+        if(recv=="del"){
+            cout<<recv<<endl;
+            printf(RED "        你已不是该群成员\n" RESET);
+            continue;
+        }
         if(recv=="ok"){
             continue;
         }
@@ -480,5 +520,41 @@ void group_chat(const string groupID){
 
 }
 
+void invite_friend_to_group(const string groupID){
+   int res= friend_list();
+   if(res<0){
+    return;
+   }
 
+   printf("你想邀请的好友的uid为:\n");
+   string friend_uid;
+   getline(cin,friend_uid);
+
+   Message msg(log_uid,INVITE_FRIEND_TO_GROUP,groupID,friend_uid);
+   socket_fd.mysend(msg.S_to_json());
+   string recv=socket_fd.client_recv();
+
+
+   if(recv=="no_friend"){
+      printf("该用户不是你的好友\n");
+      return;
+   }
+
+   if(recv=="no_sign_up"){
+     printf("该用户未注册\n");
+     return;
+   }
+
+   if(recv=="你已被对方删除，无法邀请"){
+    cout<<recv<<endl;
+    return;
+   }
+
+   if(recv=="ok"){
+      printf("已成功发送邀请\n");
+   }
+
+
+
+}
 

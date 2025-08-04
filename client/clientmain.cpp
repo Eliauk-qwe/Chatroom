@@ -63,6 +63,13 @@ int main(int argc,char *argv[]){
         getline(cin,opt);
         printf("=========================================\n");
 
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
+       
+
         switch (stoi(opt)) {
             case 1: {
                 sign_up();
@@ -82,8 +89,8 @@ int main(int argc,char *argv[]){
                 exit(0);
             }
             default:
-                printf("无效选项,请输入1-4\n");
-                break;
+            printf("请输入正确选项\n");
+            break;
         }
 
     }

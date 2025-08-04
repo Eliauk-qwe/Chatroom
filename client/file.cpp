@@ -18,6 +18,9 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
         return -1;
     }
 
+    std::string hash = calculateHashFromDescriptor(fd);
+    printf("文件 '%s' 的SHA-256哈希值: %s\n", filename, hash.c_str());
+
     //获取文件大小
     off_t filesize = lseek(fd, 0, SEEK_END);
     lseek(fd, 0, SEEK_SET);
@@ -29,7 +32,7 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
 
     
     
-    Message msg(uid,friend_or_group,{filename, to_string(filesize)}, flag);
+    Message msg(uid,friend_or_group,{filename, to_string(filesize)}, flag,hash);
     f_socket.mysend(msg.S_to_json());
     string recv = f_socket.client_recv();
     if (recv == "读取消息头不完整")
@@ -230,7 +233,7 @@ int friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_
 
 
 void sfile(string uid,string friend_or_group,int flag,string path){
-    printf("11111111111111\n");
+    //printf("11111111111111\n");
     int file_fd = socket(AF_INET,SOCK_STREAM,0);
     StickyPacket filesocket(file_fd);
 

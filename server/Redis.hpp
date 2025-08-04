@@ -125,29 +125,29 @@ public:
 
     string Hget (const string &key,const string &field){
         redisReply *reply = (redisReply *)redisCommand(con,"HGET %s %s",key.c_str(),field.c_str());
-            cout<<"111111111"<<endl;
+            //cout<<"111111111"<<endl;
 
         if(reply == nullptr){
-            cout<<"222222222"<<endl;
+            //cout<<"222222222"<<endl;
             fprintf(stderr,"HGET fail\n");
         }
         else if(reply->type == REDIS_REPLY_ERROR){
-            cout<<"3333333333"<<endl;
+            //cout<<"3333333333"<<endl;
 
             fprintf(stderr,"HGET错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_STRING ){
-            cout<<"333333333"<<endl;
+            //cout<<"333333333"<<endl;
 
             printf("HGET成功:%s\n",reply->str);
             string recv=reply->str;
             freeReplyObject(reply);
             return recv;
         }
-            cout<<"444444444"<<endl;
+            //cout<<"444444444"<<endl;
 
         freeReplyObject(reply);
-            cout<<"55555555555"<<endl;
+            
 
         return "";
         

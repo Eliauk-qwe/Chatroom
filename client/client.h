@@ -12,6 +12,15 @@
 #include <csignal>  // 包含 SIGPIPE, SIG_IGN 和 signal 的声明
 #include <cerrno>   // 包含 EPIPE 错误码的声明
 #include <limits>
+#include <regex>
+#include <string>
+#include <unistd.h>
+#include <fcntl.h>
+#include <openssl/sha.h>
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include <cstdio>
 
 #define SIGNUP 1
 #define LOGIN 2
@@ -57,6 +66,8 @@
 #define CLIENT_QUIT 43
 #define HEART 44
 #define INFORM 45
+#define INVITE_FRIEND_TO_GROUP 46
+
 
 
 
@@ -101,13 +112,13 @@ void group_owner_menu(const string groupID,const string group_name);
 void group_manager_menu(const string groupID,const string group_name);
 void group_common_menu(const string groupID,const string group_name);
 void group_chat(const string group_name);
-void check_group_members(const string group_name);
+int check_group_members(const string group_name);
 void group_quit(const string group_name);
 void owner_add_managers(const string group_name);
 void owner_del_managers(const string group_name);
 void owner_quit_group(const string group_name);
 void all_managers_del_members(const string group_name);
-void check_group_managers(const string group_name);
+int check_group_managers(const string group_name);
 void notice_recv_thread(string uid,int noticefd);
 void client_quit(int fd);
 void sfile(string uid,string friend_or_group,int flag,string path);
@@ -115,7 +126,10 @@ void fvfile(string uid,string friend_or_group,int flag,string filename,string wa
 int  friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path);
 void gvfile(string uid,string friend_or_group,int flag,string filename,string want_path,string other_uid);
 int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path,string other_uid);
-void heartthread(string uid,int fd);
+//void heartthread(string uid,int fd);
+bool isNotNumber(const std::string& str) ;
+void invite_friend_to_group(const string group_name);
+
 
 
 
@@ -127,9 +141,6 @@ void heartthread(string uid,int fd);
 #define QING  "\033[1;36m"
 #define PLUSBLUE  "\033[1;34m"
 #define PLUSWHITE  "\033[1;37m"
-
-
-
 
 
 

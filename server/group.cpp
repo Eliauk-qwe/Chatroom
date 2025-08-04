@@ -124,6 +124,7 @@ void group_add(StickyPacket socket,Message &msg){
 
     vector<string> group_managers=redis.Smembers(msg.friend_or_group+"的高权限者");
     for(const string & group_managers_uid :group_managers){
+        if(group_managers_uid==msg.uid) continue;
         redis.hset(group_managers_uid+"的群聊申请",msg.uid,"我想加入群聊"+msg.friend_or_group+":"+name+",我的自我介绍是"+msg.other);
 
         string user_name=redis.Hget(msg.uid,"name");

@@ -87,10 +87,10 @@ int log_in(){
             notice_thread.detach();
 
             // 修复点2：添加分号并重命名线程变量
-            thread heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
+            /*thread heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
-            heart_thread.detach();
+            heart_thread.detach();*/
             
             return 1;
         }
@@ -196,7 +196,7 @@ void client_quit(int fd){
 }
 
 
-void heartthread(string uid,int fd){
+/*void heartthread(string uid,int fd){
     //printf("心跳检测开始！\n");
 
    // string notice="heart";
@@ -212,4 +212,4 @@ void heartthread(string uid,int fd){
 
     }
 
-}
+}*/

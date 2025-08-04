@@ -53,8 +53,8 @@ public:
     Message(string uid,vector<string> para,int flag)
          :uid(uid),para(para),flag(flag){}
 
-    Message(string uid,string friend_or_group,vector<string> para,int flag)
-         :uid(uid),friend_or_group(friend_or_group),para(para),flag(flag){}
+    Message(string uid,string friend_or_group,vector<string> para,int flag,string other)
+         :uid(uid),friend_or_group(friend_or_group),para(para),flag(flag),other(other){}
 
 
     // JSON转换方法
@@ -88,5 +88,3 @@ public:
 };
 
 #endif
-
-

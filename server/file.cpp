@@ -45,16 +45,19 @@ void friend_send_file(StickyPacket socket,Message &msg){
     }
 
 
+    redis.hset("文件ID-NAME表",msg.other,msg.para[0]);
+
+
 
     
 
     //正常聊天
     //把消息存入服务器
-    string notice1 =PLUSWHITE "我：" RESET"上传了文件" + msg.para[0];
+    string notice1 =PLUSWHITE "我：" RESET"上传了文件" + msg.para[0]+YELLOW+msg.other+RESET;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
-    string notice2 =ZI+ name1 +RESET+ ":上传了文件" + msg.para[0];
+    string notice2 =ZI+ name1 +RESET+ ":上传了文件" + msg.para[0]+YELLOW+msg.other+RESET;
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -187,10 +190,10 @@ void group_send_file(StickyPacket socket,Message &msg){
     }
      //对于我
     string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
-    string my_notice=PLUSWHITE"我：" RESET "发送了一个文件"+msg.para[0];
+    string my_notice=PLUSWHITE"我：" RESET "发送了一个文件"+msg.para[0]+YELLOW+msg.other+RESET;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",my_notice);
     string my_notice_fd=redis.Hget(msg.uid,"消息fd");
-    cout<<my_notice_fd<<"1111111111"<<endl;
+    //cout<<my_notice_fd<<"1111111111"<<endl;
     StickyPacket my_notice_socket(stoi(my_notice_fd));
     //我肯定是群聊的在线用户，不需要特别颜色，也不需要处理未读消息
     my_notice_socket.mysend(my_notice);
@@ -199,7 +202,7 @@ void group_send_file(StickyPacket socket,Message &msg){
 
     //对于他人
     string name1=redis.Hget(msg.uid,"name");
-    string other_notice=name1+"("+msg.uid+"):发送了一个文件"+msg.para[0];
+    string other_notice=name1+"("+msg.uid+"):发送了一个文件"+msg.para[0]+YELLOW+msg.other+RESET;
     vector<string> groupmemberslist =redis.Smembers(msg.friend_or_group+"的群成员");
    
     for(const string &groupmember : groupmemberslist){
@@ -259,14 +262,14 @@ void group_recv_file(StickyPacket socket,Message &msg){
         printf("服务器发送文件成功\n");
     }
 
-    cout<<"888888888888888"<<endl;
+    //cout<<"888888888888888"<<endl;
 
     //对于我
     string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
     string my_notice=PLUSWHITE"我：" RESET "接受了一个文件"+msg.para[1];
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",my_notice);
     string my_notice_fd=redis.Hget(msg.uid,"消息fd");
-    cout<<my_notice_fd<<"1111111111"<<endl;
+   // cout<<my_notice_fd<<"1111111111"<<endl;
 
     StickyPacket my_notice_socket(stoi(my_notice_fd));
     //我肯定是群聊的在线用户，不需要特别颜色，也不需要处理未读消息
@@ -358,7 +361,7 @@ int recv_sendfile(StickyPacket socket,Message &msg){
     // 确保基础目录存在
     mkdir("./filesave", 0755); // 忽略错误
 
-    string savepath = "./filesave/"+msg.uid+"/";
+    string savepath = "./filesave/"+msg.other;
     
     //所有者读写执行，组和其他用户读执行
     int num=mkdir(savepath.c_str(),0755);

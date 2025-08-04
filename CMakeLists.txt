@@ -47,6 +47,7 @@ client/group_apply.cpp
 client/group.cpp
 client/signup.cpp
 client/user.cpp
+client/err.cpp
 )
 
 # 添加服务器可执行文件

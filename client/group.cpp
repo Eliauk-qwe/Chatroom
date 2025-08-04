@@ -8,6 +8,12 @@ void group_menu(){
         getline(cin,opt);
         printf("=========================================\n");
 
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
+
         switch (stoi(opt))
         {
         case 1:
@@ -30,6 +36,7 @@ void group_menu(){
 
         
         default:
+            printf("请输入正确选项\n");
             break;
         }
 
@@ -48,7 +55,6 @@ int group_list(){
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-
     if(recv=="no"){
         printf("你还没有群聊\n");
         return -1;
@@ -174,7 +180,7 @@ void group_add(){
 
 void access_group(){
     int res=group_list();
-    if(res==1)  return;
+    if(res<0)  return;
     printf("你想进入的群聊ID是:\n");
     string groupID;
     getline(cin,groupID);

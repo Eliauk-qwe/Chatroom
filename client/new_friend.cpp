@@ -10,6 +10,12 @@ void new_friend()
         getline(cin, opt);
         printf("====================================\n");
 
+        if (isNotNumber(opt))
+        {
+            std::cout << "不是数字" << std::endl;
+            continue;
+        }
+
         switch (stoi(opt))
         {
         case 1:
@@ -25,7 +31,7 @@ void new_friend()
             return;
 
         default:
-            printf("请输入范围内的选择\n");
+            printf("请输入正确选项\n");
             break;
         }
     }
@@ -36,13 +42,13 @@ void friend_apply_agree(){
     if(res<0){
         return;
     }
-    printf("\n你想要同意的的好友申请的数量为:\n");
+    /*printf("\n你想要同意的的好友申请的数量为:\n");
     string num;
-    getline(cin,num);
+    getline(cin,num);*/
 
-    printf(PLUSBLUE "请依次输入你想添加的好友的uid(不能为空)\n\n" RESET);
-    for (int i = 0; i < stoi(num); i++)
-    {
+    //printf(PLUSBLUE "请依次输入你想添加的好友的uid(不能为空)\n\n" RESET);
+    //for (int i = 0; i < stoi(num); i++)
+    //{
 
         string friend_agree_uid;
         printf("你想同意的收到的好友申请的uid:\n");
@@ -66,9 +72,9 @@ void friend_apply_agree(){
         if (recv == "ok")
         {
             printf("你们已成功加为好友\n");
-            continue;
+            return;
         }
-    }
+    //}
 }
 
 
@@ -82,14 +88,14 @@ void friend_apply_refuse(){
     if(res<0){
         return;
     }
-    printf("\n你想要拒绝的的好友申请的数量为:\n");
+    /*printf("\n你想要拒绝的的好友申请的数量为:\n");
     string num;
     getline(cin, num);
 
-    printf(PLUSBLUE "请依次输入你想拒绝的好友的uid(不能为空)\n\n" RESET);
+    printf(PLUSBLUE "请依次输入你想拒绝的好友的uid(不能为空)\n\n" RESET);*/
 
-    for (int i = 0; i < stoi(num); i++)
-    {
+    //for (int i = 0; i < stoi(num); i++)
+    //{
         string friend_refuse_uid;
         printf("你想拒绝的收到的好友申请的uid:\n");
         getline(cin, friend_refuse_uid);
@@ -107,10 +113,10 @@ void friend_apply_refuse(){
         if (recv == "OK")
         {
             printf("你们已成功拒绝加为好友\n");
-            continue;
+            return;
         }
     }
-}
+
 
 
 /*void check_friend_apply(){
