@@ -42,7 +42,7 @@ void group_owner_menu(const string groupID,const string group_name){
             break;
         case 9:
             invite_friend_to_group(groupID);
-            return;
+            break;
         case 10:
             return;
        default:
@@ -81,7 +81,7 @@ void group_common_menu(const string groupID,const string group_name){
             break;
         case 4:
             invite_friend_to_group(groupID);
-            return;
+            break;
         case 5:
             return;
         default:
@@ -236,6 +236,17 @@ void owner_add_managers(const string groupID){
             return;
         }
 
+        if(recv=="no_group_name"){
+            printf("该用户未注册\n");
+            return;
+        }
+
+        
+        if(recv=="no_have_exist"){
+            printf("不是该群成员，无法被添加为管理员\n");
+            return;
+        }
+
         if(recv=="ok"){
             printf("已成功将此人添加为管理员\n");
             
@@ -318,7 +329,10 @@ void owner_quit_group(const string groupID){
 }
 
 void all_managers_del_members(const string groupID){
-    check_group_members(groupID);
+    int res=check_group_members(groupID);
+    if(res<0){
+        return;
+    }
 
     /*printf("你想踢出群成员的数量为：\n");
     string num;
@@ -345,8 +359,13 @@ void all_managers_del_members(const string groupID){
             return;
         }
 
+        if(recv=="no_sign"){
+            printf("该用户未注册\n");
+            return;
+        }
+
         if(recv=="no_exist"){
-            printf("此人已不在该群，可能已经被群主或其他管理员踢出\n");
+            printf("此人已不在该群\n");
             return;
         }
 
@@ -372,7 +391,7 @@ void all_managers_del_members(const string groupID){
 }
 
 int check_group_managers(const string groupID){
-    Message msg(CHECK_GROUP_MANAGERS,groupID);
+    Message msg(log_uid,CHECK_GROUP_MANAGERS,groupID);
     socket_fd.mysend(msg.S_to_json());
 
     string recv=socket_fd.client_recv();
@@ -390,6 +409,11 @@ int check_group_managers(const string groupID){
     if(recv=="0"){
         printf("该群还没有管理员\n");
         return -1;
+    }
+
+    if(recv=="no_member"){
+        printf("你不是该群成员，无法查看群管理员\n");
+        return 0;
     }
 
     while(recv != "over"){
@@ -422,6 +446,8 @@ void group_chat(const string groupID){
         printf("你不是该群的成员，无法进行聊天\n");
         return;
     }
+
+    printf("历史聊天记录为:\n");
 
     while(recv!="over"){
         cout<<recv<<endl;
@@ -467,7 +493,7 @@ void group_chat(const string groupID){
         }
         else if(notice==":recv"){
             string other_uid;
-            printf("你要下载的文件的人的uid为\n");
+            printf("你要下载的文件ID为\n");
             getline(cin, other_uid);
 
             printf("你要下载的文件名为：\n");
@@ -557,11 +583,21 @@ void invite_friend_to_group(const string groupID){
    }
 
    if(recv=="ok"){
-      printf("已成功发送邀请\n");
+      printf("已成功将对方拉入群聊\n");
    }
 
    if(recv=="have_exist"){
     printf("该用户已经在群里\n");
+    return;
+   }
+
+   if(recv=="my"){
+    printf("不能自己邀请自己\n");
+    return;
+   }
+
+   if(recv=="no"){
+    printf("你不是该群的成员，无法邀请好友加群\n");
     return;
    }
 

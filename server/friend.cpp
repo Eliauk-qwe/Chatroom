@@ -9,6 +9,7 @@ void friend_add(StickyPacket socket,Message &msg){
     //判断是不是friend在不在uid的好友列表
     if((redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group)) &&(redis.Hexists(msg.friend_or_group+"的好友列表",msg.uid))){
         socket.mysend("friend_exit");
+        return;
     }
 
     if(redis.Hexists(msg.uid+"的新的朋友",msg.friend_or_group)){

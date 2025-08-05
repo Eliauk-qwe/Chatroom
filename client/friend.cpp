@@ -67,11 +67,11 @@ void friend_add(){
         printf("你想添加的用户不存在\n");
         return;
     }
-    /*else if (recv == "friend_exit")
+    else if (recv == "friend_exit")
     {
         printf("该用户你已添加，无需添加\n");
         return;
-    }*/
+    }
     else if (recv == "receive_friend_apply")
     {
         printf("对方已向你发送过好友申请，可到新的朋友界面，实现添加\n");
@@ -212,9 +212,9 @@ void friend_chat(){
         }
         printf("现在可以开始新的聊天了:\n");
         printf(PLUSBLUE "HELP(如果你想收发文件或退出): \n" RESET);
-        printf(PLUSBLUE"[1]请输入 <send> 来发送文件\n" RESET);
-        printf(PLUSBLUE"[2]请输入 <recv> 来接受文件\n" RESET);
-        printf(PLUSBLUE"[3]输入 <quit> 可退出\n\n" RESET);
+        printf(PLUSBLUE"[1]请输入 :send 来发送文件\n" RESET);
+        printf(PLUSBLUE"[2]请输入 :recv 来接受文件\n" RESET);
+        printf(PLUSBLUE"[3]输入 :quit 可退出\n\n" RESET);
         
     }
     

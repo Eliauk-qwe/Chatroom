@@ -8,33 +8,38 @@ void group_creat(StickyPacket socket,Message &msg){
     }*/
 
 
-    string gid = redis.incr("group_uid_counter");
+    /*string gid = redis.incr("group_uid_counter");
     redis.sadd("群聊ID集合",gid);
-    redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);
+    redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);*/
 
+    if(!redis.Hexists(msg.uid+"的好友列表",msg.other)){
+        socket.mysend("no_friend");
+        return;
+    }
+
+    /*string gid;
     string notice="你已成功与uid为";
     int num=0;
     for(int i=0;i<msg.para.size();i++){
         if(!redis.Hexists(msg.uid+"的好友列表",msg.para[i])){
             continue;
         }
-        num++;
-        redis.sadd(gid+"的群成员",msg.para[i]);
-        redis.hset(msg.para[i]+"的群聊列表",gid,msg.friend_or_group);
-        //redis.hset(msg.para[i]+"的群聊消息",msg.friend_or_group,"0");
-        if(i==msg.para.size()-1){
-            notice=notice+msg.para[i]+",";
-            continue;
-        }
-        notice=notice+msg.para[i]+",";
-        
+        num++;*/
+    string  gid = redis.incr("group_uid_counter");
+    redis.sadd("群聊ID集合",gid);
+    redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);
 
-    } 
-    notice=notice+"的好友创建群聊";
 
-    
+    redis.sadd(gid+"的群成员",msg.uid);
+    redis.sadd(gid+"的群成员",msg.other);
 
     redis.hset(msg.uid+"的群聊列表",gid,msg.friend_or_group);
+    redis.hset(msg.other+"的群聊列表",gid,msg.friend_or_group);
+
+     
+    
+
+    //redis.hset(msg.uid+"的群聊列表",gid,msg.friend_or_group);
     redis.hset(msg.uid+"创建的群聊",gid,msg.friend_or_group);
     //redis.hset(msg.uid+"的群聊消息",msg.friend_or_group,"0");
 
@@ -43,18 +48,11 @@ void group_creat(StickyPacket socket,Message &msg){
 
     redis.sadd(gid+"的高权限者",msg.uid);
 
-    redis.sadd(gid+"的群成员",msg.uid);
+    //redis.sadd(gid+"的群成员",msg.uid);
 
     
 
-    if(num==msg.para.size()){
-        socket.mysend("ok");
-    }else if(num==0){
-        socket.mysend("0");
-    }
-    else {
-        socket.mysend(notice);
-    }
+    socket.mysend("ok");
 
     socket.mysend(gid);
     
@@ -102,7 +100,14 @@ void group_add(StickyPacket socket,Message &msg){
         return;
     }
 
+    
     string group_owner_uid=redis.Hget(msg.friend_or_group,"群主");
+
+    if(redis.Hexists(group_owner_uid+"的群聊申请",msg.uid)){
+        socket.mysend("have_send");
+        return;
+    }
+    //string group_owner_uid=redis.Hget(msg.friend_or_group,"群主");
 
     /*if(redis.Hexists(group_owner_uid+"的群聊申请",msg.uid)){
         socket.mysend("have_send");

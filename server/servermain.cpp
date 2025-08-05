@@ -309,6 +309,7 @@ void heart(int epd)
                 }
 
                 cout << "客户端" << fd << "已断开连接" << endl;
+                //time_out_clients.erase(fd);
                
             }
         

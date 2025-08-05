@@ -69,6 +69,9 @@
 #define HEART 44
 #define INFORM 45
 #define INVITE_FRIEND_TO_GROUP 46
+#define GROUP_INVITE_AGREE 47
+#define GROUP_INVITE_REFUSE 48
+#define CHECK_GROUP_INVITE 49
 
 
 
@@ -131,6 +134,12 @@ int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_g
 void heartthread(string uid,int fd);
 bool isNotNumber(const std::string& str) ;
 void invite_friend_to_group(const string group_name);
+void  group_invite_agree();
+void  frient_invite_group();
+void   group_invite_refuse();
+int  check_group_invite();
+
+
 
 
 

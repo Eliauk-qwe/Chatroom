@@ -31,6 +31,7 @@ void group_menu(){
         case 5:
             access_group();
             break;
+        
         case 6:
             return;
 
@@ -85,7 +86,7 @@ void group_creat(){
     string gruop_name;
     getline(cin,gruop_name);
 
-    printf("你想邀请一起创建群聊的人的个数为：\n");
+    /*printf("你想邀请一起创建群聊的人的个数为：\n");
     string num;
     getline(cin,num);
 
@@ -94,15 +95,16 @@ void group_creat(){
     
     vector<string> uidlist;
     for(int i=0;i<stoi(num);i++){
-        string uid;
+        string uid;*/
         printf("你想邀请一起创建群聊的人的uid为:\n");
+        string uid;
         getline(cin,uid);
-        uidlist.push_back(uid);
+       // uidlist.push_back(uid);
 
-    }
+    
 
-
-    Message msg(log_uid,gruop_name,uidlist,GROUP_CREAT);
+    Message msg(log_uid,GROUP_CREAT,gruop_name,uid);
+    //Message msg(log_uid,gruop_name,uidlist,GROUP_CREAT);
     socket_fd.mysend(msg.S_to_json());
 
     string recv;
@@ -116,6 +118,11 @@ void group_creat(){
     if(recv=="name_have_exit"){
         printf("该名字已存在，请更改名字\n");
         group_creat();
+        return;
+    }
+
+    if(recv=="no_friend"){
+        printf("该人不是你的好友，创建群聊失败\n");
         return;
     }
 

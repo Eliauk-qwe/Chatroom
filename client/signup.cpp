@@ -47,8 +47,8 @@ int log_in(){
     string phone,pass,uid;
     int i=3;
     while(1){
-        cout<<"请输入你的电话号码:"<<endl;
-        getline(cin,phone);
+        /*cout<<"请输入你的电话号码:"<<endl;
+        getline(cin,phone);*/
         cout<<"请输入你的密码:"<<endl;
         getline(cin,pass);
         cout<<"请输入你的uid:"<<endl;
@@ -213,7 +213,7 @@ void heartthread(string uid,int fd){
    //int flag=true;
 
     while(1){
-        std::this_thread::sleep_for(std::chrono::seconds(10));
+        std::this_thread::sleep_for(std::chrono::seconds(30));
 
         Message msg(uid,HEART);
 

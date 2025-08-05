@@ -4,7 +4,7 @@ void user_menu(){
     string opt;
     while(1){
         printf("=============用户界面===========\n");
-        printf("选项：\n[1]好友\n[2]群聊\n[3]用户注销\n[4]通知类消息\n[5]退出登录\n");
+        printf("选项：\n[1]好友\n[2]群聊\n[3]通知类消息\n[4]退出登录\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("===============================\n");
@@ -25,15 +25,15 @@ void user_menu(){
             group_menu();
             break;
         
-        case 3:
+        /*case 3:
             user_quit();
-            break;
+            exit(0);*/
 
-        case 4:
+        case 3:
             notice();
             break;
 
-        case 5:
+        case 4:
             client_quit(socket_fd.getfd());
             break;
         
