@@ -56,6 +56,9 @@ public:
     Message(string uid,string friend_or_group,vector<string> para,int flag,string other)
          :uid(uid),friend_or_group(friend_or_group),para(para),flag(flag),other(other){}
 
+    Message(string uid,string friend_or_group,vector<string> para,int flag)
+         :uid(uid),friend_or_group(friend_or_group),para(para),flag(flag){}
+
 
     // JSON转换方法
     void Json_to_s(const string &jsr)

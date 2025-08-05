@@ -140,11 +140,11 @@ void friend_recv_file(StickyPacket socket,Message &msg){
                                     
     //正常聊天
     //把消息存入服务器
-    string notice1 =PLUSWHITE "我：" RESET"下载了文件" + msg.other;
+    string notice1 =PLUSWHITE "我：" RESET"下载了文件" + msg.para[1];
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice1);
 
     string name1=redis.Hget(msg.uid,"name");
-    string notice2 =QING+ name1+RESET + ":下载了文件" + msg.other;
+    string notice2 =ZI+ name1+RESET + ":下载了文件" + msg.para[1];
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
@@ -361,7 +361,7 @@ int recv_sendfile(StickyPacket socket,Message &msg){
     // 确保基础目录存在
     mkdir("./filesave", 0755); // 忽略错误
 
-    string savepath = "./filesave/"+msg.other;
+    string savepath = "./filesave/"+msg.other+"/";
     
     //所有者读写执行，组和其他用户读执行
     int num=mkdir(savepath.c_str(),0755);

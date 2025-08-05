@@ -1,4 +1,4 @@
-#include "client.hpp"
+#include "client.h"
 void friend_quit_menu(){
     string opt;
     while(1){

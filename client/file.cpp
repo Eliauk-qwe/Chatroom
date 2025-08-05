@@ -1,4 +1,4 @@
-#include "client.hpp"
+#include "client.h"
 #include <sys/socket.h>
 int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,string filepath){
     
@@ -18,8 +18,10 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
         return -1;
     }
 
-    std::string hash = calculateHashFromDescriptor(fd);
-    printf("文件 '%s' 的SHA-256哈希值: %s\n", filename, hash.c_str());
+    int fileID=std::rand()%900000+100000;
+
+    /*std::string hash = calculateHashFromDescriptor(fd);
+    printf("文件 '%s' 的SHA-256哈希值: %s\n", filename, hash.c_str());*/
 
     //获取文件大小
     off_t filesize = lseek(fd, 0, SEEK_END);
@@ -32,7 +34,7 @@ int send_file(string uid,string friend_or_group,StickyPacket f_socket,int flag,s
 
     
     
-    Message msg(uid,friend_or_group,{filename, to_string(filesize)}, flag,hash);
+    Message msg(uid,friend_or_group,{filename, to_string(filesize)}, flag,std::to_string(fileID));
     f_socket.mysend(msg.S_to_json());
     string recv = f_socket.client_recv();
     if (recv == "读取消息头不完整")

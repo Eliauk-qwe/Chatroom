@@ -1,4 +1,4 @@
-#include "client.hpp"
+#include "client.h"
 
 void friend_menu(){
     string opt;
@@ -257,12 +257,24 @@ void friend_chat(){
             string filename;
             getline(cin, filename);
 
+            printf("你要下载的文件名ID为\n");
+            string fileID;
+            getline(cin, fileID);
+
+
+
             printf("请输入你想存储的文件的位置（无需以 / 结尾）：\n");
             string want_path;
             getline(cin, want_path);
 
-            thread thread([uid=log_uid,friend_or_group=friend_chat_uid,filename=filename,want_path=want_path](){
-                fvfile(uid,friend_or_group,FRIEND_RECV_FILE,filename,want_path);
+
+            /*thread thread([uid=log_uid,friend_or_group=groupID,filename=filename,want_path=want_path,other_uid=other_uid](){
+                gvfile(uid,friend_or_group,GROUP_RECV_FILE,filename,want_path,other_uid);
+            });
+            thread.detach();*/
+
+            thread thread([uid=log_uid,friend_or_group=friend_chat_uid,filename=filename,want_path=want_path,other_uid=fileID](){
+                gvfile(uid,friend_or_group,FRIEND_RECV_FILE,filename,want_path,other_uid);
             });
             thread.detach();
             continue;

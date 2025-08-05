@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
-#include "client.hpp"
+#include "client.h"
 #include <csignal>
 
 
@@ -16,6 +16,9 @@ string log_uid="0";
 
 
 int main(int argc,char *argv[]){
+    std::srand(std::time(0));
+
+
     std::signal(SIGPIPE, SIG_IGN);
     if(argc !=3){
         cerr << "Usage : " << argv[0] << " <IP> <PORT>" << endl;

@@ -16,11 +16,13 @@
 #include <string>
 #include <unistd.h>
 #include <fcntl.h>
-#include <openssl/sha.h>
+#include <cstdlib>
+#include <ctime>
+/*#include <openssl/sha.h>
 #include <string>
 #include <vector>
 #include <stdexcept>
-#include <cstdio>
+#include <cstdio>*/
 
 #define SIGNUP 1
 #define LOGIN 2
