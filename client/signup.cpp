@@ -87,10 +87,17 @@ int log_in(){
             notice_thread.detach();
 
             // 修复点2：添加分号并重命名线程变量
-            /*thread heart_thread([uid=log_uid,fd=socket_fd.getfd()](){
+            thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
-            heart_thread.detach();*/
+            heart_thread_1.detach();
+
+            /*thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
+                heartthread(uid,fd);
+            });
+            heart_thread_2.detach();*/
+
+
             
             return 1;
         }
@@ -109,6 +116,10 @@ void notice_recv_thread(string uid,int noticefd){
         close(noticefd);
         return;
     }
+
+    /*thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
+                          { heartthread(uid, fd); });
+    heart_thread_2.detach();*/
 
     Message msg(uid,NOTICE);
     //noticesocket.mysend(msg.S_to_json());
@@ -195,15 +206,14 @@ void client_quit(int fd){
     }
 }
 
-
-/*void heartthread(string uid,int fd){
+void heartthread(string uid,int fd){
     //printf("心跳检测开始！\n");
 
    // string notice="heart";
    //int flag=true;
 
     while(1){
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
 
         Message msg(uid,HEART);
 
@@ -212,4 +222,4 @@ void client_quit(int fd){
 
     }
 
-}*/
+}

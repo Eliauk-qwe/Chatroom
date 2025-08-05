@@ -57,7 +57,7 @@ void group_apply_refuse(StickyPacket socket,Message &msg){
         return;
     }
 
-    if(!redis.Hexists(msg.uid+"群聊申请",msg.friend_or_group)){
+    if(!redis.Hexists(msg.uid+"的群聊申请",msg.friend_or_group)){
         socket.mysend("nosend");
         return;
     }

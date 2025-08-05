@@ -123,7 +123,12 @@ void owner_add_managers(StickyPacket socket,Message &msg){
     if(online_users.find(msg.other) != online_users.end()){
         string notice_fd=redis.Hget(msg.other,"消息fd");
         StickyPacket notice_socket(stoi(notice_fd));
-        notice_socket.mysend(RED+notice+RESET);
+        if(redis.sismember(msg.friend_or_group+"的在线用户",msg.other)){
+            notice_socket.mysend(notice);
+        }else{
+            notice_socket.mysend(QING+notice+RESET);
+        }
+       
     }
 
     socket.mysend("ok");
@@ -145,7 +150,7 @@ void owner_del_managers(StickyPacket socket,Message &msg){
 
     redis.Srem(msg.friend_or_group+"的管理员",msg.other);
     redis.Srem(msg.friend_or_group+"的高权限者",msg.other);
-    redis.Srem(msg.friend_or_group+"的群成员",msg.other);
+    //redis.Srem(msg.friend_or_group+"的群成员",msg.other);
 
 
     string notice="你已被移除群聊"+msg.friend_or_group+"的管理员";
@@ -153,7 +158,7 @@ void owner_del_managers(StickyPacket socket,Message &msg){
     if(online_users.find(msg.other) != online_users.end()){
         string notice_fd=redis.Hget(msg.other,"消息fd");
         StickyPacket notice_socket(stoi(notice_fd));
-        notice_socket.mysend(RED+notice+RESET);
+        notice_socket.mysend(QING+notice+RESET);
     }
 
     socket.mysend("ok");
@@ -229,11 +234,11 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
 
     loop:
     
-    redis.Hdel(msg.other+"的群聊列表",msg.friend_or_group);
+    /*redis.Hdel(msg.other+"的群聊列表",msg.friend_or_group);
     redis.Srem(msg.friend_or_group+"的群成员",msg.other);
     if(redis.sismember(msg.friend_or_group+"的管理员",msg.other)){
         redis.Srem(msg.friend_or_group+"的管理员",msg.other);
-    }
+    }*/
     string name1=redis.Hget(msg.uid,"name");
     string name2=redis.Hget(msg.other,"name");
 
@@ -246,7 +251,7 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
 
         //你是被踢出的人
         if(groupmember==msg.other){
-            notice="你已被管理员移出群聊"+msg.friend_or_group;
+            notice="你已被移出群聊"+msg.friend_or_group;
         }
         //对于你是踢人的人
         else if(groupmember==msg.uid){
@@ -266,12 +271,18 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
             }
             else
             {
-                if(groupmember==msg.other || groupmember==msg.uid){
+                if(groupmember==msg.other ){
                     notice_socket.mysend(QING + notice + RESET);
                 }
             }
         }
         
+    }
+
+    redis.Hdel(msg.other+"的群聊列表",msg.friend_or_group);
+    redis.Srem(msg.friend_or_group+"的群成员",msg.other);
+    if(redis.sismember(msg.friend_or_group+"的管理员",msg.other)){
+        redis.Srem(msg.friend_or_group+"的管理员",msg.other);
     }
 
     socket.mysend("ok");
@@ -444,13 +455,18 @@ void invite_friend_to_group(StickyPacket socket,Message &msg){
         socket.mysend("你已被对方删除，无法邀请");
         return;
     }
+
+    if(redis.Hexists(msg.other+"的群聊列表",msg.friend_or_group)){
+        socket.mysend("have_exist");
+        return;
+    }
     
 
 
     string name =redis.Hget(msg.uid,"name");
 
     string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
-    string invite = msg.uid + ":"+ name+"邀请你加入群聊"+groupname;
+    string invite = msg.uid + ":"+ name+"邀请你加入群聊"+msg.friend_or_group+":"+groupname;
     redis.hset(msg.other+"的群聊申请",msg.friend_or_group,invite);
     redis.Rpush(msg.other+"的通知类消息","收到来自" + msg.uid +":"+name+ "的群聊邀请");
 

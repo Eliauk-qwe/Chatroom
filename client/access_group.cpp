@@ -4,7 +4,7 @@ void group_owner_menu(const string groupID,const string group_name){
     string opt;
     while(1){
         cout<<"================"<<group_name<<"=============="<<endl;
-        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主删除管理员\n[6]群主解散群聊\n[7]群主踢出用户\n[8]查看群管理员\n[9]邀请好友加群[10]返回\n");
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]群主添加管理员\n[5]群主取消管理员\n[6]群主解散群聊\n[7]群主踢出用户\n[8]查看群管理员\n[9]邀请好友加群\n[10]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
@@ -59,7 +59,7 @@ void group_common_menu(const string groupID,const string group_name){
     string opt;
     while(1){
         cout<<"================"<<group_name<<"=============="<<endl;
-        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]返回\n");
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]邀请好友加群\n[5]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
@@ -80,6 +80,9 @@ void group_common_menu(const string groupID,const string group_name){
             group_quit(groupID);
             break;
         case 4:
+            invite_friend_to_group(groupID);
+            return;
+        case 5:
             return;
         default:
             printf("请输入正确选项\n");
@@ -94,7 +97,7 @@ void group_manager_menu(const string groupID,const string group_name){
     string opt;
     while(1){
         cout<<"================"<<group_name<<"=============="<<endl;
-        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]管理员踢出用户\n[5]查看群管理员\n[6]返回\n");
+        printf("选项：\n[1]群聊聊天\n[2]查看群成员\n[3]退出群聊\n[4]管理员踢出用户\n[5]查看群管理员\n[6]邀请好友加群\n[7]返回\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("=============================================\n");
@@ -122,6 +125,9 @@ void group_manager_menu(const string groupID,const string group_name){
             check_group_managers(groupID);
             break;
         case 6:
+            invite_friend_to_group(groupID);
+            return;
+        case 7:
             return;
         default:
             printf("请输入正确选项\n");
@@ -552,6 +558,11 @@ void invite_friend_to_group(const string groupID){
 
    if(recv=="ok"){
       printf("已成功发送邀请\n");
+   }
+
+   if(recv=="have_exist"){
+    printf("该用户已经在群里\n");
+    return;
    }
 
 

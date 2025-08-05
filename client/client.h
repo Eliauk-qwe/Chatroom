@@ -128,7 +128,7 @@ void fvfile(string uid,string friend_or_group,int flag,string filename,string wa
 int  friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path);
 void gvfile(string uid,string friend_or_group,int flag,string filename,string want_path,string other_uid);
 int group_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path,string other_uid);
-//void heartthread(string uid,int fd);
+void heartthread(string uid,int fd);
 bool isNotNumber(const std::string& str) ;
 void invite_friend_to_group(const string group_name);
 

@@ -45,13 +45,13 @@ void group_apply_agree(){
     if(res<0){
         return;
     }
-    printf("你想要同意的的好友申请的数量为：\n");
+    /*printf("你想要同意的的好友申请的数量为：\n");
     string num;
     getline(cin,num);
     
     printf(PLUSBLUE "请依次输入你想同意的人的uid和群ID\n" RESET);
    
-    for(int i=0;i<stoi(num);i++){
+    for(int i=0;i<stoi(num);i++){**/
         printf("你想同意入群的人的uid为:\n");
         string person_uid;
         getline(cin,person_uid);
@@ -72,12 +72,12 @@ void group_apply_agree(){
 
         if(recv=="group_no_exit"){
             printf("该群聊不存在\n");
-            continue;
+            return;
         }
 
         if(recv=="have_exist"){
             printf("该人已经在该群里，可能已经被其他高权限者同意入群\n");
-            continue;
+            return;
         }
 
         if(recv=="nosend"){
@@ -87,10 +87,10 @@ void group_apply_agree(){
 
         if(recv=="ok"){
             printf("已成功同意这个人进入群聊\n");
-            continue;
+            return;
         }
 
-    }        
+          
 
     
 
