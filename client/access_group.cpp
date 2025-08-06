@@ -271,7 +271,7 @@ void owner_del_managers(const string groupID){
     printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
  
     for(int i=0;i<stoi(num) ; i++){*/
-        printf("你想删除管理员的人的uid为:\n");
+        printf("你想取消管理员的人的uid为:\n");
         string manager_uid;
         getline(cin,manager_uid);
 

@@ -13,7 +13,7 @@ void sign_up(StickyPacket socket,Message &msg){
     redis.hset(uid,"pass",msg.pass);
     //redis.hset(uid,"question",msg.question);
     //redis.hset(uid,"answer",msg.para[0]);
-    //redis.hset(uid,"phone",msg.phone);
+    redis.hset(uid,"phone",msg.phone);
 
     redis.hset(uid, "聊天对象", "无");
     redis.hset(uid + "的未读消息", "通知类消息", "0");

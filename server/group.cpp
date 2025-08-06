@@ -11,11 +11,28 @@ void group_creat(StickyPacket socket,Message &msg){
     /*string gid = redis.incr("group_uid_counter");
     redis.sadd("群聊ID集合",gid);
     redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);*/
+    if(msg.uid==msg.other){
+        socket.mysend("my");
+        return;
+    }
 
     if(!redis.Hexists(msg.uid+"的好友列表",msg.other)){
         socket.mysend("no_friend");
         return;
     }
+
+    if(redis.Hexists(msg.uid+"的好友列表",msg.other) && redis.Hexists(msg.other+"的好友列表",msg.uid)){
+        socket.mysend("del");
+        return;
+    }
+
+    if(!redis.sismember("用户ID集合",msg.other)){
+        socket.mysend("no");
+        return;
+    }
+
+
+
 
     /*string gid;
     string notice="你已成功与uid为";

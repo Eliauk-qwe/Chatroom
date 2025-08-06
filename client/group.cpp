@@ -126,6 +126,22 @@ void group_creat(){
         return;
     }
 
+    if(recv=="no"){
+        printf("该用户未注册\n");
+        return;
+    }
+
+        
+    if(recv=="del"){
+        printf("你已被对方删除\n");
+        return;
+    }
+
+    if(recv=="my"){
+        printf("不能自己邀请自己\n");
+        return;
+    }
+
     if(recv=="ok"){
         printf("群聊创建成功\n");
         

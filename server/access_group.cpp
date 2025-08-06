@@ -119,7 +119,7 @@ void owner_add_managers(StickyPacket socket,Message &msg){
         return;
     }
 
-    if(redis.sismember(msg.friend_or_group+"的群成员",msg.other)){
+    if(!redis.sismember(msg.friend_or_group+"的群成员",msg.other)){
         socket.mysend("no_have_exist");
         return;
     }
@@ -237,10 +237,7 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
         return;
     }
 
-    if(!redis.sismember(msg.friend_or_group+"的群成员",msg.other)){
-        socket.mysend("no_exist");
-        return;
-    }
+   
 
     
     if(redis.sismember(msg.friend_or_group+"的高权限者",msg.other)){
@@ -249,6 +246,11 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
     }
 
     loop:
+
+    if(!redis.sismember(msg.friend_or_group+"的群成员",msg.other)){
+        socket.mysend("no_exist");
+        return;
+    }
     
     /*redis.Hdel(msg.other+"的群聊列表",msg.friend_or_group);
     redis.Srem(msg.friend_or_group+"的群成员",msg.other);
@@ -289,6 +291,11 @@ void all_managers_del_members(StickyPacket socket,Message &msg){
             {
                 if(groupmember==msg.other ){
                     notice_socket.mysend(QING + notice + RESET);
+                }
+                if(redis.sismember(msg.friend_or_group+"的群管理员",msg.uid)){
+                   
+                    notice_socket.mysend(QING + notice + RESET);
+
                 }
             }
         }
@@ -466,7 +473,7 @@ void invite_friend_to_group(StickyPacket socket,Message &msg){
         return;
     }
 
-    if(!redis.sismember("用户ID集合",msg.friend_or_group)){
+    if(!redis.sismember("用户ID集合",msg.other)){
         socket.mysend("no_sign_up");
         return;
     }

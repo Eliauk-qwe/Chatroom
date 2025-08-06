@@ -211,6 +211,8 @@ public:
                             online_users.erase(uid);
                         }
                     }
+                    heart_time.erase(fd);
+
                 }
 
                 cout << "客户端" << fd << "已断开连接" << endl;
