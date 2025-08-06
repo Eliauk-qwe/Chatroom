@@ -81,10 +81,12 @@ private:
 
             while(!pool->stop && pool->taskqueue.empty()){
                 pthread_cond_wait(&pool->cond,&pool->mutex);
+                
             }
 
            if(pool->stop && pool->taskqueue.empty()){
               pthread_mutex_unlock(&pool->mutex);
+              break;
            }
 
            Task task =pool->taskqueue.front();

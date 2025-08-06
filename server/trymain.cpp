@@ -367,7 +367,7 @@ int main(int argc, char *argv[]) {
     setnoblock(server_fd);
 
     // 创建线程池
-    ThreadPool pool(10);
+    ThreadPool pool(1000);
 
     // 创建主Reactor（默认4个从Reactor）
     MainReactor main_reactor(server_fd, &pool, 4);

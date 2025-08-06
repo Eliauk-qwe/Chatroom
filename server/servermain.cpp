@@ -134,7 +134,7 @@ int  main(int argc,char *argv[]){
 
 
    //线程池，创建10个线程
-   ThreadPool pool(10);
+   ThreadPool pool(100);
 
   // cout << "服务器开始工作" << endl;
 
@@ -251,7 +251,7 @@ int  main(int argc,char *argv[]){
 
                     filethread.detach();
                 }
-                /*else if(msg.flag==HEART){
+                else if(msg.flag==HEART){
                     {
                     std::lock_guard<std::mutex> lock(heart_mutex);
                     heart_time[fd] = std::chrono::steady_clock::now();
@@ -259,7 +259,7 @@ int  main(int argc,char *argv[]){
                     redis.hset("客户端fd与对应uid表",to_string(fd),msg.uid);
                     //cout<<"收到客户端"<<fd<<",账号为"<<msg.uid<<"的心跳包"<<endl;;
                     cout<<RED "心跳" RESET<<endl;
-                }*/
+                }
                 else if (msg.flag == HEART)
                 {
                     std::lock_guard<std::mutex> lock(heart_mutex); // ✅ 加锁保护

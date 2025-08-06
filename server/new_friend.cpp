@@ -4,7 +4,7 @@ void friend_apply_agree(StickyPacket socket,Message &msg){
 
 
     // redis.Hdel(msg.uid+"的好友申请",msg.friend_or_group);
-    if(!redis.Hexists(msg.uid+"的好友申请",msg.friend_or_group)){
+    if(!redis.Hexists(msg.uid+"的新的朋友",msg.friend_or_group)){
         socket.mysend("no_exist");
         return;
     }

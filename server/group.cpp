@@ -15,23 +15,23 @@ void group_creat(StickyPacket socket,Message &msg){
         socket.mysend("my");
         return;
     }
-
-    if(!redis.Hexists(msg.uid+"的好友列表",msg.other)){
+        for(int i=0;i<msg.para.size();i++){
+    if(!redis.Hexists(msg.uid+"的好友列表",msg.para[i])){
         socket.mysend("no_friend");
         return;
     }
 
-    if(redis.Hexists(msg.uid+"的好友列表",msg.other) && redis.Hexists(msg.other+"的好友列表",msg.uid)){
+    if((redis.Hexists(msg.uid+"的好友列表",msg.para[i]) ) && ( !redis.Hexists(msg.para[i]+"的好友列表",msg.uid))){
         socket.mysend("del");
         return;
     }
 
-    if(!redis.sismember("用户ID集合",msg.other)){
+    if(!redis.sismember("用户ID集合",msg.para[i])){
         socket.mysend("no");
         return;
     }
 
-
+}
 
 
     /*string gid;
@@ -49,10 +49,10 @@ void group_creat(StickyPacket socket,Message &msg){
     for (int i = 0; i < msg.para.size(); i++)
     {
         redis.sadd(gid + "的群成员", msg.uid);
-        redis.sadd(gid + "的群成员", msg.other);
+        redis.sadd(gid + "的群成员", msg.para[i]);
 
         redis.hset(msg.uid + "的群聊列表", gid, msg.friend_or_group);
-        redis.hset(msg.other + "的群聊列表", gid, msg.friend_or_group);
+        redis.hset(msg.para[i] + "的群聊列表", gid, msg.friend_or_group);
     }
 
     //redis.hset(msg.uid+"的群聊列表",gid,msg.friend_or_group);
