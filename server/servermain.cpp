@@ -9,6 +9,8 @@ Redis redis;
 unordered_set<string> online_users;
 std::unordered_map<int, std::chrono::steady_clock::time_point> heart_time;
 std::chrono::seconds maxtime=std::chrono::seconds(60);
+// 推荐使用 constexpr 定义常量
+//constexpr std::chrono::seconds HEARTBEAT_TIMEOUT = 60s;
 std::mutex heart_mutex;
 
 
@@ -212,12 +214,14 @@ int  main(int argc,char *argv[]){
                         
                     }
                     cout << "客户端" << fd << "已断开连接" << endl;
-
+                    // 增加心跳记录的清理
+                    {
+                        std::lock_guard<std::mutex> lock(heart_mutex);
+                        heart_time.erase(fd);
+                    }
 
                     // 关闭连接
                     close(fd);
-
-                    
 
                     continue; // 继续处理下一个事件
                 }
@@ -247,13 +251,22 @@ int  main(int argc,char *argv[]){
 
                     filethread.detach();
                 }
-                else if(msg.flag==HEART){
+                /*else if(msg.flag==HEART){
                     {
                     std::lock_guard<std::mutex> lock(heart_mutex);
                     heart_time[fd] = std::chrono::steady_clock::now();
                     }
                     redis.hset("客户端fd与对应uid表",to_string(fd),msg.uid);
-                    cout<<"收到客户端"<<fd<<",账号为"<<msg.uid<<"的心跳包"<<endl;;
+                    //cout<<"收到客户端"<<fd<<",账号为"<<msg.uid<<"的心跳包"<<endl;;
+                    cout<<RED "心跳" RESET<<endl;
+                }*/
+                else if (msg.flag == HEART)
+                {
+                    std::lock_guard<std::mutex> lock(heart_mutex); // ✅ 加锁保护
+                    heart_time[fd] = std::chrono::steady_clock::now();
+                    redis.hset("客户端fd与对应uid表", to_string(fd), msg.uid);
+                    //online_users.insert(msg.uid); // ✅ 添加到在线用户
+                    cout <<  RED "心跳" RESET << endl;
                 }
                 else{  
                     StickyPacket socket(fd); 
@@ -271,7 +284,7 @@ int  main(int argc,char *argv[]){
 
 }
 
-void heart(int epd)
+/*void heart(int epd)
 {
 
     
@@ -309,9 +322,60 @@ void heart(int epd)
                 }
 
                 cout << "客户端" << fd << "已断开连接" << endl;
-                //time_out_clients.erase(fd);
+                time_out_clients.erase(fd);
                
             }
         
     
+}*/
+
+
+
+// 修复后的心跳线程函数
+void heart(int epd)
+{
+    while (true) // ✅ 改为无限循环
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        auto now = std::chrono::steady_clock::now();
+
+        vector<int> time_out_clients;
+        {
+            std::lock_guard<std::mutex> lock(heart_mutex);
+            // 遍历并找出超时的客户端
+            for (auto it = heart_time.begin(); it != heart_time.end();)
+            {
+                if (now - it->second > maxtime)
+                {
+                    time_out_clients.push_back(it->first);
+                    it = heart_time.erase(it); // ✅ 从记录中移除
+                }
+                else
+                {
+                    ++it;
+                }
+            }
+        }
+
+        // 处理超时客户端
+        for (int fd : time_out_clients)
+        {
+            close(fd);
+            epoll_ctl(epd, EPOLL_CTL_DEL, fd, nullptr);
+            
+            // 清理Redis和在线用户记录
+            if (redis.Exists("客户端fd与对应uid表"))
+            {
+                string uid = redis.Hget("客户端fd与对应uid表", to_string(fd));
+                redis.Hdel("客户端fd与对应uid表", to_string(fd));
+                
+                std::lock_guard<std::mutex> lock(heart_mutex);
+                if (online_users.find(uid) != online_users.end())
+                {
+                    online_users.erase(uid);
+                }
+            }
+            cout << "客户端" << fd << "已断开连接（心跳超时）" << endl;
+        }
+    }
 }

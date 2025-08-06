@@ -125,7 +125,7 @@ void owner_quit_group(const string group_name);
 void all_managers_del_members(const string group_name);
 int check_group_managers(const string group_name);
 void notice_recv_thread(string uid,int noticefd);
-void client_quit(int fd);
+void client_quit(int fd,int rfd);
 void sfile(string uid,string friend_or_group,int flag,string path);
 void fvfile(string uid,string friend_or_group,int flag,string filename,string want_path);
 int  friend_recv_file(string uid,StickyPacket f_socket,int flag,string friend_or_group,string filename,string want_path);

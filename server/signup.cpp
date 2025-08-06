@@ -88,6 +88,9 @@ void passfind(StickyPacket socket,Message &msg){
 
 void client_quit(StickyPacket socket,Message &msg){
     online_users.erase(msg.uid);
+    string cfd=redis.Hget(msg.uid,"消息fd");
+    close(stoi(cfd));
+    
     redis.hset(msg.uid,"消息fd","-1");
     socket.mysend("ok");
     int fd=socket.getfd();

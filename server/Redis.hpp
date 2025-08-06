@@ -45,7 +45,7 @@ public:
             fprintf(stderr,"SADD错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("SADD成功: %s\n",reply->str);
+            //printf("SADD成功: %s\n",reply->str);
             freeReplyObject(reply);
             return true;
         }
@@ -70,8 +70,8 @@ public:
             fprintf(stderr,"SCARD错误 :%s\n",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("SCARD成功: %s\n",reply->str);
-            cout << key<<"中元素个数为"<< reply->integer<<endl;
+            //printf("SCARD成功: %s\n",reply->str);
+            //cout << key<<"中元素个数为"<< reply->integer<<endl;
             int num=reply->integer;
             freeReplyObject(reply);
             return num;
@@ -93,7 +93,7 @@ public:
             fprintf(stderr,"HSET错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HSET成功: %s\n",reply->str);
+            //printf("HSET成功: %s\n",reply->str);
             cout<<reply->integer<<endl;
             freeReplyObject(reply);
             return reply->integer;
@@ -113,7 +113,7 @@ public:
             fprintf(stderr,"SISMEMBER错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("SISMEMBER成功\n");
+            //printf("SISMEMBER成功\n");
             int num=reply->integer;
             freeReplyObject(reply);
             return num;
@@ -206,7 +206,7 @@ public:
             fprintf(stderr,"DEL错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("DEL成功\n");
+            //printf("DEL成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -226,7 +226,7 @@ public:
             fprintf(stderr,"SREM错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("SREM成功\n");
+           // printf("SREM成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -257,7 +257,7 @@ public:
             fprintf(stderr,"HLEN错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HLEN成功\n");
+           // printf("HLEN成功\n");
             int count=reply->integer;
             freeReplyObject(reply);
             return count;
@@ -294,7 +294,7 @@ public:
             fprintf(stderr,"HEXISTS错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("HEXISTS成功\n");
+           // printf("HEXISTS成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -314,7 +314,7 @@ public:
             fprintf(stderr,"EXISTS错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer==1){
-            printf("EXISTS成功\n");
+            //printf("EXISTS成功\n");
             freeReplyObject(reply);
             return true;
         }
@@ -335,7 +335,7 @@ public:
             fprintf(stderr,"EXISTS错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_ARRAY ){
-            printf("SMEMBERS成功\n");
+           // printf("SMEMBERS成功\n");
             for (size_t i = 0; i < reply->elements; ++i)
             {
                 
@@ -366,7 +366,7 @@ public:
             fprintf(stderr,"RPUSH错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER && reply->integer>0){
-            printf("RPUSH成功\n");
+          //  printf("RPUSH成功\n");
             int num=reply->integer;
             freeReplyObject(reply);
             return num;
@@ -443,7 +443,7 @@ public:
             fprintf(stderr,"HLEN错误 :%s",reply->str);
         }
         else if(reply->type ==REDIS_REPLY_INTEGER ){
-            printf("HLEN成功\n");
+           // printf("HLEN成功\n");
             int count=reply->integer;
             freeReplyObject(reply);
             return count;

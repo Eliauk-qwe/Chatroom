@@ -18,6 +18,11 @@ string log_uid="0";
 int main(int argc,char *argv[]){
     std::srand(std::time(0));
 
+    thread heart_thread_1([uid = log_uid, fd = socket_fd.getfd()]()
+                                  { heartthread(uid, fd); });
+            heart_thread_1.detach();
+
+
 
     std::signal(SIGPIPE, SIG_IGN);
     if(argc !=3){

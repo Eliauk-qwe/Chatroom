@@ -4,6 +4,10 @@ void friend_apply_agree(StickyPacket socket,Message &msg){
 
 
     // redis.Hdel(msg.uid+"的好友申请",msg.friend_or_group);
+    if(!redis.Hexists(msg.uid+"的好友申请",msg.friend_or_group)){
+        socket.mysend("no_exist");
+        return;
+    }
 
     if(!redis.sismember("用户ID集合",msg.friend_or_group)){
         socket.mysend("no");
@@ -57,6 +61,14 @@ void friend_apply_agree(StickyPacket socket,Message &msg){
 }
 
 void friend_apply_refuse(StickyPacket socket,Message &msg){
+    if(!redis.Hexists(msg.uid+"的好友申请",msg.friend_or_group)){
+        socket.mysend("no_exist");
+        return;
+    }
+    if(!redis.sismember("用户ID集合",msg.friend_or_group)){
+        socket.mysend("no");
+        return;
+    }
 
     redis.Hdel(msg.uid + "的新的朋友", msg.friend_or_group);
     /*string num1 = redis.Hget(msg.uid + "的未读消息", "新的朋友");

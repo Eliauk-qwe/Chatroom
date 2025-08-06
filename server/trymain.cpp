@@ -35,7 +35,7 @@ private:
     std::mutex queue_mutex;
     std::queue<int> new_connections;
     std::unordered_map<int, std::chrono::steady_clock::time_point> heart_time;
-    std::unordered_map<int, std::string> fd_to_uid;  // 存储fd到uid的映射
+    //std::unordered_map<int, std::string> fd_to_uid;  // 存储fd到uid的映射
     Redis redis;  // 每个SubReactor有自己的Redis连接
     ThreadPool* pool;
     const std::chrono::seconds maxtime = std::chrono::seconds(60);
@@ -120,10 +120,11 @@ public:
                             close(new_fd);
                             continue;
                         }
-                       /* heart_time[new_fd] = std::chrono::steady_clock::now();
-                        cout << "SubReactor添加新连接: " << new_fd << endl;*/
+                       //heart_time[new_fd] = std::chrono::steady_clock::now();
+                        cout << "SubReactor添加新连接: " << new_fd << endl;
                     }
                 } else if (events[i].events & EPOLLIN) {
+                    //cout<<"fd:"<<fd<<endl;
                     // 处理数据读取
                     StickyPacket sp_fd(fd);
                     string client_cmd;
@@ -172,10 +173,14 @@ public:
                         });
                         filethread.detach();
                     } else if (msg.flag == HEART) {
+                        //cout<<"fd888888:"<<fd<<endl;
+                        
                         // 更新心跳时间
                         heart_time[fd] = std::chrono::steady_clock::now();
-                        fd_to_uid[fd] = msg.uid;
-                        cout << "收到客户端" << fd << "的心跳包, uid: " << msg.uid << endl;
+                        redis.hset("客户端fd与对应uid表",to_string(fd),msg.uid);
+                        //fd_to_uid[fd] = msg.uid;
+                        //cout << "收到客户端" << fd << "的心跳包, uid: " << msg.uid << endl;
+                        cout<<RED "心跳" RESET<<endl;
                     } else {
                         // 普通消息交给线程池处理
                         StickyPacket socket(fd);
@@ -214,6 +219,7 @@ public:
                     heart_time.erase(fd);
 
                 }
+               // cout<<"0"<<endl;
 
                 cout << "客户端" << fd << "已断开连接" << endl;
                

@@ -69,6 +69,11 @@ void friend_apply_agree(){
             return;
         }
 
+        if(recv=="no_exist"){
+            printf("对方没有给你发送好友申请\n");
+            return;
+        }
+
         if (recv == "ok")
         {
             printf("你们已成功加为好友\n");
@@ -108,6 +113,16 @@ void friend_apply_refuse(){
         {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
+        }
+
+        if(recv=="no"){
+            printf("该用户未注册\n");
+            return;
+        }
+
+        if(recv=="no_exist"){
+            printf("对方没有给你发送好友申请\n");
+            return;
         }
 
         if (recv == "OK")

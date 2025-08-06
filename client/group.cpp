@@ -82,11 +82,13 @@ void group_creat(){
     if(res<0){
         return;
     }
+
+
     printf("输入你想创建的群聊的名字\n");
     string gruop_name;
     getline(cin,gruop_name);
 
-    /*printf("你想邀请一起创建群聊的人的个数为：\n");
+    printf("你想邀请一起创建群聊的人的个数为：\n");
     string num;
     getline(cin,num);
 
@@ -95,16 +97,15 @@ void group_creat(){
     
     vector<string> uidlist;
     for(int i=0;i<stoi(num);i++){
-        string uid;*/
         printf("你想邀请一起创建群聊的人的uid为:\n");
         string uid;
         getline(cin,uid);
-       // uidlist.push_back(uid);
-
+        uidlist.push_back(uid);
+    }
     
 
-    Message msg(log_uid,GROUP_CREAT,gruop_name,uid);
-    //Message msg(log_uid,gruop_name,uidlist,GROUP_CREAT);
+   // Message msg(log_uid,GROUP_CREAT,gruop_name,uid);
+    Message msg(log_uid,gruop_name,uidlist,GROUP_CREAT);
     socket_fd.mysend(msg.S_to_json());
 
     string recv;

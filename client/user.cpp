@@ -4,7 +4,7 @@ void user_menu(){
     string opt;
     while(1){
         printf("=============用户界面===========\n");
-        printf("选项：\n[1]好友\n[2]群聊\n[3]通知类消息\n[4]退出登录\n");
+        printf("选项：\n[1]好友\n[2]群聊\n[3]通知类消息\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("===============================\n");
@@ -33,9 +33,9 @@ void user_menu(){
             notice();
             break;
 
-        case 4:
-            client_quit(socket_fd.getfd());
-            break;
+        /*case 4:
+            client_quit(socket_fd.getfd(),socket_fd.get_notice_fd());
+            break;*/
         
         default:
             printf("请输入正确选项\n");

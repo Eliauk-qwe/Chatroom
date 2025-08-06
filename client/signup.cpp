@@ -87,18 +87,26 @@ int log_in(){
             notice_thread.detach();
 
             // 修复点2：添加分号并重命名线程变量
-            thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
+            /*thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
-            heart_thread_1.detach();
+            heart_thread_1.detach();*/
 
             /*thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
                 heartthread(uid,fd);
             });
             heart_thread_2.detach();*/
 
+            // 登录成功后启动两个心跳线程
+            /*thread heart_thread_1([uid = log_uid, fd = socket_fd.getfd()]()
+                                  { heartthread(uid, fd); });
+            heart_thread_1.detach();*/
 
-            
+            // 添加通知socket的心跳
+            thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
+                                  { heartthread(uid, fd); });
+            heart_thread_2.detach();
+
             return 1;
         }
 
@@ -178,7 +186,7 @@ void pass_find(){
 
 
 
-void client_quit(int fd){
+void client_quit(int fd,int cfd){
     if(log_uid=="0"){
         close(fd);
         int notice_fd=socket_fd.get_notice_fd();
@@ -197,6 +205,7 @@ void client_quit(int fd){
         }
         if(recv=="ok"){
             close(fd);
+            close(cfd);
             int notice_fd=socket_fd.get_notice_fd();
             close(notice_fd);
             printf("连接已关闭\n");
@@ -213,12 +222,16 @@ void heartthread(string uid,int fd){
    //int flag=true;
 
     while(1){
-        std::this_thread::sleep_for(std::chrono::seconds(30));
 
         Message msg(uid,HEART);
 
-        socket_fd.mysend(msg.S_to_json());
+        int res=socket_fd.mysend(msg.S_to_json());
+        if(res<0){
+            printf("服务器关闭\n");
+            exit(0);
+        }
 
+        std::this_thread::sleep_for(std::chrono::seconds(30));
 
     }
 

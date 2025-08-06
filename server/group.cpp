@@ -46,15 +46,14 @@ void group_creat(StickyPacket socket,Message &msg){
     redis.sadd("群聊ID集合",gid);
     redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);
 
+    for (int i = 0; i < msg.para.size(); i++)
+    {
+        redis.sadd(gid + "的群成员", msg.uid);
+        redis.sadd(gid + "的群成员", msg.other);
 
-    redis.sadd(gid+"的群成员",msg.uid);
-    redis.sadd(gid+"的群成员",msg.other);
-
-    redis.hset(msg.uid+"的群聊列表",gid,msg.friend_or_group);
-    redis.hset(msg.other+"的群聊列表",gid,msg.friend_or_group);
-
-     
-    
+        redis.hset(msg.uid + "的群聊列表", gid, msg.friend_or_group);
+        redis.hset(msg.other + "的群聊列表", gid, msg.friend_or_group);
+    }
 
     //redis.hset(msg.uid+"的群聊列表",gid,msg.friend_or_group);
     redis.hset(msg.uid+"创建的群聊",gid,msg.friend_or_group);
