@@ -2967,8 +2967,6 @@ CMakeFiles/server.dir/server/servermain.cpp.o: /home/wly/桌面/chatroom/server/
   /home/wly/桌面/chatroom/StickyPacket.hpp \
   /home/wly/桌面/chatroom/ThreadPool.hpp \
   /home/wly/桌面/chatroom/server/Redis.hpp \
-  /home/wly/桌面/chatroom/server/msgqueue.hpp \
-  /home/wly/桌面/chatroom/server/server.hpp \
   /home/wly/桌面/chatroom/server/server.hpp \
   /usr/include/alloca.h \
   /usr/include/arpa/inet.h \
@@ -4279,8 +4277,6 @@ CMakeFiles/server.dir/server/user.cpp.o: /home/wly/桌面/chatroom/server/user.c
 /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
 
 /usr/include/c++/13/csignal:
-
-/home/wly/桌面/chatroom/server/msgqueue.hpp:
 
 /home/wly/桌面/chatroom/server/servermain.cpp:
 

@@ -2975,8 +2975,6 @@ CMakeFiles/server.dir/server/servermain.cpp.o
  /home/wly/桌面/chatroom/StickyPacket.hpp
  /home/wly/桌面/chatroom/ThreadPool.hpp
  /home/wly/桌面/chatroom/server/Redis.hpp
- /home/wly/桌面/chatroom/server/msgqueue.hpp
- /home/wly/桌面/chatroom/server/server.hpp
  /home/wly/桌面/chatroom/server/server.hpp
  /usr/include/alloca.h
  /usr/include/arpa/inet.h
