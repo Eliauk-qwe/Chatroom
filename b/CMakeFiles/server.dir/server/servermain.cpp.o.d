@@ -336,8 +336,6 @@ CMakeFiles/server.dir/server/servermain.cpp.o: \
  /usr/include/nlohmann/ordered_map.hpp /usr/include/c++/13/any \
  /usr/include/nlohmann/detail/macro_unscope.hpp \
  /usr/include/nlohmann/thirdparty/hedley/hedley_undef.hpp \
- /home/wly/桌面/chatroom/server/./msgqueue.hpp \
- /home/wly/桌面/chatroom/server/./server.hpp \
  /usr/include/c++/13/condition_variable /usr/include/c++/13/csignal \
  /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
