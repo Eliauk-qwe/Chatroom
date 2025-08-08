@@ -72,6 +72,7 @@
 #define GROUP_INVITE_AGREE 47
 #define GROUP_INVITE_REFUSE 48
 #define CHECK_GROUP_INVITE 49
+#define IS_FRIEND_CHAT_DAILY 50
 
 
 
@@ -138,6 +139,7 @@ void  group_invite_agree();
 void  frient_invite_group();
 void   group_invite_refuse();
 int  check_group_invite();
+void is_friend_chat(string friend_chat_uid);
 
 
 

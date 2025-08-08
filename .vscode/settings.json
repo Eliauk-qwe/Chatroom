@@ -1,5 +1,22 @@
 {
     "files.associations": {
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "cstring": "cpp",
+        "string": "cpp",
+        "regex": "cpp",
+        "string_view": "cpp",
+        "format": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "stdexcept": "cpp",
+        "system_error": "cpp",
+        "typeinfo": "cpp",
+        "variant": "cpp",
+        "*.inc": "cpp"
     }
 }

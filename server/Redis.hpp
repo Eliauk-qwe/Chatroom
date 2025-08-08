@@ -30,6 +30,24 @@ public:
         }
     }
 
+    // 添加复制构造函数
+    Redis(const Redis& other) {
+        con = redisConnect("127.0.0.1", 6379);
+        if (con == nullptr) {
+            cout << "Can not allocate redis context" << endl;
+        } else if (con->err) {
+            cout << con->errstr << endl;
+            redisFree(con);
+        } else {
+            cout << "Connect to redis successfully! (Copied)" << endl;
+        }
+    }
+    
+    // 添加移动构造函数
+    Redis(Redis&& other) noexcept : con(other.con) {
+        other.con = nullptr;
+    }
+
     ~Redis(){
         redisFree(con);
     }
@@ -139,7 +157,7 @@ public:
         else if(reply->type ==REDIS_REPLY_STRING ){
             //cout<<"333333333"<<endl;
 
-            printf("HGET成功:%s\n",reply->str);
+           printf("HGET成功:%s\n",reply->str);
             string recv=reply->str;
             freeReplyObject(reply);
             return recv;
@@ -452,6 +470,55 @@ public:
         freeReplyObject(reply);
         return 0;
     }
+
+
+
+    bool acquire_lock(const string& lock_key, const string& lock_value, int expire_time) {
+        redisReply* reply = (redisReply*)redisCommand(con, "SET %s %s NX EX %d", lock_key.c_str(), lock_value.c_str(), expire_time);
+        
+        if (reply == nullptr) return false;
+        bool success = (reply->type == REDIS_REPLY_STATUS && string(reply->str) == "OK");
+        freeReplyObject(reply);
+        return success;
+    }
+
+    bool release_lock(const string& lock_key, const string& lock_value) {
+        string script = 
+            "if redis.call('get', KEYS[1]) == ARGV[1] then "
+            "   return redis.call('del', KEYS[1]) "
+            "else "
+            "   return 0 "
+            "end";
+        
+        redisReply* reply = (redisReply*)redisCommand(con, "EVAL %s 1 %s %s", script.c_str(), lock_key.c_str(), lock_value.c_str());
+        
+        if (reply == nullptr) return false;
+        bool success = (reply->type == REDIS_REPLY_INTEGER && reply->integer == 1);
+        freeReplyObject(reply);
+        return success;
+    }
+
+    // ====== 新增消息队列方法 ======
+    void enqueue_message(const string& queue_key, const string& message) {
+        redisCommand(con, "LPUSH %s %s", queue_key.c_str(), message.c_str());
+    }
+
+    string dequeue_message(const string& queue_key) {
+        redisReply* reply = (redisReply*)redisCommand(con, "BRPOP %s 0", queue_key.c_str());
+        if (reply == nullptr || reply->type != REDIS_REPLY_ARRAY || reply->elements < 2) {
+            freeReplyObject(reply);
+            return "";
+        }
+        string message = reply->element[1]->str;
+        freeReplyObject(reply);
+        return message;
+    }
+
+    // ====== 新增锁值生成方法 ======
+    string generate_lock_value() {
+        return to_string(time(nullptr)) + "_" + to_string(rand());
+    }
+
 
 
     

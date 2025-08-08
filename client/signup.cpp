@@ -92,10 +92,10 @@ int log_in(){
             });
             heart_thread_1.detach();*/
 
-            /*thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
+            thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
                 heartthread(uid,fd);
             });
-            heart_thread_2.detach();*/
+            heart_thread_2.detach();
 
             // 登录成功后启动两个心跳线程
             /*thread heart_thread_1([uid = log_uid, fd = socket_fd.getfd()]()
@@ -103,9 +103,9 @@ int log_in(){
             heart_thread_1.detach();*/
 
             // 添加通知socket的心跳
-            thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
+            /*thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
                                   { heartthread(uid, fd); });
-            heart_thread_2.detach();
+            heart_thread_2.detach();*/
 
             return 1;
         }

@@ -23,9 +23,9 @@ endif()
 
 # 服务器源文件（根据实际文件调整）
 set(SERVER_SOURCES
-##server/servermain.cpp
+server/servermain.cpp
 server/file.cpp
-server/trymain.cpp
+#server/trymain.cpp
 server/friend_quit.cpp
 server/friend.cpp
 server/new_friend.cpp
@@ -34,6 +34,7 @@ server/group_apply.cpp
 server/group.cpp
 server/signup.cpp
 server/user.cpp
+##server/chat_notice.cpp
 )
 
 # 客户端源文件（根据实际文件调整）

@@ -15,6 +15,22 @@ sockaddr_in client_addr;
 string log_uid="0";
 
 
+// 设置文件描述符为非阻塞模式
+void setnoblock(int fd){
+    int flag =fcntl(fd,F_GETFL);
+     if(flag<0){
+        cerr << "fcntl" <<endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(fcntl(fd,F_SETFL,flag|O_NONBLOCK)  <0){
+        cerr << "fcntl" <<endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+
 int main(int argc,char *argv[]){
     std::srand(std::time(0));
 
@@ -30,6 +46,10 @@ int main(int argc,char *argv[]){
         exit(EXIT_FAILURE);
     }
 
+
+
+    
+
     /*int fd=socket(AF_INET,SOCK_STREAM,0);
     if(fd<0){
         perror("socket failed!\n");
@@ -38,6 +58,9 @@ int main(int argc,char *argv[]){
     }*/
 
     int fd=socket_fd.getfd();
+
+   // setnoblock(fd);
+   // setnoblock(socket_fd.get_notice_fd());
 
     // 设置接收缓冲区大小（系统级）
     int recv_buf_size = 2*1024 * 1024; // 1MB

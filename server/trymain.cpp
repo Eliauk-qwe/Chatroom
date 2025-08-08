@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <queue>
-#include <unistd.h> // for pipe
+#include <unistd.h> 
 
 // 全局变量（需要加锁保护）
 std::mutex online_users_mutex;
@@ -128,6 +128,7 @@ public:
                     // 处理数据读取
                     StickyPacket sp_fd(fd);
                     string client_cmd;
+                    cout<<client_cmd<<endl;
                     int recv_ret = sp_fd.server_recv(fd, client_cmd);
                     if (recv_ret <= 0) {
                         if (recv_ret == 0) {
@@ -365,6 +366,7 @@ int main(int argc, char *argv[]) {
 
     // 设置非阻塞
     setnoblock(server_fd);
+   
 
     // 创建线程池
     ThreadPool pool(1000);

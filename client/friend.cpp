@@ -301,15 +301,44 @@ void friend_chat(){
             continue;
         }
         else if(recv=="ok"){
-            continue;
+            is_friend_chat(friend_chat_uid);
+            return;
         }
     }
 
 }
 
 
+void is_friend_chat(string friend_chat_uid){
+    while(1){
+        string notice;
+        getline(cin,notice);
 
 
+        if(notice == "quit"){
+            //printf("退出聊天\n");
+            Message msg(log_uid,FRIEND_QUIT_CHAT,friend_chat_uid);
+            socket_fd.mysend(msg.S_to_json());
+            string recv=socket_fd.client_recv();
+            if (recv == "读取消息头不完整")
+            {
+                cout << "服务器关闭" << endl;
+                exit(EXIT_SUCCESS);
+            }
+            if(recv=="ok"){
+                return;
+            }
+        }
 
 
+        Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
+        socket_fd.mysend(msg.S_to_json());
+        
+        string recv=socket_fd.client_recv();
+        if(recv=="ok"){
+            continue;
+        }
 
+    }
+
+}

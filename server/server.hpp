@@ -18,6 +18,8 @@
 #include <mutex>
 #include "../StickyPacket.hpp"
 #include "../Message.hpp"
+#include <csignal>
+
 
 
 
@@ -73,6 +75,7 @@
 #define GROUP_INVITE_AGREE 47
 #define GROUP_INVITE_REFUSE 48
 #define CHECK_GROUP_INVITE 49
+#define IS_FRIEND_CHAT_DAILY 50
 
 
 
@@ -134,6 +137,12 @@ void group_quit_chat(StickyPacket socket,Message &msg);
 void client_quit(StickyPacket socket,Message &msg);
 void heart(int epd);
 void invite_friend_to_group(StickyPacket socket,Message &msg);
+void is_friend_chat_daily(StickyPacket socket,Message &msg);
+/*void init_friend_message_process();
+void friend_message_process();
+void process_friendchat_message(Redis& local_redis,string &sender_uid,string &recver_uid,string &content);*/
+
+ 
 
 
 
@@ -155,6 +164,8 @@ public:
     void translation(StickyPacket socket,const std::string &cmd){
         Message msg;
         msg.Json_to_s(cmd);
+    
+
         switch (msg.flag)
         {
         case SIGNUP:
@@ -280,11 +291,16 @@ public:
             invite_friend_to_group(socket,msg);
             break;
 
+        case IS_FRIEND_CHAT_DAILY:
+            is_friend_chat_daily(socket,msg);
+            break;
+
         
         default:
             break;
         }
 
+    
     }
 };
 
