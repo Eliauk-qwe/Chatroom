@@ -36,7 +36,7 @@ void user_quit(StickyPacket socket,Message &msg){
 
 
 void notice(StickyPacket socket,Message &msg){
-    printf("11111111111\n");
+    
     //通知类消息
     int num1=redis.Llen(msg.uid+"的通知类消息");
     //cout<<num1<<endl;
@@ -53,38 +53,7 @@ void notice(StickyPacket socket,Message &msg){
     socket.mysend("over");
 
     
-    //新的朋友
-    /*string num2=redis.Hget(msg.uid+"的未读消息","新的朋友");
-    string b="[2]新的朋友消息有"+num2+"个";
-    socket.mysend(b);
-
-    //好友消息
-    string num3=redis.Hget(msg.uid+"的未读消息","好友消息");
-    string c="[3]好友消息共有"+num3+"个,以下是你的分别未读的好友消息";
-    socket.mysend(c);
-    vector<string> noticelist2=redis.Hgetall(msg.uid+"的好友消息");
-    for(int i=0;i<noticelist2.size();i+=2){
-        string name =redis.Hget(noticelist2[i],"name");
-        const string &notice=noticelist2[i]+":"+name+"    "+noticelist2[i+1];
-        socket.mysend(notice);
-    }
-
-    //群聊申请
-    string num4=redis.Hget(msg.uid+"的未读消息","群聊申请");
-    string d="[4]群聊申请有"+num4+"个";
-    socket.mysend(d);
-
-    //群聊消息
-    string num5=redis.Hget(msg.uid+"的未读消息","群聊消息");
-    string e="[5]群聊消息共有"+num5+"个,以下是你的分别未读的群聊消息";
-    socket.mysend(e);
-    vector<string> noticelist3=redis.Hgetall(msg.uid+"的群聊消息");
-    for(int i=0;i<noticelist3.size();i+=2){
-        const string &notice=noticelist3[i]+"   "+noticelist3[i+1];
-        socket.mysend(notice);
-    }*/
-
-
+   
 
 
 }

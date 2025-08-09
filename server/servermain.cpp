@@ -144,8 +144,8 @@ int  main(int argc,char *argv[]){
   // cout << "服务器开始工作" << endl;
 
    // 在main函数中启动心跳线程
-   /*std::thread heart_thread(heart, epoll_fd);
-   heart_thread.detach(); // 分离线程，使其独立运行*/
+   std::thread heart_thread(heart, epoll_fd);
+   heart_thread.detach(); // 分离线程，使其独立运行
 
    //======================================================================
    //心跳检测
@@ -258,7 +258,7 @@ int  main(int argc,char *argv[]){
 
                     filethread.detach();
                 }
-                /*else if(msg.flag==HEART){
+                else if(msg.flag==HEART){
                     {
                     std::lock_guard<std::mutex> lock(heart_mutex);
                     heart_time[fd] = std::chrono::steady_clock::now();
@@ -266,7 +266,7 @@ int  main(int argc,char *argv[]){
                     redis.hset("客户端fd与对应uid表",to_string(fd),msg.uid);
                     //cout<<"收到客户端"<<fd<<",账号为"<<msg.uid<<"的心跳包"<<endl;;
                     cout<<RED "心跳" RESET<<endl;
-                }*/
+                }
                 /*else if (msg.flag == HEART)
                 {
                     std::lock_guard<std::mutex> lock(heart_mutex); // ✅ 加锁保护

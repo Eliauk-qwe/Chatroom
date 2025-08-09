@@ -360,7 +360,7 @@ void is_friend_chat_daily(StickyPacket socket,Message &msg){
         
     }
     
-    socket.mysend("ok");
+    //socket.mysend("ok");
     return;
 
 

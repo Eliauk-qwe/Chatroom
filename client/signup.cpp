@@ -86,16 +86,21 @@ int log_in(){
             });
             notice_thread.detach();
 
+            cout<<"notice_fd:"<<socket_fd.get_notice_fd()<<endl;
+            cout<<"fd:"<<socket_fd.getfd()<<endl;
+
+
+
             // 修复点2：添加分号并重命名线程变量
             /*thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
             heart_thread_1.detach();*/
 
-            thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
+            /*thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
                 heartthread(uid,fd);
             });
-            heart_thread_2.detach();
+            heart_thread_2.detach();*/
 
             // 登录成功后启动两个心跳线程
             /*thread heart_thread_1([uid = log_uid, fd = socket_fd.getfd()]()
@@ -116,6 +121,8 @@ int log_in(){
 
 void notice_recv_thread(string uid,int noticefd){
     StickyPacket noticesocket(noticefd);
+
+    cout<<"notice_recv_thread:"<<noticefd<<endl;
 
     
     sockaddr_in notice_addr=client_addr;
@@ -207,6 +214,7 @@ void client_quit(int fd,int cfd){
             close(fd);
             close(cfd);
             int notice_fd=socket_fd.get_notice_fd();
+            cout<<"notice_fd:"<<notice_fd<<endl;
             close(notice_fd);
             printf("连接已关闭\n");
             printf("感谢使用聊天室，再见！\n");

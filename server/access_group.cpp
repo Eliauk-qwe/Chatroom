@@ -357,13 +357,7 @@ void group_chat(StickyPacket socket,Message &msg){
         socket.mysend(notice);
     }
 
-    //处理未读消息中群聊消息
-    /*string num1=redis.Hget(msg.uid+"的群聊消息",msg.friend_or_group);
-    redis.hset(msg.uid+"的群聊消息",msg.friend_or_group,"0");
-
-    string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
-    redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num2) - stoi(num1)));*/
-
+    
 
     socket.mysend("over");
 }
@@ -373,10 +367,6 @@ void group_daily_chat(StickyPacket socket,Message &msg){
     StickyPacket fd1_socket(stoi(fd1));
 
     string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
-
-
-
-
     if(!redis.sismember(msg.friend_or_group+"的群成员",msg.uid)){
         string  notice="我:" RED "!" RESET +msg.other; 
         fd1_socket.mysend(notice);
@@ -384,17 +374,6 @@ void group_daily_chat(StickyPacket socket,Message &msg){
         socket.mysend("del");
         return;
     }
-
-
-
-
-
-
-
-
-
-
-
 
     //对于我
     string my_notice=PLUSWHITE "我：" RESET+msg.other;
@@ -421,9 +400,9 @@ void group_daily_chat(StickyPacket socket,Message &msg){
         if(online_users.find(groupmember)!=online_users.end()){
             string other_notice_fd=redis.Hget(groupmember,"消息fd");
 
-            //printf("1111111111\n");
+            
             StickyPacket other_notice_socket(stoi(other_notice_fd));
-           // printf("222222222\n");
+        
 
 
             //对于在这个群聊界面的人
@@ -431,28 +410,13 @@ void group_daily_chat(StickyPacket socket,Message &msg){
                 other_notice_socket.mysend(other_notice);
             }else{
                 other_notice_socket.mysend(QING "群聊"+msg.friend_or_group+":"+groupname+"发来了一条消息"+RESET);
-               // string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
-               // cout<<"num1:"<<num1<<endl;
-                //redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
-
-                //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
-               // redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
+               
             }
 
 
 
         }
-        //对于未登录的人
-        else{
-            //printf("33333333333\n");
-
-           // string num1=redis.Hget(groupmember+"的群聊消息",msg.friend_or_group);
-           // cout<<"num1:"<<num1<<endl;
-            //redis.hset(groupmember+"的群聊消息",msg.friend_or_group,to_string(stoi(num1)+1));
-
-            //string num2=redis.Hget(msg.uid+"的未读消息","群聊消息");
-           // redis.hset(msg.uid+"的未读消息","群聊消息",to_string(stoi(num1)+1));
-        }
+        
     }
 
     socket.mysend("ok");

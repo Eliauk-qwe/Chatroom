@@ -212,9 +212,9 @@ void friend_chat(){
         }
         printf("现在可以开始新的聊天了:\n");
         printf(PLUSBLUE "HELP(如果你想收发文件或退出): \n" RESET);
-        printf(PLUSBLUE"[1]请输入 :send 来发送文件\n" RESET);
-        printf(PLUSBLUE"[2]请输入 :recv 来接受文件\n" RESET);
-        printf(PLUSBLUE"[3]输入 :quit 可退出\n\n" RESET);
+        printf(PLUSBLUE"[1]请输入 send 来发送文件\n" RESET);
+        printf(PLUSBLUE"[2]请输入 recv 来接受文件\n" RESET);
+        printf(PLUSBLUE"[3]输入 quit 可退出\n\n" RESET);
         
     }
     
@@ -334,10 +334,10 @@ void is_friend_chat(string friend_chat_uid){
         Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
         socket_fd.mysend(msg.S_to_json());
         
-        string recv=socket_fd.client_recv();
-        if(recv=="ok"){
+        //string recv=socket_fd.client_recv();
+        /*if(recv=="ok"){
             continue;
-        }
+        }*/
 
     }
 

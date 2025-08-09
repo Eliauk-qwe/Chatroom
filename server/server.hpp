@@ -16,7 +16,7 @@
 #include <sys/sendfile.h>
 #include <thread>
 #include <mutex>
-#include "../StickyPacket.hpp"
+#include "../a.hpp"
 #include "../Message.hpp"
 #include <csignal>
 
@@ -135,9 +135,11 @@ void group_send_file(StickyPacket socket,Message &msg);
 void group_recv_file(StickyPacket socket,Message &msg);
 void group_quit_chat(StickyPacket socket,Message &msg);
 void client_quit(StickyPacket socket,Message &msg);
-void heart(int epd);
+void heart();
 void invite_friend_to_group(StickyPacket socket,Message &msg);
 void is_friend_chat_daily(StickyPacket socket,Message &msg);
+//void heart(StickyPacket socket,Message &msg);
+
 /*void init_friend_message_process();
 void friend_message_process();
 void process_friendchat_message(Redis& local_redis,string &sender_uid,string &recver_uid,string &content);*/
@@ -150,6 +152,13 @@ void process_friendchat_message(Redis& local_redis,string &sender_uid,string &re
 
 extern Redis redis;
 extern unordered_set<string> online_users;
+extern std::unordered_map<int, time_t> last_active_time;
+extern std::unordered_map<int, std::string> fd_to_user;
+extern std::mutex active_mtx;
+
+
+
+
 
 
 using namespace std;
@@ -293,6 +302,10 @@ public:
 
         case IS_FRIEND_CHAT_DAILY:
             is_friend_chat_daily(socket,msg);
+            break;
+
+        case NOTICE:
+            redis.hset(msg.uid, "消息fd", to_string(socket.getfd()));
             break;
 
         

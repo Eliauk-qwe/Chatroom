@@ -129,7 +129,8 @@ public:
                     StickyPacket sp_fd(fd);
                     string client_cmd;
                     cout<<client_cmd<<endl;
-                    int recv_ret = sp_fd.server_recv(fd, client_cmd);
+                    
+                    int recv_ret = sp_fd.notice_recv(client_cmd);
                     if (recv_ret <= 0) {
                         if (recv_ret == 0) {
                             cout << "客户端关闭连接: " << fd << endl;
@@ -156,7 +157,7 @@ public:
                     }
 
                     // 处理消息
-                    Message msg;
+                   /* Message msg;
                     msg.Json_to_s(client_cmd);
                     
                     if (msg.flag == NOTICE) {
@@ -189,7 +190,7 @@ public:
                             trans.translation(socket, client_cmd);
                         });
                         pool->addTask(task);
-                    }
+                    }*/
                 }
             }
             

@@ -23,7 +23,8 @@ endif()
 
 # 服务器源文件（根据实际文件调整）
 set(SERVER_SOURCES
-server/servermain.cpp
+##server/servermain.cpp
+server/main.cpp
 server/file.cpp
 #server/trymain.cpp
 server/friend_quit.cpp
