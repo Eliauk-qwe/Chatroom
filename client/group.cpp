@@ -92,6 +92,11 @@ void group_creat(){
     string num;
     getline(cin,num);
 
+    if(num=="0"){
+        printf("0个无法创群\n");
+        return;
+    }
+
     printf(PLUSBLUE "注意：接下来每次只能输入一个人\n" RESET);
 
     

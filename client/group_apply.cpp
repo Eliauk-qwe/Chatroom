@@ -80,6 +80,11 @@ void group_apply_agree(){
             return;
         }
 
+        if(recv=="no"){
+            printf("不一致，请重新输入\n");
+            return;
+        }
+
         if(recv=="nosend"){
             printf("对方没有给你发过群聊申请\n");
             return;
@@ -137,6 +142,12 @@ void group_apply_refuse(){
     if (recv == "have_exist")
     {
         printf("该人已经在该群里，可能已经被其他高权限者同意入群\n");
+        return;
+    }
+
+    if (recv == "no")
+    {
+        printf("不一致，请重新输入\n");
         return;
     }
 

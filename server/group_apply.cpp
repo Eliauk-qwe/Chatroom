@@ -5,6 +5,12 @@ void group_apply_agree(StickyPacket socket,Message &msg){
         return;
     }
 
+    string apply =redis.Hget(msg.uid+"的群聊申请",msg.friend_or_group);
+    if(apply.find(msg.other)==std::string::npos){
+        socket.mysend("no");
+        return;
+    }
+
     string group_name=redis.Hget("群聊ID-NAME表",msg.other);
 
     if(redis.sismember(msg.other+"的群成员",msg.friend_or_group)){
@@ -17,6 +23,8 @@ void group_apply_agree(StickyPacket socket,Message &msg){
         socket.mysend("nosend");
         return;
     }
+
+    
 
     
     //对于uid
@@ -54,6 +62,12 @@ void group_apply_refuse(StickyPacket socket,Message &msg){
     if(redis.sismember(msg.other+"的群成员",msg.friend_or_group)){
         socket.mysend("have_exist");
         redis.Hdel(msg.uid+"的群聊申请",msg.friend_or_group);
+        return;
+    }
+
+    string apply =redis.Hget(msg.uid+"的群聊申请",msg.friend_or_group);
+    if(apply.find(msg.other)==std::string::npos){
+        socket.mysend("no");
         return;
     }
 

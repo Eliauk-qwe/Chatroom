@@ -2,37 +2,31 @@
 void group_creat(StickyPacket socket,Message &msg){
     
 
-    /*if(redis.sismember("群聊ID集合",msg.friend_or_group)){
-        socket.mysend("name_have_exit");
-        return;
-    }*/
 
-
-    /*string gid = redis.incr("group_uid_counter");
-    redis.sadd("群聊ID集合",gid);
-    redis.hset("群聊ID-NAME表",gid,msg.friend_or_group);*/
     if(msg.uid==msg.other){
         socket.mysend("my");
         return;
     }
-        for(int i=0;i<msg.para.size();i++){
-    if(!redis.Hexists(msg.uid+"的好友列表",msg.para[i])){
-        socket.mysend("no_friend");
-        return;
+    for (int i = 0; i < msg.para.size(); i++)
+    {
+        if (!redis.Hexists(msg.uid + "的好友列表", msg.para[i]))
+        {
+            socket.mysend("no_friend");
+            return;
+        }
+
+        if ((redis.Hexists(msg.uid + "的好友列表", msg.para[i])) && (!redis.Hexists(msg.para[i] + "的好友列表", msg.uid)))
+        {
+            socket.mysend("del");
+            return;
+        }
+
+        if (!redis.sismember("用户ID集合", msg.para[i]))
+        {
+            socket.mysend("no");
+            return;
+        }
     }
-
-    if((redis.Hexists(msg.uid+"的好友列表",msg.para[i]) ) && ( !redis.Hexists(msg.para[i]+"的好友列表",msg.uid))){
-        socket.mysend("del");
-        return;
-    }
-
-    if(!redis.sismember("用户ID集合",msg.para[i])){
-        socket.mysend("no");
-        return;
-    }
-
-}
-
 
     /*string gid;
     string notice="你已成功与uid为";
