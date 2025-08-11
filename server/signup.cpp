@@ -52,7 +52,7 @@ void log_in(StickyPacket socket,Message &msg){
         else{
             cout<<"登录成功"<<endl;
             online_users.insert(msg.uid);
-            //redis.hset("fd-uid表", to_string(socket.getfd()), msg.uid);
+            redis.hset("fd-uid表", to_string(socket.getfd()), msg.uid);
             //redis.hset(msg.uid, "聊天对象", "0");
             //string name = redis.Hget(msg.uid, "name");
             redis.hset(msg.uid, "聊天对象", "0");

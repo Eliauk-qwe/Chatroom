@@ -362,14 +362,15 @@ void group_chat(StickyPacket socket,Message &msg){
     socket.mysend("over");
 }
 
-void group_daily_chat(StickyPacket socket,Message &msg){
-    string fd1 =redis.Hget(msg.uid,"消息fd");
-    StickyPacket fd1_socket(stoi(fd1));
+void group_daily_chat(StickyPacket socket,Message &msg,Redis redis){
+    //string fd1 =redis.Hget(msg.uid,"消息fd");
+    //cout<<"fd1 wo："<<fd1<<endl;
+    //StickyPacket fd1_socket(stoi(fd1));
 
     string groupname=redis.Hget("群聊ID-NAME表",msg.friend_or_group);
     if(!redis.sismember(msg.friend_or_group+"的群成员",msg.uid)){
         string  notice="我:" RED "!" RESET +msg.other; 
-        fd1_socket.mysend(notice);
+        //fd1_socket.mysend(notice);
         redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",notice);
         socket.mysend("del");
         return;
@@ -378,10 +379,12 @@ void group_daily_chat(StickyPacket socket,Message &msg){
     //对于我
     string my_notice=PLUSWHITE "我：" RESET+msg.other;
     redis.Rpush(msg.uid+"与"+msg.friend_or_group+":"+groupname+"的聊天记录",my_notice);
-    string my_notice_fd=redis.Hget(msg.uid,"消息fd");
-    StickyPacket my_notice_socket(stoi(my_notice_fd));
+    //string my_notice_fd=redis.Hget(msg.uid,"消息fd");
+   // StickyPacket my_notice_socket(stoi(my_notice_fd));
+   // cout<<"fd1 wo："<<fd1<<endl;
+
     //我肯定是群聊的在线用户，不需要特别颜色，也不需要处理未读消息
-    my_notice_socket.mysend(my_notice);
+   // my_notice_socket.mysend(my_notice);
 
 
 

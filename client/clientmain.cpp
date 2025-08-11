@@ -42,20 +42,9 @@ int main(int argc,char *argv[]){
     }
 
 
-
-    
-
-    /*int fd=socket(AF_INET,SOCK_STREAM,0);
-    if(fd<0){
-        perror("socket failed!\n");
-        close(fd);
-        exit(EXIT_FAILURE);
-    }*/
-
     int fd=socket_fd.getfd();
 
-   // setnoblock(fd);
-   // setnoblock(socket_fd.get_notice_fd());
+   
 
     // 设置接收缓冲区大小（系统级）
     int recv_buf_size = 2*1024 * 1024; // 1MB
@@ -77,7 +66,8 @@ int main(int argc,char *argv[]){
         close(fd);
         exit(EXIT_FAILURE);
     }
-
+    //setnoblock(fd);
+    
     
 
     int res;

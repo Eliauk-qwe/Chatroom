@@ -268,11 +268,6 @@ void friend_chat(){
             getline(cin, want_path);
 
 
-            /*thread thread([uid=log_uid,friend_or_group=groupID,filename=filename,want_path=want_path,other_uid=other_uid](){
-                gvfile(uid,friend_or_group,GROUP_RECV_FILE,filename,want_path,other_uid);
-            });
-            thread.detach();*/
-
             thread thread([uid=log_uid,friend_or_group=friend_chat_uid,filename=filename,want_path=want_path,other_uid=fileID](){
                 gvfile(uid,friend_or_group,FRIEND_RECV_FILE,filename,want_path,other_uid);
             });
@@ -284,6 +279,7 @@ void friend_chat(){
 
         Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
         socket_fd.mysend(msg.S_to_json());
+
         
         string recv=socket_fd.client_recv();
         if (recv == "读取消息头不完整")
@@ -301,15 +297,15 @@ void friend_chat(){
             continue;
         }
         else if(recv=="ok"){
-            is_friend_chat(friend_chat_uid);
-            return;
+            cout<<PLUSWHITE "我：" RESET+notice<<endl;
+            continue;
         }
     }
 
 }
 
 
-void is_friend_chat(string friend_chat_uid){
+/*void is_friend_chat(string friend_chat_uid){
     while(1){
         string notice;
         getline(cin,notice);
@@ -334,11 +330,11 @@ void is_friend_chat(string friend_chat_uid){
         Message msg(log_uid,FRIEND_CHAT_DAILY,friend_chat_uid,notice);
         socket_fd.mysend(msg.S_to_json());
         
-        //string recv=socket_fd.client_recv();
-        /*if(recv=="ok"){
+        string recv=socket_fd.client_recv();
+        if(recv=="ok"){
             continue;
-        }*/
+        }
 
     }
 
-}
+}*/

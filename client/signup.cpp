@@ -18,10 +18,7 @@ void sign_up(){
         else   break;
     }
 
-    /*cout<<"请输入密保问题"<<endl;
-    getline(cin,question);
-    cout<<"请输入回答"<<endl;
-    getline(cin,answer);*/
+   
 
     cout<<"请设置昵称"<<endl;
     getline(cin,name);
@@ -47,8 +44,7 @@ int log_in(){
     string phone,pass,uid;
     int i=3;
     while(1){
-        /*cout<<"请输入你的电话号码:"<<endl;
-        getline(cin,phone);*/
+        
         cout<<"请输入你的密码:"<<endl;
         getline(cin,pass);
         cout<<"请输入你的uid:"<<endl;
@@ -86,31 +82,16 @@ int log_in(){
             });
             notice_thread.detach();
 
-            cout<<"notice_fd:"<<socket_fd.get_notice_fd()<<endl;
-            cout<<"fd:"<<socket_fd.getfd()<<endl;
-
-
-
-            // 修复点2：添加分号并重命名线程变量
-            /*thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
+            thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
                 heartthread(uid,fd);
             });
-            heart_thread_1.detach();*/
+            heart_thread_1.detach();
 
-            /*thread heart_thread_2([uid=log_uid,fd=socket_fd.get_notice_fd()](){
-                heartthread(uid,fd);
+
+            /*thread notice_thread([uid=log_uid,noticefd=socket_fd.getfd()](){
+                notice_recv_thread_1(uid,noticefd);
             });
-            heart_thread_2.detach();*/
-
-            // 登录成功后启动两个心跳线程
-            /*thread heart_thread_1([uid = log_uid, fd = socket_fd.getfd()]()
-                                  { heartthread(uid, fd); });
-            heart_thread_1.detach();*/
-
-            // 添加通知socket的心跳
-            /*thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
-                                  { heartthread(uid, fd); });
-            heart_thread_2.detach();*/
+            notice_thread.detach();*/
 
             return 1;
         }
@@ -122,7 +103,7 @@ int log_in(){
 void notice_recv_thread(string uid,int noticefd){
     StickyPacket noticesocket(noticefd);
 
-    cout<<"notice_recv_thread:"<<noticefd<<endl;
+    //cout<<"notice_recv_thread:"<<noticefd<<endl;
 
     
     sockaddr_in notice_addr=client_addr;
@@ -132,9 +113,7 @@ void notice_recv_thread(string uid,int noticefd){
         return;
     }
 
-    /*thread heart_thread_2([uid = log_uid, fd = socket_fd.get_notice_fd()]()
-                          { heartthread(uid, fd); });
-    heart_thread_2.detach();*/
+    //setnoblock(noticefd);
 
     Message msg(uid,NOTICE);
     //noticesocket.mysend(msg.S_to_json());
@@ -143,9 +122,19 @@ void notice_recv_thread(string uid,int noticefd){
         return;
     }
 
+    /*while (true)
+    {
+        auto msgs = noticesocket.recv_messages();
+        for (auto &m : msgs)
+        {
+            cout << m << endl;
+        }
+        
+    }*/
+
     while(1){
-        string recv =noticesocket.client_recv();
-        if(recv =="读取消息头不完整"){
+        string recv =noticesocket.Receive_client();
+        if(recv =="close"){
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
@@ -156,6 +145,20 @@ void notice_recv_thread(string uid,int noticefd){
 
 
 }
+
+
+/*void notice_recv_thread_1(string uid,int noticefd){
+    while(1){
+        string recv =socket_fd.Receive_client();
+        if(recv =="读取消息头不完整"){
+            cout << "服务器关闭" << endl;
+            exit(EXIT_SUCCESS);
+        }
+
+        cout << recv <<endl;
+    }
+    return;
+}*/
 
 
 void pass_find(){

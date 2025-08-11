@@ -15,6 +15,7 @@ class StickyPacket{
 private:
     int fd=-1;
     int notice_fd=-1;
+    string recv_buffer;
 
 public:
     int getfd() {
@@ -40,19 +41,19 @@ public:
         }
     }
 
-    ~StickyPacket()  {
-        //1cout<<"StickyPacket 析构函数调用"<<endl;
-
-    }
-        /*if (fd != -1) {
-            close(fd);  // 析构时自动关闭
-            fd = -1;
+   
+        ~StickyPacket() {
+            if (fd > 0) {
+                close(fd);
+                fd = -1;
+            }
+            if (notice_fd > 0) {
+                close(notice_fd);
+                notice_fd = -1;
+            }
         }
-        if(notice_fd!=-1){
-            close(notice_fd);
-            notice_fd=-1;
-        }*/
     
+        
 
 
 
@@ -170,66 +171,7 @@ public:
     }
 
 
-    //客户端接受
-    /*string client_recv(){
-        // === 第一步：接收4字节消息头（长度信息） ===
-        int len=0;
-        char *head_buf=new char[4];
-        int left=4;
-        char *p=(char *)len;
-
-        while(left>0){
-            int nrecv=recv(fd,p,left,0);
-            if(nrecv == -1){
-                close(fd);
-                perror("recv failed!\n");
-                exit(0);
-            }
-            else if(nrecv ==0){
-                cout << "连接已结束" <<endl;
-                close(fd);
-                delete [] head_buf;
-                return "close";
-            }
-
-            p=p+nrecv;
-            left=left-nrecv;
-        }
-
-        len=ntohl(len);
-        delete [] head_buf;
-
-        char *buf =new char[len+1];
-        left=len;
-        p=buf;
-
-        while(left>0){
-            int nrecv=recv(fd,p,left,0);
-            if(nrecv == -1){
-                close(fd);
-                perror("recv failed!\n");
-                delete [] buf;
-                exit(0);
-            }
-            else if(nrecv ==0){
-                cout << "连接已结束" <<endl;
-                close(fd);
-                delete [] buf;
-                return "close";
-            }
-
-            p=p+nrecv;
-            left=left-nrecv;
-
-        }
-
-        buf[len]='\0';
-        string msg(buf);
-        delete [] buf;
-        return msg;
-
-    }*/
-
+    
 
     string client_recv(){
         uint32_t len=0;
@@ -263,6 +205,145 @@ public:
         string msg(buf);
         return msg;
         
+    }
+
+
+    /*void set_nonblock() {
+        int flags = fcntl(fd, F_GETFL, 0);
+        fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+    }
+
+    // 发送消息（长度头 + 数据体）
+    int send_message(const string &message) {
+        if (fd <= 0) return -1;
+        uint32_t len = htonl(message.size());
+
+        string packet;
+        packet.append(reinterpret_cast<char*>(&len), 4);
+        packet.append(message);
+
+        size_t left = packet.size();
+        const char *p = packet.data();
+
+        while (left > 0) {
+            ssize_t n = send(fd, p, left, 0);
+            if (n < 0) {
+                if (errno == EINTR || errno == EWOULDBLOCK) continue;
+                perror("send");
+                return -1;
+            }
+            p += n;
+            left -= n;
+        }
+        return 0;
+    }
+
+    // 接收并解析消息（批量拆包）
+    vector<string> recv_messages() {
+        vector<string> messages;
+        char buf[4096];
+
+        // 非阻塞 recv
+        while (true) {
+            ssize_t n = recv(fd, buf, sizeof(buf), 0);
+            if (n > 0) {
+                recv_buffer.append(buf, n);
+            } else if (n == 0) {
+                // 对方关闭连接
+                close(fd);
+                fd = -1;
+                break;
+            } else {
+                if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                    break; // 暂时无数据可读
+                } else if (errno == EINTR) {
+                    continue; // 信号中断，重试
+                } else {
+                    perror("recv");
+                    close(fd);
+                    fd = -1;
+                    break;
+                }
+            }
+        }
+
+        // 解析粘包（长度前缀协议）
+        while (true) {
+            if (recv_buffer.size() < 4) break; // 不够长度头
+
+            uint32_t msg_len;
+            memcpy(&msg_len, recv_buffer.data(), 4);
+            msg_len = ntohl(msg_len);
+
+            if (recv_buffer.size() < 4 + msg_len) break; // 不够完整消息
+
+            string msg = recv_buffer.substr(4, msg_len);
+            messages.push_back(msg);
+
+            recv_buffer.erase(0, 4 + msg_len); // 移除已处理数据
+        }
+
+        return messages;
+    }*/
+
+
+    string Receive_client()
+    {
+        // 数据头
+        int len = 0;
+        char *buf = new char[4];
+        int cnt = 4;
+        char *pt = (char *)&len;
+        while (cnt > 0)
+        {
+            int ret = recv(fd, pt, cnt, 0);
+            if (ret == -1)
+            {
+                close(fd);
+                perror("read error");
+                exit(0);
+            }
+            else if (ret == 0)
+            {
+                cout << "连接已结束" << endl;
+                close(fd);
+                delete[] buf;
+                return "close";
+            }
+            pt += ret;
+            cnt -= ret;
+        }
+        len = ntohl(len);
+        delete[] buf;
+        buf = new char[len + 1];
+        cnt = len;
+        pt = buf;
+
+        while (cnt > 0)
+        {
+            int ret = recv(fd, pt, cnt, 0);
+            if (ret == -1)
+            {
+                close(fd);
+                perror("read error");
+                delete[] buf;
+                exit(0);
+            }
+            else if (ret == 0)
+            {
+                cout << "连接已结束" << endl;
+                close(fd);
+                delete[] buf;
+                return "close";
+            }
+            pt += ret;
+            cnt -= ret;
+        }
+        buf[len] = '\0';
+        string msg(buf);
+        delete[] buf;
+
+        return msg;
     }
 };
 

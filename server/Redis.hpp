@@ -31,7 +31,7 @@ public:
     }
 
     // 添加复制构造函数
-    Redis(const Redis& other) {
+    /*Redis(const Redis& other) {
         con = redisConnect("127.0.0.1", 6379);
         if (con == nullptr) {
             cout << "Can not allocate redis context" << endl;
@@ -50,7 +50,7 @@ public:
 
     ~Redis(){
         redisFree(con);
-    }
+    }*/
 
     //集合SADD  在集合key中添加member元素
     bool sadd (const string &key,const string &member){
@@ -102,6 +102,7 @@ public:
 
     //哈希HSET  设置  1001 name wly |||| key field alue  返回值为新增的字段数
     int hset (const string &key,const string &field,const string &value){
+        
         redisReply *reply = (redisReply *)redisCommand(con,"HSET %s %s %s",key.c_str(),field.c_str(),value.c_str());
 
         if(reply == nullptr){
@@ -133,6 +134,7 @@ public:
         else if(reply->type ==REDIS_REPLY_INTEGER ){
             //printf("SISMEMBER成功\n");
             int num=reply->integer;
+            cout<<num<<endl;
             freeReplyObject(reply);
             return num;
         }

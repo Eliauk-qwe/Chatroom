@@ -16,9 +16,11 @@
 #include <sys/sendfile.h>
 #include <thread>
 #include <mutex>
-#include "../a.hpp"
+
 #include "../Message.hpp"
 #include <csignal>
+#include "../StickyPacket.hpp"
+
 
 
 
@@ -130,14 +132,17 @@ void all_managers_del_members(StickyPacket socket,Message &msg);
 void check_group_managers(StickyPacket socket,Message &msg);
 void access_group(StickyPacket socket,Message &msg);
 void group_chat(StickyPacket socket,Message &msg);
-void group_daily_chat(StickyPacket socket,Message &msg);
+void group_daily_chat(StickyPacket socket,Message &msg,Redis redis);
 void group_send_file(StickyPacket socket,Message &msg);
 void group_recv_file(StickyPacket socket,Message &msg);
 void group_quit_chat(StickyPacket socket,Message &msg);
 void client_quit(StickyPacket socket,Message &msg);
-void heart();
+void heart(int fd);
 void invite_friend_to_group(StickyPacket socket,Message &msg);
-void is_friend_chat_daily(StickyPacket socket,Message &msg);
+void client_dead(int nfd);
+void client_lastactive_now(int nfd);
+
+//void is_friend_chat_daily(StickyPacket socket,Message &msg,Redis redis);
 //void heart(StickyPacket socket,Message &msg);
 
 /*void init_friend_message_process();
@@ -150,11 +155,12 @@ void process_friendchat_message(Redis& local_redis,string &sender_uid,string &re
 
 
 
-extern Redis redis;
+
 extern unordered_set<string> online_users;
 extern std::unordered_map<int, time_t> last_active_time;
 extern std::unordered_map<int, std::string> fd_to_user;
 extern std::mutex active_mtx;
+extern Redis redis;
 
 
 
@@ -174,7 +180,7 @@ public:
         Message msg;
         msg.Json_to_s(cmd);
     
-
+        Redis redis;
         switch (msg.flag)
         {
         case SIGNUP:
@@ -277,7 +283,7 @@ public:
             group_chat(socket,msg);
             break;
         case GROUP_DAILY_CHAT:
-            group_daily_chat(socket,msg);
+            group_daily_chat(socket,msg, redis);
             break;
         case GROUP_SEND_FILE:
             group_send_file(socket,msg);
@@ -300,12 +306,14 @@ public:
             invite_friend_to_group(socket,msg);
             break;
 
-        case IS_FRIEND_CHAT_DAILY:
-            is_friend_chat_daily(socket,msg);
-            break;
+        /*case IS_FRIEND_CHAT_DAILY:
+            is_friend_chat_daily(socket,msg,redis);
+            break;*/
 
-        case NOTICE:
+       /* case NOTICE:
             redis.hset(msg.uid, "消息fd", to_string(socket.getfd()));
+            break;*/
+        case HEART:
             break;
 
         

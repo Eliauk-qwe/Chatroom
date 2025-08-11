@@ -170,16 +170,16 @@ void friend_quit_chat(StickyPacket socket,Message &msg){
 
 void friend_chat_daily(StickyPacket socket,Message &msg){
     //获取两个客户端的实时socket
-    string fd1 =redis.Hget(msg.uid,"消息fd");
+    //string fd1 =redis.Hget(msg.uid,"消息fd");
     string fd2 =redis.Hget(msg.friend_or_group,"消息fd");
-    StickyPacket fd1_socket(stoi(fd1));
+    //StickyPacket fd1_socket(stoi(fd1));
     StickyPacket fd2_socket(stoi(fd2));
 
     //对于你被好友删除
     if((!redis.Hexists(msg.friend_or_group+"的好友列表",msg.uid)) &&(redis.Hexists(msg.uid+"的好友列表",msg.friend_or_group))){
         //socket.mysend("friend_del");
         string  notice="我:" RED "!" RESET +msg.other; 
-        fd1_socket.mysend(notice);
+        //fd1_socket.mysend(notice);
         redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice);
         socket.mysend("del");
         return;
@@ -189,7 +189,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
     //对于你被好友屏蔽
     if(redis.Hexists(msg.friend_or_group+"的屏蔽列表",msg.uid)){
         string  notice="我:" RED "!" RESET +msg.other; 
-        fd1_socket.mysend(notice);
+        //fd1_socket.mysend(notice);
         redis.Rpush(msg.uid+"与"+msg.friend_or_group+"的聊天记录",notice);
         socket.mysend("quit");
         return; 
@@ -205,7 +205,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
     redis.Rpush(msg.friend_or_group+"与"+msg.uid+"的聊天记录",notice2);
 
     //对于你
-    fd1_socket.mysend(notice1);
+    //fd1_socket.mysend(notice1);
 
     //对于好友
     //发送给客户端2
@@ -216,10 +216,8 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
         fd2_socket.mysend(QING+msg.uid+":"+name1+"给你发了一条消息"+RESET);
         
     }
-    else if(online_users.find(msg.friend_or_group)==online_users.end()){
-        
-        
-    }
+    
+    //close(stoi(fd2));
     socket.mysend("ok");
     return;
 
@@ -331,7 +329,7 @@ void friend_chat_daily(StickyPacket socket,Message &msg){
 // }
 
 
-void is_friend_chat_daily(StickyPacket socket,Message &msg){
+/*void is_friend_chat_daily(StickyPacket socket,Message &msg,Redis redis){
     //获取两个客户端的实时socket
     string fd1 =redis.Hget(msg.uid,"消息fd");
     string fd2 =redis.Hget(msg.friend_or_group,"消息fd");
@@ -360,11 +358,11 @@ void is_friend_chat_daily(StickyPacket socket,Message &msg){
         
     }
     
-    //socket.mysend("ok");
+    socket.mysend("ok");
     return;
 
 
-}
+}*/
 
 
 

@@ -139,7 +139,9 @@ void  group_invite_agree();
 void  frient_invite_group();
 void   group_invite_refuse();
 int  check_group_invite();
-void is_friend_chat(string friend_chat_uid);
+//void is_friend_chat(string friend_chat_uid);
+void notice_recv_thread_1(string uid,int noticefd);
+void setnoblock(int fd);
 
 
 

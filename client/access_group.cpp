@@ -541,11 +541,13 @@ void group_chat(const string groupID){
         }
 
         if(recv=="del"){
-            cout<<recv<<endl;
+            cout<<PLUSWHITE "我:" RESET<<notice<<endl;
+
             printf(RED "        你已不是该群成员\n" RESET);
             continue;
         }
         if(recv=="ok"){
+            cout<<PLUSWHITE "我:" RESET<<notice<<endl;
             continue;
         }
     }

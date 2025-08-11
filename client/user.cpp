@@ -34,7 +34,8 @@ void user_menu(){
             break;
 
         case 4:
-            client_quit(socket_fd.getfd(),socket_fd.get_notice_fd());
+            //client_quit(socket_fd.getfd(),socket_fd.get_notice_fd());
+            exit(0);
             break;
         
         default:
