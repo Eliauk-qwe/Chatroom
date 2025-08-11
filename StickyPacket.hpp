@@ -42,16 +42,7 @@ public:
     }
 
    
-        ~StickyPacket() {
-            if (fd > 0) {
-                close(fd);
-                fd = -1;
-            }
-            if (notice_fd > 0) {
-                close(notice_fd);
-                notice_fd = -1;
-            }
-        }
+       
     
         
 
