@@ -58,18 +58,20 @@ void group_apply_refuse(StickyPacket socket,Message &msg){
 
     string group_name=redis.Hget("群聊ID-NAME表",msg.other);
 
-
-    if(redis.sismember(msg.other+"的群成员",msg.friend_or_group)){
-        socket.mysend("have_exist");
-        redis.Hdel(msg.uid+"的群聊申请",msg.friend_or_group);
-        return;
-    }
-
     string apply =redis.Hget(msg.uid+"的群聊申请",msg.friend_or_group);
     if(apply.find(msg.other)==std::string::npos){
         socket.mysend("no");
         return;
     }
+
+
+    if(redis.sismember(msg.other+"的群成员",msg.friend_or_group)){
+        socket.mysend("have_exist");
+        //redis.Hdel(msg.uid+"的群聊申请",msg.friend_or_group);
+        return;
+    }
+
+   
 
     if(!redis.Hexists(msg.uid+"的群聊申请",msg.friend_or_group)){
         socket.mysend("nosend");

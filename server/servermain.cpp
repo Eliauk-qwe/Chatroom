@@ -184,44 +184,12 @@ int  main(int argc,char *argv[]){
                 string client_cmd;
                // 修改后：仅关闭当前连接
                 int recv_ret = sp_fd.server_recv(fd, client_cmd);
-                /*if (recv_ret <= 0)
-                {
-                    if (recv_ret == 0)
-                    {
-                        cout << "客户端关闭连接: " << fd << endl;
-                    }
-                    else
-                    {
-                       // perror("接收数据错误");
-                    }
-
-                    // 从 epoll 中移除
-                    epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, nullptr);
-                    if(redis.Exists("客户端fd与对应uid表")){
-                        string uid=redis.Hget("客户端fd与对应uid表",to_string(fd));
-                        redis.Hdel("客户端fd与对应uid表",to_string(fd));
-                        if(online_users.find(uid)!=online_users.end()){
-                            online_users.erase(uid);
-                        }
-                        
-                    }
-                    cout << "客户端" << fd << "已断开连接" << endl;
-                    // 增加心跳记录的清理
-                    {
-                        std::lock_guard<std::mutex> lock(heart_mutex);
-                        heart_time.erase(fd);
-                    }
-
-                    // 关闭连接
-                    close(fd);
-
-                    continue; // 继续处理下一个事件
-                }*/
+               
+                
 
                 if (recv_ret <= 0)
                 { // 用户退出了
-                    cout<<"111exit"<<endl;
-                    cout<<"fd:"<<fd<<endl;
+                
                     client_dead(fd);
                     continue;
                 }
