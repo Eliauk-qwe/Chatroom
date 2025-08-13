@@ -6,7 +6,6 @@ void user_quit(StickyPacket socket,Message &msg){
     for(int i=0;i<friendlist.size();i=i+2){
         redis.del(msg.uid+"与"+friendlist[i]+"的聊天记录");
     }
- 
     redis.del(msg.uid + "的好友列表");
     redis.del(msg.uid + "的屏蔽列表");
     redis.del(msg.uid + "的通知类消息");
@@ -14,14 +13,10 @@ void user_quit(StickyPacket socket,Message &msg){
     redis.del(msg.uid + "的群聊申请");
     redis.del(msg.uid + "的群聊列表");
     redis.del(msg.uid + "创建的群聊");
-
-
     vector<string> grouplist = redis.Smembers(msg.uid+"的群聊列表");
     for(const string &groupname : grouplist){
         redis.del(msg.uid + "与"+groupname+"的聊天记录");
     }
-
-
     redis.del(msg.uid);
     redis.Srem("用户ID集合",msg.uid);
     if (online_users.find(msg.uid) != online_users.end())
@@ -30,6 +25,8 @@ void user_quit(StickyPacket socket,Message &msg){
     }
      
 }
+
+
 
 
 
