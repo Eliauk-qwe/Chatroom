@@ -4,7 +4,7 @@ void user_menu(){
     string opt;
     while(1){
         printf("=============用户界面===========\n");
-        printf("选项：\n[1]好友\n[2]群聊\n[3]通知类消息\n[4]用户退出\n");
+        printf("选项：\n[1]好友\n[2]群聊\n[3]通知类消息\n[4]用户注销\n[4]用户退出\n");
         printf("请输入你的选择：\n");
         getline(cin,opt);
         printf("===============================\n");
@@ -25,16 +25,15 @@ void user_menu(){
             group_menu();
             break;
         
-        /*case 3:
+        case 4:
             user_quit();
-            exit(0);*/
+            exit(0);
 
         case 3:
             notice();
             break;
 
-        case 4:
-            //client_quit(socket_fd.getfd(),socket_fd.get_notice_fd());
+        case 5:
             exit(0);
             break;
         
@@ -62,7 +61,7 @@ void user_quit(){
 }
 
 void  notice(){
-    //printf("以下是你的所有通知消息:\n");
+   
     Message msg(log_uid,INFORM);
     socket_fd.mysend(msg.S_to_json());
     string recv =socket_fd.client_recv();
@@ -71,10 +70,7 @@ void  notice(){
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-    /*if(recv=="0"){
-        printf("你还没有未读的通知消息\n");
-        return;
-    }*/
+    
     while(recv !="over"){
         cout<<recv<<endl;
         recv=socket_fd.client_recv();

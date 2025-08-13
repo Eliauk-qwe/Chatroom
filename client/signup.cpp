@@ -103,8 +103,6 @@ int log_in(){
 void notice_recv_thread(string uid,int noticefd){
     StickyPacket noticesocket(noticefd);
 
-    //cout<<"notice_recv_thread:"<<noticefd<<endl;
-
     
     sockaddr_in notice_addr=client_addr;
     if(connect(noticefd,(sockaddr*)&notice_addr,sizeof(notice_addr))  <0){
@@ -113,24 +111,16 @@ void notice_recv_thread(string uid,int noticefd){
         return;
     }
 
-    //setnoblock(noticefd);
+    
 
     Message msg(uid,NOTICE);
-    //noticesocket.mysend(msg.S_to_json());
+    
     if (noticesocket.mysend(msg.S_to_json()) < 0) {
         cerr << "通知注册失败" << endl;
         return;
     }
 
-    /*while (true)
-    {
-        auto msgs = noticesocket.recv_messages();
-        for (auto &m : msgs)
-        {
-            cout << m << endl;
-        }
-        
-    }*/
+   
 
     while(1){
         string recv =noticesocket.Receive_client();
@@ -147,19 +137,7 @@ void notice_recv_thread(string uid,int noticefd){
 }
 
 
-/*void notice_recv_thread_1(string uid,int noticefd){
-    while(1){
-        string recv =socket_fd.Receive_client();
-        if(recv =="读取消息头不完整"){
-            cout << "服务器关闭" << endl;
-            exit(EXIT_SUCCESS);
-        }
-
-        cout << recv <<endl;
-    }
-    return;
-}*/
-
+   
 
 void pass_find(){
     string uid,phone;

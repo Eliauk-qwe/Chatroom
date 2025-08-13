@@ -42,13 +42,7 @@ void friend_apply_agree(){
     if(res<0){
         return;
     }
-    /*printf("\n你想要同意的的好友申请的数量为:\n");
-    string num;
-    getline(cin,num);*/
-
-    //printf(PLUSBLUE "请依次输入你想添加的好友的uid(不能为空)\n\n" RESET);
-    //for (int i = 0; i < stoi(num); i++)
-    //{
+    
 
         string friend_agree_uid;
         printf("你想同意的收到的好友申请的uid:\n");

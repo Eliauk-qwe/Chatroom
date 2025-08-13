@@ -1,24 +1,13 @@
 #include "server.hpp"
 #include <csignal>
 
-//int user_uid=1001;
+
 
 
 MessageTrans trans;
 Redis redis;
 unordered_set<string> online_users;
-/*std::unordered_map<int, std::chrono::steady_clock::time_point> heart_time;
-std::chrono::seconds maxtime=std::chrono::seconds(60);
-// 推荐使用 constexpr 定义常量
-//constexpr std::chrono::seconds HEARTBEAT_TIMEOUT = 60s;
-std::mutex heart_mutex;*/
-
 unordered_map<int, chrono::time_point<chrono::steady_clock>> client_last_active;
-
-
-
-
-
 
 
 // 设置文件描述符为非阻塞模式
@@ -40,7 +29,7 @@ void setnoblock(int fd){
 
 
 int  main(int argc,char *argv[]){
-    signal(SIGPIPE, SIG_IGN);
+    
 
     // 在main函数中初始化USER_UID计数器
     if (!redis.Exists("user_uid_counter"))
@@ -105,9 +94,6 @@ int  main(int argc,char *argv[]){
     }
    
 
-   
-   //init_friend_message_process();
-
 
     //使用epoll
     int epoll_fd=epoll_create1(0);
@@ -131,7 +117,7 @@ int  main(int argc,char *argv[]){
    //线程池，创建10个线程
    ThreadPool pool(10);
 
-  // cout << "服务器开始工作" << endl;
+
 
    // 在main函数中启动心跳线程
    std::thread heart_thread(heart, epoll_fd);
@@ -184,21 +170,14 @@ int  main(int argc,char *argv[]){
                 string client_cmd;
                // 修改后：仅关闭当前连接
                 int recv_ret = sp_fd.server_recv(fd, client_cmd);
-               
-                
-
                 if (recv_ret <= 0)
-                { // 用户退出了
+                { 
                 
                     client_dead(fd);
                     continue;
                 }
 
                 cout<<client_cmd<<endl;
-
-
-                
-
                 Message msg;
                 msg.Json_to_s(client_cmd);
                 
@@ -219,8 +198,9 @@ int  main(int argc,char *argv[]){
                     });
 
                     filethread.detach();
+                }else if(msg.flag==HEART){
+                    client_lastactive_now(fd);
                 }
-                
                 else{  
                     client_lastactive_now(fd);
                     StickyPacket socket(fd); 

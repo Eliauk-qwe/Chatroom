@@ -30,27 +30,7 @@ public:
         }
     }
 
-    // 添加复制构造函数
-    /*Redis(const Redis& other) {
-        con = redisConnect("127.0.0.1", 6379);
-        if (con == nullptr) {
-            cout << "Can not allocate redis context" << endl;
-        } else if (con->err) {
-            cout << con->errstr << endl;
-            redisFree(con);
-        } else {
-            cout << "Connect to redis successfully! (Copied)" << endl;
-        }
-    }
     
-    // 添加移动构造函数
-    Redis(Redis&& other) noexcept : con(other.con) {
-        other.con = nullptr;
-    }
-
-    ~Redis(){
-        redisFree(con);
-    }*/
 
     //集合SADD  在集合key中添加member元素
     bool sadd (const string &key,const string &member){

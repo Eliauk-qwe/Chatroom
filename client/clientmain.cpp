@@ -10,24 +10,11 @@
 
 
 using namespace std;
-StickyPacket socket_fd("receive");
+StickyPacket socket_fd("start");
 sockaddr_in client_addr;
 string log_uid="0";
 
 
-// 设置文件描述符为非阻塞模式
-void setnoblock(int fd){
-    int flag =fcntl(fd,F_GETFL);
-     if(flag<0){
-        cerr << "fcntl" <<endl;
-        exit(EXIT_FAILURE);
-    }
-
-    if(fcntl(fd,F_SETFL,flag|O_NONBLOCK)  <0){
-        cerr << "fcntl" <<endl;
-        exit(EXIT_FAILURE);
-    }
-}
 
 
 
@@ -35,7 +22,7 @@ int main(int argc,char *argv[]){
     std::srand(std::time(0));
 
 
-    std::signal(SIGPIPE, SIG_IGN);
+    
     if(argc !=3){
         cerr << "Usage : " << argv[0] << " <IP> <PORT>" << endl;
         exit(EXIT_FAILURE);
@@ -49,7 +36,7 @@ int main(int argc,char *argv[]){
     // 设置接收缓冲区大小（系统级）
     int recv_buf_size = 2*1024 * 1024; // 1MB
     setsockopt(fd, SOL_SOCKET, SO_RCVBUF,&recv_buf_size, sizeof(recv_buf_size));
-    //sockaddr_in client_addr;
+  
     memset(&client_addr,0,sizeof(client_addr));
     client_addr.sin_family=AF_INET;
     uint16_t port=atoi(argv[2]);
@@ -66,7 +53,7 @@ int main(int argc,char *argv[]){
         close(fd);
         exit(EXIT_FAILURE);
     }
-    //setnoblock(fd);
+  
     
     
 
@@ -101,7 +88,6 @@ int main(int argc,char *argv[]){
                 break;
             }
             case 4: {
-                //client_quit(fd);
                 exit(0);
             }
             default:
