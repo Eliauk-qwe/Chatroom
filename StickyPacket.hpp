@@ -1,5 +1,5 @@
-#ifndef _粘包_H_
-#define _粘包_H_
+#ifndef _StickyPacket_H_
+#define _StickyPacket_H_
 
 #include <iostream>
 #include <string>

@@ -16,17 +16,12 @@
 #include <sys/sendfile.h>
 #include <thread>
 #include <mutex>
-
 #include "../JSON.hpp"
 #include <csignal>
 #include "../StickyPacket.hpp"
 
 
 
-
-
-
-//class StickyPacket;
 
 
 #define SIGNUP 1
@@ -142,12 +137,7 @@ void invite_friend_to_group(StickyPacket socket,Message &msg);
 void client_dead(int nfd);
 void client_lastactive_now(int nfd);
 
-//void is_friend_chat_daily(StickyPacket socket,Message &msg,Redis redis);
-//void heart(StickyPacket socket,Message &msg);
 
-/*void init_friend_message_process();
-void friend_message_process();
-void process_friendchat_message(Redis& local_redis,string &sender_uid,string &recver_uid,string &content);*/
 
  
 
@@ -161,9 +151,6 @@ extern std::unordered_map<int, time_t> last_active_time;
 extern std::unordered_map<int, std::string> fd_to_user;
 extern std::mutex active_mtx;
 extern Redis redis;
-
-
-
 
 
 
@@ -306,11 +293,9 @@ public:
             invite_friend_to_group(socket,msg);
             break;
 
-        
         case HEART:
             break;
 
-        
         default:
             break;
         }
@@ -318,8 +303,6 @@ public:
     
     }
 };
-
-
 
 
 #endif
