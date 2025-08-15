@@ -76,22 +76,13 @@ int log_in(){
         }else if(recv=="ok"){
             cout<<"登录成功"<<endl;
            
-            // 修复点1：添加分号并重命名线程变量
+           
             thread notice_thread([uid=log_uid,noticefd=socket_fd.get_notice_fd()](){
                 notice_recv_thread(uid,noticefd);
             });
             notice_thread.detach();
 
-            thread heart_thread_1([uid=log_uid,fd=socket_fd.getfd()](){
-                heartthread(uid,fd);
-            });
-            heart_thread_1.detach();
-
-
-            /*thread notice_thread([uid=log_uid,noticefd=socket_fd.getfd()](){
-                notice_recv_thread_1(uid,noticefd);
-            });
-            notice_thread.detach();*/
+           
 
             return 1;
         }

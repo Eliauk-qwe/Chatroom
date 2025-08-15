@@ -121,7 +121,7 @@ int  main(int argc,char *argv[]){
 
    // 在main函数中启动心跳线程
    std::thread heart_thread(heart, epoll_fd);
-   heart_thread.detach(); // 分离线程，使其独立运行
+   heart_thread.detach(); 
 
    
    
@@ -168,12 +168,13 @@ int  main(int argc,char *argv[]){
             else if(events[i].events & EPOLLIN){
                 StickyPacket sp_fd(fd);
                 string client_cmd;
-               // 修改后：仅关闭当前连接
+               
                 int recv_ret = sp_fd.server_recv(fd, client_cmd);
                 if (recv_ret <= 0)
                 { 
                 
                     client_dead(fd);
+                    epoll_ctl(epoll_fd,EPOLL_CTL_DEL,fd,nullptr);
                     continue;
                 }
 
@@ -199,20 +200,23 @@ int  main(int argc,char *argv[]){
 
                     filethread.detach();
                 }else if(msg.flag==HEART){
-                    client_lastactive_now(fd);
+                    //未登录
+                    if(msg.uid=="0"){
+                        client_last_active[fd] = chrono::steady_clock::now();
+                    //已登录
+                    }else{
+                        client_lastactive_now(fd);
+                    }
+                    
                 }
                 else{  
                     client_lastactive_now(fd);
                     StickyPacket socket(fd); 
-                    Task task([socket=StickyPacket(fd),client_cmd]() mutable{
+                    Task task([socket=StickyPacket(fd),client_cmd]() {
                         trans.translation(socket,client_cmd);
-                    });    
-                    
-        // socket会在析构时自动关闭
-   
+                    });   
                     pool.addTask(task);
 
-                    
                 }
             }
         }
@@ -225,11 +229,14 @@ void heart(int epfd) {
         auto now = chrono::steady_clock::now();
         for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
 
-            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 180) { // 180秒超时
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 60) { 
                 cout << "Client " << it->first << " 超时" << endl;
                 close(it->first);
                 client_dead(it->first);
                 it = client_last_active.erase(it);
+                epoll_ctl(epfd,EPOLL_CTL_DEL,it->first,nullptr);
+                
+
             } else {
                 ++it;
             }
@@ -246,10 +253,12 @@ void client_dead(int nfd)
     close(nfd);
 }
 void client_lastactive_now(int nfd){
-    if(redis.Hexists("fd-uid表",to_string(nfd))){
-    string uid =redis.Hget("fd-uid表",to_string(nfd));
-    if(stoi(uid)!=-1){
-     client_last_active[nfd] = chrono::steady_clock::now();
-     }
+    if (redis.Hexists("fd-uid表", to_string(nfd)))
+    {
+        string uid = redis.Hget("fd-uid表", to_string(nfd));
+        if (stoi(uid) != -1)
+        {
+            client_last_active[nfd] = chrono::steady_clock::now();
         }
+    }
 }

@@ -17,7 +17,7 @@
 #include <thread>
 #include <mutex>
 
-#include "../Message.hpp"
+#include "../JSON.hpp"
 #include <csignal>
 #include "../StickyPacket.hpp"
 
@@ -306,13 +306,7 @@ public:
             invite_friend_to_group(socket,msg);
             break;
 
-        /*case IS_FRIEND_CHAT_DAILY:
-            is_friend_chat_daily(socket,msg,redis);
-            break;*/
-
-       /* case NOTICE:
-            redis.hset(msg.uid, "消息fd", to_string(socket.getfd()));
-            break;*/
+        
         case HEART:
             break;
 

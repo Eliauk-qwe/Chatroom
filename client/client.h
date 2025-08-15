@@ -4,7 +4,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <cstring>
-#include "../Message.hpp"
+#include "../JSON.hpp"
 #include "../StickyPacket.hpp"
 #include <fcntl.h>
 #include <sys/sendfile.h>
@@ -18,11 +18,8 @@
 #include <fcntl.h>
 #include <cstdlib>
 #include <ctime>
-/*#include <openssl/sha.h>
-#include <string>
-#include <vector>
-#include <stdexcept>
-#include <cstdio>*/
+
+
 
 #define SIGNUP 1
 #define LOGIN 2
@@ -139,7 +136,6 @@ void  group_invite_agree();
 void  frient_invite_group();
 void   group_invite_refuse();
 int  check_group_invite();
-//void is_friend_chat(string friend_chat_uid);
 void notice_recv_thread_1(string uid,int noticefd);
 void setnoblock(int fd);
 

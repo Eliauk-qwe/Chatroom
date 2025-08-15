@@ -200,6 +200,7 @@ public:
         char *buf = new char[4];
         int cnt = 4;
         char *pt = (char *)&len;
+        
         while (cnt > 0)
         {
             int ret = recv(fd, pt, cnt, 0);

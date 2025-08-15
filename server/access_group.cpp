@@ -193,8 +193,7 @@ void owner_quit_group(StickyPacket socket,Message &msg){
     vector<string> groupmemberslist =redis.Smembers(msg.friend_or_group+"的群成员");
     for(const string &groupmember : groupmemberslist){
         redis.Hdel(groupmember+"的群聊列表",msg.friend_or_group);
-        //有必要删除用不到的键值吗
-        //按没必要写
+        
         if(groupmember==msg.uid)  continue;
         redis.Srem(msg.friend_or_group+"的群成员",groupmember);
         string num=redis.Hget(groupmember+"的未读消息","通知类消息");

@@ -11,9 +11,55 @@ void user_quit(StickyPacket socket,Message &msg){
     redis.del(msg.uid + "的通知类消息");
     redis.del(msg.uid + "的新的朋友");
     redis.del(msg.uid + "的群聊申请");
-    redis.del(msg.uid + "的群聊列表");
-    redis.del(msg.uid + "创建的群聊");
-    vector<string> grouplist = redis.Smembers(msg.uid+"的群聊列表");
+
+
+    
+    
+
+    vector<string> groupIDlist=redis.Hgetall(msg.uid + "创建的群聊");
+    for(int i=0;i<groupIDlist.size();i=i+2){
+       
+        cout<<"i=:"<<i<<endl;
+        string groupID=groupIDlist[i];
+        cout<<"groupid:"<<groupID<<endl;
+        redis.del(groupID+"的高权限者");
+        redis.del(groupID+"的管理员");
+        redis.del(groupID+"的高权限者");
+        redis.del(groupID+"的在线用户");
+        vector<string> groupmemberslist =redis.Smembers(groupID+"的群成员");
+        for(const string &groupmember : groupmemberslist){
+        
+        redis.Hdel(groupmember+"的群聊列表",groupID);
+        if(groupmember==msg.uid)  continue;
+        redis.Srem(groupID+"的群成员",groupmember);
+        redis.del(groupmember+"与"+groupID+"的聊天记录");
+
+        redis.Rpush(groupmember+"的通知类消息","群主已解散群聊"+groupID);
+
+        if(online_users.find(groupmember) != online_users.end()){
+            string notice_fd=redis.Hget(groupmember,"消息fd");
+            StickyPacket notice_socket(stoi(notice_fd));
+            string notice="群主已解散群聊"+groupID;
+            notice_socket.mysend(QING+notice+RESET);
+        }
+        redis.del(groupID+"的群成员");
+        redis.del(groupID);
+        redis.Srem("群聊ID集合",groupID);
+        redis.del(groupID+"的群成员");
+
+
+    }
+
+    
+
+
+
+    }
+
+    
+
+
+    vector<string> grouplist = redis.Hgetall(msg.uid+"的群聊列表");
     for(const string &groupname : grouplist){
         redis.del(msg.uid + "与"+groupname+"的聊天记录");
     }
@@ -23,6 +69,13 @@ void user_quit(StickyPacket socket,Message &msg){
     {
         online_users.erase(msg.uid);
     }
+
+    redis.del(msg.uid + "创建的群聊");
+    redis.del(msg.uid + "的群聊列表");
+    redis.del(msg.uid + "的群成员");
+
+
+    socket.mysend("ok");
      
 }
 

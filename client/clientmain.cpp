@@ -33,9 +33,9 @@ int main(int argc,char *argv[]){
 
    
 
-    // 设置接收缓冲区大小（系统级）
-    int recv_buf_size = 2*1024 * 1024; // 1MB
-    setsockopt(fd, SOL_SOCKET, SO_RCVBUF,&recv_buf_size, sizeof(recv_buf_size));
+    // 设置发送缓冲区大小（系统级）
+    int send_buf_size = 2*1024 * 1024; // 1MB
+    setsockopt(fd, SOL_SOCKET, SO_SNDBUF,&send_buf_size, sizeof(send_buf_size));
   
     memset(&client_addr,0,sizeof(client_addr));
     client_addr.sin_family=AF_INET;
