@@ -15,7 +15,7 @@ class StickyPacket{
 private:
     int fd=-1;
     int notice_fd=-1;
-    //string recv_buffer;
+   
 
 public:
     int getfd() {

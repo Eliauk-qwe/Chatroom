@@ -1,5 +1,6 @@
 #ifndef _SEVER_H_
 #define _SEVER_H_
+
 #include <iostream>
 #include <netinet/in.h>
 #include <cstring>
@@ -136,6 +137,7 @@ void heart(int fd);
 void invite_friend_to_group(StickyPacket socket,Message &msg);
 void client_dead(int nfd);
 void client_lastactive_now(int nfd);
+void setnoblock(int fd) ;
 
 
 
@@ -151,6 +153,10 @@ extern std::unordered_map<int, time_t> last_active_time;
 extern std::unordered_map<int, std::string> fd_to_user;
 extern std::mutex active_mtx;
 extern Redis redis;
+extern unordered_map<int, chrono::time_point<chrono::steady_clock>> client_last_active;
+
+
+
 
 
 
@@ -159,138 +165,138 @@ using namespace std;
 #define LISTEN_NUM 150
 #define MAX_EVENTS 1024
 
-
 class MessageTrans
 {
 public:
-    void translation(StickyPacket socket,const std::string &cmd){
+    void translation(StickyPacket socket, const std::string &cmd)
+    {
         Message msg;
         msg.Json_to_s(cmd);
-    
+
         Redis redis;
         switch (msg.flag)
         {
         case SIGNUP:
-            sign_up(socket,msg);
+            sign_up(socket, msg);
             break;
         case LOGIN:
-            log_in(socket,msg);
+            log_in(socket, msg);
             break;
         case PASSFIND:
-            passfind(socket,msg);
+            passfind(socket, msg);
             break;
         case USER_QUIT:
-            user_quit(socket,msg);
+            user_quit(socket, msg);
             break;
         case INFORM:
-            notice(socket,msg);
+            notice(socket, msg);
             break;
         case FRIEND_ADD:
-            friend_add(socket,msg);
+            friend_add(socket, msg);
             break;
         case FRIEND_DEL:
-            friend_del(socket,msg);
+            friend_del(socket, msg);
             break;
         case FRIEND_LIST:
-            friend_list(socket,msg);
+            friend_list(socket, msg);
             break;
         case FRIEND_QUIT:
-            friend_quit(socket,msg);
+            friend_quit(socket, msg);
             break;
         case FRIEND_QUIT_LIST:
-            friend_quit_list(socket,msg);
+            friend_quit_list(socket, msg);
             break;
         case FRIEND_BACK:
-            friend_back(socket,msg);
+            friend_back(socket, msg);
             break;
         case FRIEND_APPLY_AGREE:
-            friend_apply_agree(socket,msg);
+            friend_apply_agree(socket, msg);
             break;
         case FRIEND_APPLY_REFUSE:
-            friend_apply_refuse(socket,msg);
+            friend_apply_refuse(socket, msg);
             break;
         case FRIEND_CHAT:
-            friend_chat(socket,msg);
+            friend_chat(socket, msg);
             break;
         case FRIEND_CHAT_DAILY:
-            friend_chat_daily(socket,msg);
+            friend_chat_daily(socket, msg);
             break;
         case FRIEND_QUIT_CHAT:
-            friend_quit_chat(socket,msg);
+            friend_quit_chat(socket, msg);
             break;
         case FRIEND_SEND_FILE:
-            friend_send_file(socket,msg);
+            friend_send_file(socket, msg);
             break;
         case FRIEND_RECV_FILE:
-            friend_recv_file(socket,msg);
+            friend_recv_file(socket, msg);
             break;
         case GROUP_CREAT:
-            group_creat(socket,msg);
+            group_creat(socket, msg);
             break;
         case GROUP_LIST:
-            group_list(socket,msg);
+            group_list(socket, msg);
             break;
         case GROUP_ADD:
-            group_add(socket,msg);
+            group_add(socket, msg);
             break;
         case GROUP_APPLY_AGREE:
-            group_apply_agree(socket,msg);
+            group_apply_agree(socket, msg);
             break;
         case GROUP_APPLY_REFUSE:
-            group_apply_refuse(socket,msg);
+            group_apply_refuse(socket, msg);
             break;
         case CHECK_FRIEND_APPLY:
-            check_friend_apply(socket,msg);
+            check_friend_apply(socket, msg);
             break;
         case CHECK_GROUP_APPLY:
-            check_group_apply(socket,msg);
+            check_group_apply(socket, msg);
             break;
         case CHECK_GROUP_MEMBERS:
-            check_group_members(socket,msg);
+            check_group_members(socket, msg);
             break;
         case OWNER_ADD_MANAGERS:
-            owner_add_managers(socket,msg);
+            owner_add_managers(socket, msg);
             break;
         case OWNER_DEL_MANAGERS:
-            owner_del_managers(socket,msg);
+            owner_del_managers(socket, msg);
             break;
         case OWNER_QUIT_GROUP:
-            owner_quit_group(socket,msg);
+            owner_quit_group(socket, msg);
             break;
         case ALL_MANAGERS_DEL_MEMBERS:
-            all_managers_del_members(socket,msg);
+            all_managers_del_members(socket, msg);
             break;
         case CHECK_GROUP_MANAGERS:
-            check_group_managers(socket,msg);
+            check_group_managers(socket, msg);
             break;
         case ACCESS_GROUP:
-            access_group(socket,msg);
+            access_group(socket, msg);
             break;
         case GROUP_CHAT:
-            group_chat(socket,msg);
+            group_chat(socket, msg);
             break;
         case GROUP_DAILY_CHAT:
-            group_daily_chat(socket,msg, redis);
+            group_daily_chat(socket, msg, redis);
             break;
         case GROUP_SEND_FILE:
-            group_send_file(socket,msg);
+            group_send_file(socket, msg);
             break;
         case GROUP_RECV_FILE:
-            group_recv_file(socket,msg);
+            group_recv_file(socket, msg);
             break;
         case GROUP_QUIT_CHAT:
-            group_quit_chat(socket,msg);
+            group_quit_chat(socket, msg);
             break;
         case GROUP_QUIT:
-            group_quit(socket,msg);
+            group_quit(socket, msg);
             break;
 
         case CLIENT_QUIT:
-            client_quit(socket,msg);
+            client_quit(socket, msg);
             break;
 
         case INVITE_FRIEND_TO_GROUP:
-            invite_friend_to_group(socket,msg);
+            invite_friend_to_group(socket, msg);
             break;
 
         case HEART:
@@ -299,10 +305,7 @@ public:
         default:
             break;
         }
-
-    
     }
 };
-
 
 #endif

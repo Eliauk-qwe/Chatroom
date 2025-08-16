@@ -128,31 +128,7 @@ void friend_apply_refuse(){
 
 
 
-/*void check_friend_apply(){
-    Message msg(log_uid,CHECK_FRIEND_APPLY);
-    socket_fd.mysend(msg.S_to_json());
 
-    string recv;
-    
-
-    while ((recv=socket_fd.client_recv()) != "over")
-    {
-        getchar();
-        if(recv=="no"){
-            getchar();
-            cout<<"你还没有好友申请"<<endl;
-            return;
-        }
-        cout << recv <<endl;
-    }
-    
-
-    printf("以上是所有好友申请,可选出想添加好友的uid,来同意或拒绝申请\n");
-    return;
-
-
-
-}*/
 
 int check_friend_apply() {
     printf("\n");

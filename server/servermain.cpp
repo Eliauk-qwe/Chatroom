@@ -1,4 +1,189 @@
 #include "server.hpp"
+#include "reactor.hpp"
+#include <csignal>
+#include <vector>
+#include <memory>
+
+MessageTrans trans;
+Redis redis;
+unordered_set<string> online_users;
+unordered_map<int, chrono::time_point<chrono::steady_clock>> client_last_active;
+
+// 设置文件描述符为非阻塞模式
+void setnoblock(int fd) {
+    int flag = fcntl(fd, F_GETFL);
+    if (flag < 0) {
+        cerr << "fcntl" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (fcntl(fd, F_SETFL, flag | O_NONBLOCK) < 0) {
+        cerr << "fcntl" << endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+
+
+int main(int argc, char *argv[]) {
+    // 初始化计数器
+    if (!redis.Exists("user_uid_counter")) {
+        redis.set("user_uid_counter", "0");
+    }
+    if (!redis.Exists("group_uid_counter")) {
+        redis.set("group_uid_counter", "0"); 
+    }
+
+    if (argc != 3) {
+        cerr << "Usage : " << argv[0] << "<IP> <PORT>" << endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // 创建主 Reactor 的监听 socket
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    if (server_fd < 0) {
+        perror("socket failed!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    sockaddr_in server_addr;
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    if (inet_pton(AF_INET, argv[1], (sockaddr*)&server_addr.sin_addr) <= 0) {
+        cerr << "Invalid server IP" << endl;
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+    uint32_t port = atoi(argv[2]);
+    server_addr.sin_port = htons(port);
+
+    // 设置 socket 选项
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    int buf_size = 2 * 1024 * 1024; // 2MB
+    setsockopt(server_fd, SOL_SOCKET, SO_RCVBUF, &buf_size, sizeof(buf_size));
+
+    // 绑定和监听
+    socklen_t server_len = sizeof(server_addr);
+    if (bind(server_fd, (sockaddr*)&server_addr, server_len) < 0) {
+        perror("bind failed!\n");
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(server_fd, LISTEN_NUM) < 0) {
+        perror("listen failed!\n");
+        close(server_fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // 创建主 Reactor
+    int main_epoll_fd = epoll_create1(0);
+    if (main_epoll_fd < 0) {
+        perror("epoll_create1");
+        exit(EXIT_FAILURE);
+    }
+
+    setnoblock(server_fd);
+    struct epoll_event ev;
+    ev.data.fd = server_fd;
+    ev.events = EPOLLIN;
+    if (epoll_ctl(main_epoll_fd, EPOLL_CTL_ADD, server_fd, &ev) < 0) {
+        perror("epoll_ctl");
+        exit(EXIT_FAILURE);
+    }
+
+    // 创建多个从 Reactor
+    const int SUB_REACTOR_COUNT = 4; // 根据CPU核心数调整
+    vector<shared_ptr<SubReactor>> subReactors;
+    for (int i = 0; i < SUB_REACTOR_COUNT; ++i) {
+        subReactors.push_back(make_shared<SubReactor>());
+        subReactors.back()->start();
+    }
+    int nextReactor = 0;
+
+    // 启动心跳线程
+    thread heart_thread(heart, main_epoll_fd);
+    heart_thread.detach();
+
+    // 主 Reactor 事件循环
+    struct epoll_event events[MAX_EVENTS];
+    while (true) {
+        int count = epoll_wait(main_epoll_fd, events, MAX_EVENTS, -1);
+        if (count < 0) {
+            if (errno == EINTR) continue;
+            perror("epoll_wait");
+            exit(EXIT_FAILURE);
+        }
+
+        for (int i = 0; i < count; i++) {
+            int fd = events[i].data.fd;
+            
+            if (fd == server_fd) {
+                // 接受新连接
+                sockaddr_in client_addr;
+                socklen_t client_len = sizeof(client_addr);
+                int new_fd = accept(server_fd, (sockaddr*)&client_addr, &client_len);
+                if (new_fd == -1) {
+                    if (errno != EAGAIN && errno != EWOULDBLOCK) {
+                        perror("accept");
+                    }
+                    continue;
+                }
+                printf("New connection: socket %d\n", new_fd);
+
+                // 将新连接分配给从 Reactor (轮询方式)
+                subReactors[nextReactor]->addFd(new_fd);
+                nextReactor = (nextReactor + 1) % SUB_REACTOR_COUNT;
+            }
+        }
+    }
+
+    // 清理
+    for (auto& reactor : subReactors) {
+        reactor->stop();
+    }
+    close(server_fd);
+    close(main_epoll_fd);
+    return 0;
+}
+
+// 以下函数保持不变
+void heart(int epfd) {
+    while (true) {
+        auto now = chrono::steady_clock::now();
+        for (auto it = client_last_active.begin(); it != client_last_active.end(); ) {
+            if (chrono::duration_cast<chrono::seconds>(now - it->second).count() > 60) { 
+                cout << "Client " << it->first << " 超时" << endl;
+                close(it->first);
+                client_dead(it->first);
+                it = client_last_active.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        this_thread::sleep_for(chrono::seconds(30));
+    }
+}
+
+void client_dead(int nfd) {
+    string uid = redis.Hget("fd-uid表", to_string(nfd));
+    online_users.erase(uid);
+    redis.hset(uid, "消息fd", "-1");
+    redis.hset("fd-uid表", to_string(nfd), "-1");
+    close(nfd);
+}
+
+void client_lastactive_now(int nfd) {
+    if (redis.Hexists("fd-uid表", to_string(nfd))) {
+        string uid = redis.Hget("fd-uid表", to_string(nfd));
+        if (stoi(uid) != -1) {
+            client_last_active[nfd] = chrono::steady_clock::now();
+        }
+    }
+}
+
+/*#include "server.hpp"
 #include <csignal>
 
 
@@ -261,4 +446,4 @@ void client_lastactive_now(int nfd){
             client_last_active[nfd] = chrono::steady_clock::now();
         }
     }
-}
+}*/
