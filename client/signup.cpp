@@ -1,192 +1,198 @@
 #include "client.h"
 
-void sign_up(){
-    string phone,pass,pass2;
+void sign_up()
+{
+    string phone, pass, pass2;
     string name;
     printf("请输入电话号码：\n");
-    getline(cin,phone);
-    for(int i=3;i>0;i--){
-        cout<<"请设置密码:"<<endl;
-        getline(cin,pass);
-        cout<<"请重新输入密码:"<<endl;
-        getline(cin,pass2);
-        if(pass!=pass2){
-            if(i==1)  return;
-            cout<<"两次密码不一致，请重新输入"<<endl;
-            cout<<"你还有"<<i-1<<"次机会"<<endl;
+    getline(cin, phone);
+    for (int i = 3; i > 0; i--)
+    {
+        cout << "请设置密码:" << endl;
+        getline(cin, pass);
+        cout << "请重新输入密码:" << endl;
+        getline(cin, pass2);
+        if (pass != pass2)
+        {
+            if (i == 1)
+                return;
+            cout << "两次密码不一致，请重新输入" << endl;
+            cout << "你还有" << i - 1 << "次机会" << endl;
         }
-        else   break;
+        else
+            break;
     }
 
-   
+    cout << "请设置昵称" << endl;
+    getline(cin, name);
 
-    cout<<"请设置昵称"<<endl;
-    getline(cin,name);
-
-    Message msg(SIGNUP,phone,pass,name);
+    Message msg(SIGNUP, phone, pass, name);
     socket_fd.mysend(msg.S_to_json());
-    //错误处理
+    // 错误处理
 
-    string uid=socket_fd.client_recv();
+    string uid = socket_fd.client_recv();
     if (uid == "读取消息头不完整")
     {
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-    cout<<"你注册的uid为:"<<QING+uid+RESET<<endl;
+    cout << "你注册的uid为:" << QING + uid + RESET << endl;
     printf("请记住它哦，它是类似学号一样重要的东西\n");
-    //cout<<"接下来将进入登录界面"<<endl<<endl;
+    // cout<<"接下来将进入登录界面"<<endl<<endl;
     return;
-
 }
 
-int log_in(){
-    string phone,pass,uid;
-    int i=3;
-    while(1){
-        
-        cout<<"请输入你的密码:"<<endl;
-        getline(cin,pass);
-        cout<<"请输入你的uid:"<<endl;
-        getline(cin,uid);
-        log_uid=uid;
+int log_in()
+{
+    string phone, pass, uid;
+    int i = 3;
+    while (1)
+    {
 
-        Message msg(phone,uid,pass,LOGIN);
-        
+        cout << "请输入你的密码:" << endl;
+        getline(cin, pass);
+        cout << "请输入你的uid:" << endl;
+        getline(cin, uid);
+        log_uid = uid;
+
+        Message msg(phone, uid, pass, LOGIN);
+
         socket_fd.mysend(msg.S_to_json());
 
-        string recv=socket_fd.client_recv();
+        string recv = socket_fd.client_recv();
         if (recv == "读取消息头不完整")
         {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
-        if(recv=="该用户未注册"){
-            cout<<"你还未注册，请先注册"<<endl;
+        if (recv == "该用户未注册")
+        {
+            cout << "你还未注册，请先注册" << endl;
             return 0;
-        }else if(recv=="该用户已登录"){
-            cout<<"你已经登录，请勿重复登录"<<endl;
+        }
+        else if (recv == "该用户已登录")
+        {
+            cout << "你已经登录，请勿重复登录" << endl;
             return 0;
-        }else if(recv=="密码错误"){
-            cout<<"密码错误"<<endl;
+        }
+        else if (recv == "密码错误")
+        {
+            cout << "密码错误" << endl;
             i--;
-            if(i==0) return 0;
-            cout<<"你还有"<<i<<"次机会"<<endl;
+            if (i == 0)
+                return 0;
+            cout << "你还有" << i << "次机会" << endl;
             continue;
-        }else if(recv=="ok"){
-            cout<<"登录成功"<<endl;
-           
-           
-            thread notice_thread([uid=log_uid,noticefd=socket_fd.get_notice_fd()](){
-                notice_recv_thread(uid,noticefd);
-            });
-            notice_thread.detach();
+        }
+        else if (recv == "ok")
+        {
+            cout << "登录成功" << endl;
 
-           
+            thread notice_thread([uid = log_uid, noticefd = socket_fd.get_notice_fd()]()
+                                 { notice_recv_thread(uid, noticefd); });
+            notice_thread.detach();
 
             return 1;
         }
-
-
     }
 }
 
-void notice_recv_thread(string uid,int noticefd){
+void notice_recv_thread(string uid, int noticefd)
+{
     StickyPacket noticesocket(noticefd);
 
-    
-    sockaddr_in notice_addr=client_addr;
-    if(connect(noticefd,(sockaddr*)&notice_addr,sizeof(notice_addr))  <0){
+    sockaddr_in notice_addr = client_addr;
+    if (connect(noticefd, (sockaddr *)&notice_addr, sizeof(notice_addr)) < 0)
+    {
         perror("connect failed!\n");
         close(noticefd);
         return;
     }
 
-    
+    Message msg(uid, NOTICE);
 
-    Message msg(uid,NOTICE);
-    
-    if (noticesocket.mysend(msg.S_to_json()) < 0) {
+    if (noticesocket.mysend(msg.S_to_json()) < 0)
+    {
         cerr << "通知注册失败" << endl;
         return;
     }
 
-   
-
-    while(1){
-        string recv =noticesocket.Receive_client();
-        if(recv =="close"){
+    while (1)
+    {
+        string recv = noticesocket.Receive_client();
+        if (recv == "close")
+        {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
 
-        cout << recv <<endl;
+        cout << recv << endl;
     }
     return;
-
-
 }
 
+void pass_find()
+{
+    string uid, phone;
+    cout << "请输入你的uid:" << endl;
+    getline(cin, uid);
+    cout << "请输入你的电话:" << endl;
+    getline(cin, phone);
 
-   
-
-void pass_find(){
-    string uid,phone;
-    cout<<"请输入你的uid:"<<endl;
-    getline(cin,uid);
-    cout<<"请输入你的电话:"<<endl;
-    getline(cin,phone);
-
-    Message msg(uid,phone,PASSFIND);
+    Message msg(uid, phone, PASSFIND);
     socket_fd.mysend(msg.S_to_json());
 
-    string recv=socket_fd.client_recv();
+    string recv = socket_fd.client_recv();
     if (recv == "读取消息头不完整")
     {
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-    if(recv=="no"){
-        cout<<"你的uid与电话不匹配,无法找回密码"<<endl;
-    }else if(recv=="yes"){
-        string pass=socket_fd.client_recv();
+    if (recv == "no")
+    {
+        cout << "你的uid与电话不匹配,无法找回密码" << endl;
+    }
+    else if (recv == "yes")
+    {
+        string pass = socket_fd.client_recv();
         if (recv == "读取消息头不完整")
         {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
-        cout<< "你的密码是："<< pass<<endl;
+        cout << "你的密码是：" << pass << endl;
     }
 
     return;
-
 }
 
-
-
-
-void client_quit(int fd,int cfd){
-    if(log_uid=="0"){
+void client_quit(int fd, int cfd)
+{
+    if (log_uid == "0")
+    {
         close(fd);
-        int notice_fd=socket_fd.get_notice_fd();
+        int notice_fd = socket_fd.get_notice_fd();
         close(notice_fd);
         printf("连接已关闭\n");
         printf("感谢使用聊天室，再见！\n");
         exit(EXIT_SUCCESS);
-    }else{
-        Message msg(log_uid,CLIENT_QUIT);
+    }
+    else
+    {
+        Message msg(log_uid, CLIENT_QUIT);
         socket_fd.mysend(msg.S_to_json());
-        string recv=socket_fd.client_recv();
+        string recv = socket_fd.client_recv();
         if (recv == "读取消息头不完整")
         {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
         }
-        if(recv=="ok"){
+        if (recv == "ok")
+        {
             close(fd);
             close(cfd);
-            int notice_fd=socket_fd.get_notice_fd();
-            cout<<"notice_fd:"<<notice_fd<<endl;
+            int notice_fd = socket_fd.get_notice_fd();
+            cout << "notice_fd:" << notice_fd << endl;
             close(notice_fd);
             printf("连接已关闭\n");
             printf("感谢使用聊天室，再见！\n");
@@ -195,24 +201,25 @@ void client_quit(int fd,int cfd){
     }
 }
 
-void heartthread(string uid,int fd){
-    //printf("心跳检测开始！\n");
+void heartthread(string uid, int fd)
+{
+    // printf("心跳检测开始！\n");
 
-   // string notice="heart";
-   //int flag=true;
+    // string notice="heart";
+    // int flag=true;
 
-    while(1){
+    while (1)
+    {
 
-        Message msg(uid,HEART);
+        Message msg(uid, HEART);
 
-        int res=socket_fd.mysend(msg.S_to_json());
-        if(res<0){
+        int res = socket_fd.mysend(msg.S_to_json());
+        if (res < 0)
+        {
             printf("服务器关闭\n");
             exit(0);
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(30));
-
     }
-
 }

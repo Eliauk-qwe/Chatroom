@@ -21,12 +21,8 @@
 #include <csignal>
 #include "../StickyPacket.hpp"
 
-
-
-
-
 #define SIGNUP 1
-#define LOGIN  2
+#define LOGIN 2
 #define QUESTION_GET 3
 #define ANSWER_GET 4
 #define PASS_GET 5
@@ -63,9 +59,9 @@
 #define ACCESS_GROUP 37
 #define GROUP_CHAT 38
 #define GROUP_DAILY_CHAT 39
-#define GROUP_SEND_FILE  40
-#define GROUP_RECV_FILE  41
-#define GROUP_QUIT_CHAT  42
+#define GROUP_SEND_FILE 40
+#define GROUP_RECV_FILE 41
+#define GROUP_QUIT_CHAT 42
 #define CLIENT_QUIT 43
 #define HEART 44
 #define INFORM 45
@@ -75,78 +71,61 @@
 #define CHECK_GROUP_INVITE 49
 #define IS_FRIEND_CHAT_DAILY 50
 
-
-
-
-
 #define RED "\033[1;31m"
 #define BLUE "\033[34m"
 #define YELLOW "\033[1;33m"
 #define GREEN "\033[1;32m"
 #define RESET "\033[0m"
-#define ZI  "\033[1;35m"
-#define PLUSWHITE  "\033[1;37m"
-#define QING  "\033[1;36m"
+#define ZI "\033[1;35m"
+#define PLUSWHITE "\033[1;37m"
+#define QING "\033[1;36m"
 
-
-
-
-
-void sign_up(StickyPacket socket,Message &msg);
-void log_in(StickyPacket socket,Message &msg);
-void user_quit(StickyPacket socket,Message &msg);
-void notice(StickyPacket socket,Message &msg);
-void friend_add(StickyPacket socket,Message &msg);
-void friend_del(StickyPacket socket,Message &msg);
-void friend_list(StickyPacket socket,Message &msg);
-void friend_quit(StickyPacket socket,Message &msg);
-void friend_quit_list(StickyPacket socket,Message &msg);
-void friend_back(StickyPacket socket,Message &msg);
-void friend_apply_agree(StickyPacket socket,Message &msg);
-void friend_apply_refuse(StickyPacket socket,Message &msg);
-void friend_chat(StickyPacket socket,Message &msg);
-void friend_chat_daily(StickyPacket socket,Message &msg);
-void friend_quit_chat(StickyPacket socket,Message &msg);
-int recv_sendfile(StickyPacket socket,Message &msg);
-void friend_send_file(StickyPacket socket,Message &msg);
-void friend_recv_file(StickyPacket socket,Message &msg);
-int send_sendfile(StickyPacket socket,Message &msg);
-void passfind(StickyPacket socket,Message &msg);
-void check_friend_apply(StickyPacket socket,Message &msg);
-void group_creat(StickyPacket socket,Message &msg);
-void group_list(StickyPacket socket,Message &msg);
-void group_add(StickyPacket socket,Message &msg);
-void group_apply_agree(StickyPacket socket,Message &msg);
-void group_apply_refuse(StickyPacket socket,Message &msg);
-void check_group_apply(StickyPacket socket,Message &msg);
-void check_group_members(StickyPacket socket,Message &msg);
-void group_quit(StickyPacket socket,Message &msg);
-void owner_add_managers(StickyPacket socket,Message &msg);
-void owner_del_managers(StickyPacket socket,Message &msg);
-void owner_quit_group(StickyPacket socket,Message &msg);
-void all_managers_del_members(StickyPacket socket,Message &msg);
-void check_group_managers(StickyPacket socket,Message &msg);
-void access_group(StickyPacket socket,Message &msg);
-void group_chat(StickyPacket socket,Message &msg);
-void group_daily_chat(StickyPacket socket,Message &msg,Redis redis);
-void group_send_file(StickyPacket socket,Message &msg);
-void group_recv_file(StickyPacket socket,Message &msg);
-void group_quit_chat(StickyPacket socket,Message &msg);
-void client_quit(StickyPacket socket,Message &msg);
+void sign_up(StickyPacket socket, Message &msg);
+void log_in(StickyPacket socket, Message &msg);
+void user_quit(StickyPacket socket, Message &msg);
+void notice(StickyPacket socket, Message &msg);
+void friend_add(StickyPacket socket, Message &msg);
+void friend_del(StickyPacket socket, Message &msg);
+void friend_list(StickyPacket socket, Message &msg);
+void friend_quit(StickyPacket socket, Message &msg);
+void friend_quit_list(StickyPacket socket, Message &msg);
+void friend_back(StickyPacket socket, Message &msg);
+void friend_apply_agree(StickyPacket socket, Message &msg);
+void friend_apply_refuse(StickyPacket socket, Message &msg);
+void friend_chat(StickyPacket socket, Message &msg);
+void friend_chat_daily(StickyPacket socket, Message &msg);
+void friend_quit_chat(StickyPacket socket, Message &msg);
+int recv_sendfile(StickyPacket socket, Message &msg);
+void friend_send_file(StickyPacket socket, Message &msg);
+void friend_recv_file(StickyPacket socket, Message &msg);
+int send_sendfile(StickyPacket socket, Message &msg);
+void passfind(StickyPacket socket, Message &msg);
+void check_friend_apply(StickyPacket socket, Message &msg);
+void group_creat(StickyPacket socket, Message &msg);
+void group_list(StickyPacket socket, Message &msg);
+void group_add(StickyPacket socket, Message &msg);
+void group_apply_agree(StickyPacket socket, Message &msg);
+void group_apply_refuse(StickyPacket socket, Message &msg);
+void check_group_apply(StickyPacket socket, Message &msg);
+void check_group_members(StickyPacket socket, Message &msg);
+void group_quit(StickyPacket socket, Message &msg);
+void owner_add_managers(StickyPacket socket, Message &msg);
+void owner_del_managers(StickyPacket socket, Message &msg);
+void owner_quit_group(StickyPacket socket, Message &msg);
+void all_managers_del_members(StickyPacket socket, Message &msg);
+void check_group_managers(StickyPacket socket, Message &msg);
+void access_group(StickyPacket socket, Message &msg);
+void group_chat(StickyPacket socket, Message &msg);
+void group_daily_chat(StickyPacket socket, Message &msg, Redis redis);
+void group_send_file(StickyPacket socket, Message &msg);
+void group_recv_file(StickyPacket socket, Message &msg);
+void group_quit_chat(StickyPacket socket, Message &msg);
+void client_quit(StickyPacket socket, Message &msg);
 void heart(int fd);
-void invite_friend_to_group(StickyPacket socket,Message &msg);
+void invite_friend_to_group(StickyPacket socket, Message &msg);
 void client_dead(int nfd);
 void client_lastactive_now(int nfd);
-void setnoblock(int fd) ;
-
-
-
- 
-
-
-
-
-
+void setnoblock(int fd);
 
 extern unordered_set<string> online_users;
 extern std::unordered_map<int, time_t> last_active_time;
@@ -154,11 +133,6 @@ extern std::unordered_map<int, std::string> fd_to_user;
 extern std::mutex active_mtx;
 extern Redis redis;
 extern unordered_map<int, chrono::time_point<chrono::steady_clock>> client_last_active;
-
-
-
-
-
 
 using namespace std;
 
@@ -290,18 +264,14 @@ public:
         case GROUP_QUIT:
             group_quit(socket, msg);
             break;
-
         case CLIENT_QUIT:
             client_quit(socket, msg);
             break;
-
         case INVITE_FRIEND_TO_GROUP:
             invite_friend_to_group(socket, msg);
             break;
-
         case HEART:
             break;
-
         default:
             break;
         }

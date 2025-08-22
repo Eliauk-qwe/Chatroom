@@ -37,54 +37,53 @@ void new_friend()
     }
 }
 
-void friend_apply_agree(){
-    int res=check_friend_apply();
-    if(res<0){
+void friend_apply_agree()
+{
+    int res = check_friend_apply();
+    if (res < 0)
+    {
         return;
     }
-    
 
-        string friend_agree_uid;
-        printf("你想同意的收到的好友申请的uid:\n");
-        getline(cin, friend_agree_uid);
+    string friend_agree_uid;
+    printf("你想同意的收到的好友申请的uid:\n");
+    getline(cin, friend_agree_uid);
 
-        Message msg(log_uid, FRIEND_APPLY_AGREE, friend_agree_uid);
-        socket_fd.mysend(msg.S_to_json());
+    Message msg(log_uid, FRIEND_APPLY_AGREE, friend_agree_uid);
+    socket_fd.mysend(msg.S_to_json());
 
-        string recv = socket_fd.client_recv();
-        if (recv == "读取消息头不完整")
-        {
-            cout << "服务器关闭" << endl;
-            exit(EXIT_SUCCESS);
-        }
+    string recv = socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
+    }
 
-        if(recv=="no"){
-            printf("该用户未注册\n");
-            return;
-        }
+    if (recv == "no")
+    {
+        printf("该用户未注册\n");
+        return;
+    }
 
-        if(recv=="no_exist"){
-            printf("对方没有给你发送好友申请\n");
-            return;
-        }
+    if (recv == "no_exist")
+    {
+        printf("对方没有给你发送好友申请\n");
+        return;
+    }
 
-        if (recv == "ok")
-        {
-            printf("你们已成功加为好友\n");
-            return;
-        }
+    if (recv == "ok")
+    {
+        printf("你们已成功加为好友\n");
+        return;
+    }
     //}
 }
 
-
-
-
-
-
-
-void friend_apply_refuse(){
-    int res=check_friend_apply();
-    if(res<0){
+void friend_apply_refuse()
+{
+    int res = check_friend_apply();
+    if (res < 0)
+    {
         return;
     }
     /*printf("\n你想要拒绝的的好友申请的数量为:\n");
@@ -93,44 +92,43 @@ void friend_apply_refuse(){
 
     printf(PLUSBLUE "请依次输入你想拒绝的好友的uid(不能为空)\n\n" RESET);*/
 
-    //for (int i = 0; i < stoi(num); i++)
+    // for (int i = 0; i < stoi(num); i++)
     //{
-        string friend_refuse_uid;
-        printf("你想拒绝的收到的好友申请的uid:\n");
-        getline(cin, friend_refuse_uid);
+    string friend_refuse_uid;
+    printf("你想拒绝的收到的好友申请的uid:\n");
+    getline(cin, friend_refuse_uid);
 
-        Message msg(log_uid, FRIEND_APPLY_REFUSE, friend_refuse_uid);
-        socket_fd.mysend(msg.S_to_json());
+    Message msg(log_uid, FRIEND_APPLY_REFUSE, friend_refuse_uid);
+    socket_fd.mysend(msg.S_to_json());
 
-        string recv = socket_fd.client_recv();
-        if (recv == "读取消息头不完整")
-        {
-            cout << "服务器关闭" << endl;
-            exit(EXIT_SUCCESS);
-        }
-
-        if(recv=="no"){
-            printf("该用户未注册\n");
-            return;
-        }
-
-        if(recv=="no_exist"){
-            printf("对方没有给你发送好友申请\n");
-            return;
-        }
-
-        if (recv == "OK")
-        {
-            printf("你们已成功拒绝加为好友\n");
-            return;
-        }
+    string recv = socket_fd.client_recv();
+    if (recv == "读取消息头不完整")
+    {
+        cout << "服务器关闭" << endl;
+        exit(EXIT_SUCCESS);
     }
 
+    if (recv == "no")
+    {
+        printf("该用户未注册\n");
+        return;
+    }
 
+    if (recv == "no_exist")
+    {
+        printf("对方没有给你发送好友申请\n");
+        return;
+    }
 
+    if (recv == "OK")
+    {
+        printf("你们已成功拒绝加为好友\n");
+        return;
+    }
+}
 
-
-int check_friend_apply() {
+int check_friend_apply()
+{
     printf("\n");
 
     Message msg(log_uid, CHECK_FRIEND_APPLY);
@@ -144,21 +142,23 @@ int check_friend_apply() {
         cout << "服务器关闭" << endl;
         exit(EXIT_SUCCESS);
     }
-    
-    if (recv == "no") {
+
+    if (recv == "no")
+    {
         cout << "你还没有好友申请" << endl;
         return -1;
     }
-    
+
     // 如果有申请，循环接收直到"over"
-    while (recv != "over") {
+    while (recv != "over")
+    {
         cout << recv << endl;
-        recv = socket_fd.client_recv();// 继续接收下一条
+        recv = socket_fd.client_recv(); // 继续接收下一条
         if (recv == "读取消息头不完整")
         {
             cout << "服务器关闭" << endl;
             exit(EXIT_SUCCESS);
-        } 
+        }
     }
 
     printf("以上是所有好友申请,可选出想添加好友的uid,来同意或拒绝申请\n");

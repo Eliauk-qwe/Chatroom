@@ -8,7 +8,8 @@
 
 using namespace std;
 
-struct Task {
+struct Task
+{
     using funcv = std::function<void()>;
 
     Task() = default;
@@ -16,32 +17,42 @@ struct Task {
 
     funcv function;
 
-    void execute() {
-        if (function) {
-            try {
+    void execute()
+    {
+        if (function)
+        {
+            try
+            {
                 function();
-            } catch (const std::exception& e) {
+            }
+            catch (const std::exception &e)
+            {
                 cerr << "任务异常: " << e.what() << endl;
             }
         }
     }
 };
 
-class ThreadPool {
+class ThreadPool
+{
 public:
-    ThreadPool(size_t number) : stop(false) {
+    ThreadPool(size_t number) : stop(false)
+    {
         pthread_mutex_init(&mutex, nullptr);
         pthread_cond_init(&cond, nullptr);
 
         workers.resize(number);
-        for (size_t i = 0; i < number; i++) {
-            if (pthread_create(&workers[i], nullptr, work, this) != 0) {
+        for (size_t i = 0; i < number; i++)
+        {
+            if (pthread_create(&workers[i], nullptr, work, this) != 0)
+            {
                 throw std::runtime_error("创建线程失败");
             }
         }
     }
 
-    ~ThreadPool() {
+    ~ThreadPool()
+    {
         {
             pthread_mutex_lock(&mutex);
             stop = true;
@@ -50,7 +61,8 @@ public:
 
         pthread_cond_broadcast(&cond);
 
-        for (pthread_t &work : workers) {
+        for (pthread_t &work : workers)
+        {
             pthread_join(work, nullptr);
         }
 
@@ -58,9 +70,11 @@ public:
         pthread_cond_destroy(&cond);
     }
 
-    void addTask(const Task &task) {
+    void addTask(const Task &task)
+    {
         pthread_mutex_lock(&mutex);
-        if (stop) {
+        if (stop)
+        {
             pthread_mutex_unlock(&mutex);
             throw std::runtime_error("向已停止的线程池添加任务");
         }
@@ -76,28 +90,31 @@ private:
     pthread_cond_t cond;
     bool stop;
 
-    static void* work(void* arg) {
-        ThreadPool* pool = static_cast<ThreadPool*>(arg);
-        while (true) {
+    static void *work(void *arg)
+    {
+        ThreadPool *pool = static_cast<ThreadPool *>(arg);
+        while (true)
+        {
             pthread_mutex_lock(&pool->mutex);
-            
+
             // 等待任务或停止信号
-            while (!pool->stop && pool->taskqueue.empty()) {
+            while (!pool->stop && pool->taskqueue.empty())
+            {
                 pthread_cond_wait(&pool->cond, &pool->mutex);
             }
-            
-            if (pool->stop && pool->taskqueue.empty()) {
+
+            if (pool->stop && pool->taskqueue.empty())
+            {
                 pthread_mutex_unlock(&pool->mutex);
                 break;
             }
-            
+
             Task task = std::move(pool->taskqueue.front());
             pool->taskqueue.pop();
             pthread_mutex_unlock(&pool->mutex);
-            
+
             task.execute();
         }
         return nullptr;
     }
 };
-
